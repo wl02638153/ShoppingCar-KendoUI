@@ -1,0 +1,19 @@
+﻿
+@{
+    ViewBag.Title = "ImgTest";
+}
+
+<h2>ImgTest</h2>
+
+<form method="post" action="@Url.Action("ImgTest")" enctype="multipart/form-data">
+    <div class="form-group">
+        <div class="col-md-10">
+            <input type="file" name="img" id="img" required />
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" value="Create" class="btn btn-default" />
+        </div>
+    </div>
+</form>
