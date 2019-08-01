@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="dbShoppingCarModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="dbShoppingCarModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="Member">
           <Key>
             <PropertyRef Name="UserID" />
@@ -35,7 +35,7 @@
           <Property Name="Modify_Date" Type="datetime" />
           <Property Name="Delete_Date" Type="datetime" />
           <Property Name="Delete_Flag" Type="bit" />
-          <Property Name="Approved_Flag" Type="bit" />
+          <Property Name="Approved_Flag" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="OrderHeader">
           <Key>
@@ -67,6 +67,7 @@
           <Property Name="Delete_Date" Type="datetime" />
           <Property Name="Delete_Flag" Type="bit" />
           <Property Name="Modify_Date" Type="datetime" />
+          <Property Name="ProductImg_DB" Type="varbinary(max)" />
         </EntityType>
         <Association Name="FK__OrderDeta__Order__3429BB53">
           <End Role="OrderHeader" Type="Self.OrderHeader" Multiplicity="0..1">
@@ -128,8 +129,7 @@
             <End Role="OrderHeader" EntitySet="OrderHeader" />
           </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="dbShoppingCarModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -164,7 +164,7 @@
           <Property Name="Modify_Date" Type="DateTime" Precision="3" />
           <Property Name="Delete_Date" Type="DateTime" Precision="3" />
           <Property Name="Delete_Flag" Type="Boolean" />
-          <Property Name="Approved_Flag" Type="Boolean" />
+          <Property Name="Approved_Flag" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="OrderHeader" Relationship="Self.FK__OrderDeta__Order__3429BB53" FromRole="OrderDetail" ToRole="OrderHeader" />
           <NavigationProperty Name="Product" Relationship="Self.FK__OrderDeta__Produ__3335971A" FromRole="OrderDetail" ToRole="Product" />
         </EntityType>
@@ -201,6 +201,7 @@
           <Property Name="Delete_Flag" Type="Boolean" />
           <Property Name="Modify_Date" Type="DateTime" Precision="3" />
           <NavigationProperty Name="OrderDetail" Relationship="Self.FK__OrderDeta__Produ__3335971A" FromRole="Product" ToRole="OrderDetail" />
+          <Property Name="ProductImg_DB" Type="Binary" MaxLength="Max" FixedLength="false" />
         </EntityType>
         <Association Name="FK__OrderHead__UserI__6CA31EA0">
           <End Role="Member" Type="Self.Member" Multiplicity="0..1">
@@ -322,6 +323,7 @@
           <EntitySetMapping Name="Product">
             <EntityTypeMapping TypeName="dbShoppingCarModel.Product">
               <MappingFragment StoreEntitySet="Product">
+                <ScalarProperty Name="ProductImg_DB" ColumnName="ProductImg_DB" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="ProductID" ColumnName="ProductID" />
                 <ScalarProperty Name="ProductName" ColumnName="ProductName" />

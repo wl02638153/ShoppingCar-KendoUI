@@ -25,7 +25,7 @@ namespace ShoppingCar.Models
         public Nullable<System.DateTime> Modify_Date { get; set; }
         public Nullable<System.DateTime> Delete_Date { get; set; }
         public Nullable<bool> Delete_Flag { get; set; }
-        public Nullable<bool> Approved_Flag { get; set; }
+        public bool Approved_Flag { get; set; }
     
         public virtual OrderHeader OrderHeader { get; set; }
         public virtual Product Product { get; set; }

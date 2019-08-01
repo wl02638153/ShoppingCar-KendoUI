@@ -88,7 +88,7 @@ namespace ShoppingCar.Controllers
             {
                 if (ImgFile.ContentLength > 0)
                 {
-                    string fileName = Path.GetFileName(ImgFile.FileName);
+                    string fileName = cProduct.ProductID;
                     var path = Path.Combine(Server.MapPath("~/Image"), fileName);
                     ImgFile.SaveAs(path);
                     cProduct.ProductImg = "~/Image/"+fileName;
@@ -112,7 +112,7 @@ namespace ShoppingCar.Controllers
         public ActionResult ShoppingCar()
         {
             string UserID = (Session["Member"] as Member).UserID;
-            var orderDetails = db.OrderDetail.Where(m => m.UserID==UserID && m.Approved_Flag == false).ToList();
+            var orderDetails = db.OrderDetail.Where(m => m.UserID==UserID && m.Approved_Flag == true).ToList();
             return View("ShoppingCar","_LayoutMember",orderDetails);
         }
         [HttpPost]
@@ -138,6 +138,52 @@ namespace ShoppingCar.Controllers
             }
             db.SaveChanges();
             return RedirectToAction("OrderList");
+        }
+
+        public ActionResult CheckCar()
+        {
+            /*string UserID = (Session["Member"] as Member).UserID;
+            var orderDetails = db.OrderDetail.Where(m => m.UserID == UserID && m.Approved_Flag == false).ToList();
+            return View("CheckCar", "_LayoutMember", orderDetails);*/
+            string UserID = (Session["Member"] as Member).UserID;
+            OrderDetailList detailList = new OrderDetailList();
+            detailList.OrderDetails = db.OrderDetail.Where(m => m.UserID == UserID&&m.OrderID==null).ToList<OrderDetail>();
+            return View(detailList);
+        }
+        [HttpPost]
+        public ActionResult CheckCar(OrderDetailList list)
+        {
+            string UserID = (Session["Member"] as Member).UserID;
+            var orderDetails = db.OrderDetail.Where(m => m.UserID == UserID && m.Approved_Flag == false).ToList<OrderDetail>();
+            var selected = list.OrderDetails.ToList<OrderDetail>();
+            /*var q = from od in orderDetails
+                    join s in selected on od.OrderDetailID equals s.OrderDetailID into check
+                    select new
+                    {
+                        od.Approved_Flag
+                    };
+            foreach(var item in q)
+            {
+                item.Approved_Flag = true;
+            }*/
+
+            foreach (var item in selected)
+            {
+                var check = db.OrderDetail.Where(m => m.OrderDetailID == item.OrderDetailID).FirstOrDefault();
+                if (item.Approved_Flag == true)
+                {
+                    check.Approved_Flag = true;
+                }
+                else if(item.Approved_Flag == false)
+                {
+                    check.Approved_Flag = false;
+                }
+                
+            }
+            db.SaveChanges();
+
+            var orderDetailsNew = db.OrderDetail.Where(m => m.UserID == UserID && m.Approved_Flag == true&&m.Delete_Flag!=true&&m.OrderID==null).ToList();
+            return View("ShoppingCar", "_LayoutMember", orderDetailsNew);
         }
 
         public ActionResult OrderList()

@@ -228,6 +228,7 @@
     <Content Include="Views\Shared\_LayoutAdmin.cshtml" />
     <Content Include="Views\Home\OrderListDetail.cshtml" />
     <Content Include="Views\Home\MemberList.cshtml" />
+    <Content Include="Views\Home\CheckCar.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Image\" />
