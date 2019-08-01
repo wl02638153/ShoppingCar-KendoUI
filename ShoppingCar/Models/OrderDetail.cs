@@ -30,4 +30,8 @@ namespace ShoppingCar.Models
         public virtual OrderHeader OrderHeader { get; set; }
         public virtual Product Product { get; set; }
     }
+    public class OrderDetailList
+    {
+        public List<OrderDetail> OrderDetails { get; set; }
+    }
 }
