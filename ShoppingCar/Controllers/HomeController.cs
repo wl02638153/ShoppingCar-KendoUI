@@ -82,17 +82,64 @@ namespace ShoppingCar.Controllers
             return View("CreateProduct", "_LayoutAdmin");
         }
         [HttpPost]
-        public ActionResult CreateProduct(HttpPostedFileBase ImgFile, Product cProduct)
+        public ActionResult CreateProduct(Product cProduct, string base64str)
         {
-            if (ImgFile != null)
+            if (base64str != null && base64str.Length > 0)
             {
-                if (ImgFile.ContentLength > 0)
+                //local
+                string fileName = cProduct.ProductID + ".PNG";
+                var path = Path.Combine(Server.MapPath("~/Image"), fileName);
+                //Base64ToImage(base64str).Save(path);
+                base64str = base64str.Replace("data:image/jpeg;base64,", "");
+                byte[] imageBytes = Convert.FromBase64String(base64str);
+                MemoryStream mss = new MemoryStream(imageBytes, 0, imageBytes.Length);
+                mss.Write(imageBytes, 0, imageBytes.Length);
+                System.Drawing.Image image = System.Drawing.Image.FromStream(mss, true);
+                image.Save(path);
+                cProduct.ProductImg = "~/Image/" + fileName;
+
+                //db
+                byte[] FileBytes = Convert.FromBase64String(base64str);
+                using (MemoryStream ms = new MemoryStream())
                 {
-                    string fileName = cProduct.ProductID;
-                    var path = Path.Combine(Server.MapPath("~/Image"), fileName);
-                    ImgFile.SaveAs(path);
-                    cProduct.ProductImg = "~/Image/"+fileName;
+                    
+                    //ImgFile.InputStream.CopyTo(ms);
+                    FileBytes = ms.GetBuffer();
                 }
+                cProduct.ProductImg_DB = FileBytes;
+            }
+            return View("CreateProduct", "_LayoutAdmin");
+        }
+
+        public System.Drawing.Image Base64ToImage(string base64str)
+        {
+            
+            byte[] imageBytes = Convert.FromBase64String(base64str);
+            MemoryStream ms = new MemoryStream(imageBytes, 0, imageBytes.Length);
+            ms.Write(imageBytes, 0, imageBytes.Length);
+            System.Drawing.Image image = System.Drawing.Image.FromStream(ms, true);
+            return image;
+        }
+        /*[HttpPost]
+        public ActionResult CreateProduct(HttpPostedFileBase ImgFile, Product cProduct, string base64str)
+        {
+            
+            if (ImgFile != null && ImgFile.ContentLength > 0) 
+            {
+                //local
+                string fileName = cProduct.ProductID+".PNG";
+                var path = Path.Combine(Server.MapPath("~/Image"), fileName);
+                ImgFile.SaveAs(path);
+                cProduct.ProductImg = "~/Image/" + fileName;
+
+                //db
+                byte[] FileBytes;
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    ImgFile.InputStream.CopyTo(ms);
+                    FileBytes = ms.GetBuffer();
+                }
+                cProduct.ProductImg_DB = FileBytes;
             }
             cProduct.Create_Date = DateTime.Now;
             cProduct.Delete_Flag = false;
@@ -107,7 +154,7 @@ namespace ShoppingCar.Controllers
             }
 
             return View("CreateProduct", "_LayoutAdmin");
-        }
+        }*/
 
         public ActionResult ShoppingCar()
         {

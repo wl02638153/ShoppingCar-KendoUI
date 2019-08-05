@@ -18,7 +18,14 @@
     {
         <div class="col-lg-4">
             <div class="thumbnail">
-                <img src="@Url.Content(item.ProductImg)" style="width:70%;height:15em"/>
+                <img src="@Url.Content(item.ProductImg)" style="width:70%;height:15em" />
+                @{
+                    byte[] img = item.ProductImg_DB;
+
+                    var base64 = Convert.ToBase64String(img);
+                    string imageDate = String.Format("data: image / gif;base64,{0}", base64);
+                }
+                <img src="@imageDate" style="width:70%;height:15em"/>
                 <div class="caption">
                     <h4>名稱:@item.ProductName</h4>
                     <hr />
