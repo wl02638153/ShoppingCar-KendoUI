@@ -5,6 +5,12 @@ using System.Web;
 using System.Web.Mvc;
 using ShoppingCar.Models;
 using System.IO;
+using OfficeOpenXml;
+using System.Web.Helpers;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Reflection;
+
 
 namespace ShoppingCar.Controllers
 {
@@ -99,16 +105,70 @@ namespace ShoppingCar.Controllers
                 cProduct.ProductImg = "~/Image/" + fileName;
 
                 //db
-                byte[] FileBytes = Convert.FromBase64String(base64str);
-                using (MemoryStream ms = new MemoryStream())
+                cProduct.ProductImg_DB = imageBytes;
+
+                cProduct.Create_Date = DateTime.Now;
+                cProduct.Delete_Flag = false;
+                db.Product.Add(cProduct);
+                try
                 {
-                    
-                    //ImgFile.InputStream.CopyTo(ms);
-                    FileBytes = ms.GetBuffer();
+                    db.SaveChanges();
                 }
-                cProduct.ProductImg_DB = FileBytes;
+                catch (Exception ex)
+                {
+                    throw;
+                }
             }
             return View("CreateProduct", "_LayoutAdmin");
+        }
+
+        public ActionResult ProductList()
+        {
+            var products = db.Product.ToList<Product>();
+            return View("ProductList", "_LayoutAdmin", products);
+        }
+
+        public ActionResult ProductEdit(string ProductID)
+        {
+            var Product = db.Product.Where(m => m.ProductID == ProductID).FirstOrDefault();
+            return View("ProductEdit", "_LayoutAdmin", Product);
+        }
+        [HttpPost]
+        public ActionResult ProductEdit(Product product, string base64str)   //string ProductExplain,string ProductName,decimal ProductPrice, string ProductID
+        {
+            var Product = db.Product.Where(m => m.ProductID == product.ProductID).FirstOrDefault();
+            if (base64str != null && base64str.Length > 0)
+            {
+                //local
+                string fileName = product.ProductID + ".PNG";
+                var path = Path.Combine(Server.MapPath("~/Image"), fileName);
+                //Base64ToImage(base64str).Save(path);
+                base64str = base64str.Replace("data:image/jpeg;base64,", "");
+                byte[] imageBytes = Convert.FromBase64String(base64str);
+                MemoryStream mss = new MemoryStream(imageBytes, 0, imageBytes.Length);
+                mss.Write(imageBytes, 0, imageBytes.Length);
+                System.Drawing.Image image = System.Drawing.Image.FromStream(mss, true);
+                image.Save(path);
+                Product.ProductImg = "~/Image/" + fileName;
+
+                //db
+                Product.ProductImg_DB = imageBytes;
+
+                Product.Modify_Date = DateTime.Now;
+                Product.ProductExplain = product.ProductExplain;
+                Product.ProductName = product.ProductName;
+                Product.ProductPrice = product.ProductPrice;
+                try
+                {
+                    db.SaveChanges();
+                }
+                catch (Exception ex)
+                {
+                    throw;
+                }
+            }
+            db.SaveChanges();
+            return RedirectToAction("ProductList");
         }
 
         public System.Drawing.Image Base64ToImage(string base64str)
@@ -159,8 +219,8 @@ namespace ShoppingCar.Controllers
         public ActionResult ShoppingCar()
         {
             string UserID = (Session["Member"] as Member).UserID;
-            var orderDetails = db.OrderDetail.Where(m => m.UserID==UserID && m.Approved_Flag == true).ToList();
-            return View("ShoppingCar","_LayoutMember",orderDetails);
+            var orderDetails = db.OrderDetail.Where(m => m.UserID==UserID&&m.Approved_Flag==true).ToList();
+            return View("ShoppingCar", "_LayoutMember", orderDetails);
         }
         [HttpPost]
         public ActionResult ShoppingCar(string Receiver,string Email,string Address)    //產生orderHeader
@@ -176,7 +236,7 @@ namespace ShoppingCar.Controllers
             orderHeader.Address = Address;
             orderHeader.Create_Date = DateTime.Now;
             db.OrderHeader.Add(orderHeader);
-            var carList = db.OrderDetail.Where(m => m.Approved_Flag == false && m.UserID == UserID).ToList();
+            var carList = db.OrderDetail.Where(m => m.Approved_Flag == true && m.UserID == UserID).ToList();
 
             foreach(var item in carList)
             {
@@ -194,8 +254,8 @@ namespace ShoppingCar.Controllers
             return View("CheckCar", "_LayoutMember", orderDetails);*/
             string UserID = (Session["Member"] as Member).UserID;
             OrderDetailList detailList = new OrderDetailList();
-            detailList.OrderDetails = db.OrderDetail.Where(m => m.UserID == UserID&&m.OrderID==null).ToList<OrderDetail>();
-            return View(detailList);
+            detailList.OrderDetails = db.OrderDetail.Where(m => m.UserID == UserID && m.OrderID == null).ToList<OrderDetail>();
+            return View("CheckCar", "_LayoutMember", detailList);
         }
         [HttpPost]
         public ActionResult CheckCar(OrderDetailList list)
@@ -230,7 +290,8 @@ namespace ShoppingCar.Controllers
             db.SaveChanges();
 
             var orderDetailsNew = db.OrderDetail.Where(m => m.UserID == UserID && m.Approved_Flag == true&&m.Delete_Flag!=true&&m.OrderID==null).ToList();
-            return View("ShoppingCar", "_LayoutMember", orderDetailsNew);
+            //return View("ShoppingCar", "_LayoutMember", orderDetailsNew);
+            return RedirectToAction("ShoppingCar", "Home", orderDetailsNew);
         }
 
         public ActionResult OrderList()
@@ -244,6 +305,62 @@ namespace ShoppingCar.Controllers
         {
             var orderDetails = db.OrderDetail.Where(m => m.OrderID == OrderID&&m.Delete_Flag!=true).ToList();
             return View("OrderListDetail", "_LayoutMember", orderDetails);
+        }
+
+        public ActionResult DownloadOrderExcel(string OrderID)
+        {
+            string UserID = (Session["Member"] as Member).UserID;
+            var orders = db.OrderHeader.Where(m => m.UserID == UserID && m.OrderID == OrderID).FirstOrDefault();
+            var orderDetails = db.OrderDetail.Where(m => m.OrderID == OrderID && m.Delete_Flag != true).ToList();
+
+            ExcelPackage ep = new ExcelPackage();
+            ExcelWorksheet sheet = ep.Workbook.Worksheets.Add("FirstSheet");
+            int col = 1;    //欄:直的，因為要從第1欄開始，所以初始為1
+            sheet.Cells[1, col++].Value = "訂單資訊";
+            sheet.Cells[1, col++].Value = "收件人";
+            sheet.Cells[1, col++].Value = "Email";
+            sheet.Cells[1, col++].Value = "地址";
+            sheet.Cells[1, col++].Value = "建立日期";
+            int row = 2;
+            col = 2;
+            sheet.Cells[row, col++].Value = orders.Receiver;
+            sheet.Cells[row, col++].Value = orders.Email;
+            sheet.Cells[row, col++].Value = orders.Address;
+            sheet.Cells[row, col++].Value = orders.Create_Date.ToString();
+            //第1列是標題列 
+            //標題列部分，是取得DataAnnotations中的DisplayName，這樣比較一致，
+            //這也可避免後期有修改欄位名稱需求，但匯出excel標題忘了改的問題發生。
+            //取得做法可參考最後的參考連結。
+            //sheet.Cells[1, col++].Value = DisplayAttributeHelper<OrderDetail>.GetDisplayName("ProductName");
+            //sheet.Cells[1, col++].Value = DisplayAttributeHelper<OrderDetail>.GetDisplayName("UserID");
+            //sheet.Cells[1, col++].Value = DisplayAttributeHelper<OrderDetail>.GetDisplayName("ProductQty");
+            //sheet.Cells[1, col++].Value = DisplayAttributeHelper<OrderDetail>.GetDisplayName("TotalPrice");
+            //sheet.Cells[1, col++].Value = DisplayAttributeHelper<OrderDetail>.GetDisplayName("Create_Date");
+            col = 1;
+            sheet.Cells[3, col++].Value = "訂單明細";
+            sheet.Cells[3, col++].Value = "產品名稱";
+            sheet.Cells[3, col++].Value = "會員ID";
+            sheet.Cells[3, col++].Value = "數量";
+            sheet.Cells[3, col++].Value = "價錢";
+            sheet.Cells[3, col++].Value = "建立日期";
+
+            row = 4;
+            foreach(OrderDetail item in orderDetails)
+            {
+                col = 2;
+                sheet.Cells[row, col++].Value = item.ProductName;
+                sheet.Cells[row, col++].Value = item.UserID;
+                sheet.Cells[row, col++].Value = item.ProductQty;
+                sheet.Cells[row, col++].Value = item.TotalPrice;
+                sheet.Cells[row, col++].Value = item.Create_Date.ToString();
+                row++;
+            }
+            MemoryStream ms = new MemoryStream();
+            ep.SaveAs(ms);
+            ep.Dispose();
+            ms.Position = 0;
+            string filename = OrderID + ".xlsx";
+            return File(ms, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", filename);
         }
 
         public ActionResult MemberList()
@@ -284,7 +401,7 @@ namespace ShoppingCar.Controllers
                 throw;
             }
 
-            return RedirectToAction("ShoppingCar");
+            return RedirectToAction("CheckCar");
         }
 
         public ActionResult DeleteCar(int OrderDetailID)
@@ -324,5 +441,6 @@ namespace ShoppingCar.Controllers
 
             return View();
         }
+        
     }
 }

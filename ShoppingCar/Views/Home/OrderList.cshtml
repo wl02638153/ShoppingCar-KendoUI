@@ -54,7 +54,8 @@
         </td>
         <td>
             @Html.ActionLink("Details", "OrderListDetail", new { OrderID = item.OrderID }) |
-            @Html.ActionLink("Delete", "DeleteOrder", new { OrderID = item.OrderID })
+            @Html.ActionLink("Delete", "DeleteOrder", new { OrderID = item.OrderID })  |
+            @Html.ActionLink("DownLoad Excel", "DownloadOrderExcel", new { OrderID = item.OrderID })
         </td>
     </tr>
 }

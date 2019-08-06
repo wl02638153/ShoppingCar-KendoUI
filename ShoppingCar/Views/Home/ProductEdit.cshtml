@@ -1,95 +1,78 @@
 ﻿@model ShoppingCar.Models.Product
 
 @{
-    ViewBag.Title = "CreateProduct";
+    ViewBag.Title = "ProductEdit";
 }
 <head>
     <script src="~/Scripts/jquery-3.3.1.min.js"></script>
     <script src="~/Scripts/bootstrap.min.js"></script>
 </head>
-<script>
-    function readImg(file) {
-        if (file.files && file.files[0]) {
-            var reader = new FileReader();
-            reader.onload = function (e) {
-                $('#UploadImg').attr('src', e.target.result);
-            };
-            reader.readAsDataURL(file.files[0]);
-        }
-    }
+<h2>ProductEdit</h2>
 
-</script>
-
-<h2>CreateProduct</h2>
-
-@using (Html.BeginForm("CreateProduct", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+@using (Html.BeginForm("ProductEdit", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
     @Html.AntiForgeryToken()
+    
+    <div class="form-horizontal">
+        <h4>Product</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
-        <div class="form-horizontal">
-            <h4>Product</h4>
-            <hr />
-            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.ProductID)
 
-            <div class="form-group">
-                @Html.LabelFor(model => model.ProductID, htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    @Html.EditorFor(model => model.ProductID, new { htmlAttributes = new { @class = "form-control" } })
-                    @Html.ValidationMessageFor(model => model.ProductID, "", new { @class = "text-danger" })
-                </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.ProductName, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.ProductName, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.ProductName, "", new { @class = "text-danger" })
             </div>
-
-            <div class="form-group">
-                @Html.LabelFor(model => model.ProductName, htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    @Html.EditorFor(model => model.ProductName, new { htmlAttributes = new { @class = "form-control" } })
-                    @Html.ValidationMessageFor(model => model.ProductName, "", new { @class = "text-danger" })
-                </div>
-            </div>
-
-            <div class="form-group">
-                @Html.LabelFor(model => model.ProductExplain, htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    @Html.EditorFor(model => model.ProductExplain, new { htmlAttributes = new { @class = "form-control" } })
-                    @Html.ValidationMessageFor(model => model.ProductExplain, "", new { @class = "text-danger" })
-                </div>
-            </div>
-
-            <div class="form-group">
-                @Html.LabelFor(model => model.ProductPrice, htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    @Html.EditorFor(model => model.ProductPrice, new { htmlAttributes = new { @class = "form-control" } })
-                    @Html.ValidationMessageFor(model => model.ProductPrice, "", new { @class = "text-danger" })
-                </div>
-            </div>
-            <div class="form-group">
-                @Html.LabelFor(model => model.ProductImg, htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    <!--<input type="file" name="ImgFile" id="ImgFile" accept="image/*" required />-->
-                    <!--<input type="file" name="ImgFile1New" id="ImgFile1New"/>-->
-                    <!-- <div class="col-lg-4">
-        <div class="thumbnail">
-            <img id="ImgOld" src="" alt="" style="width:70%;height:15em" />
         </div>
-    </div>
-    <div class="col-lg-4">
-        <div class="thumbnail">
-            <img id="Img" src="" alt="" style="width:70%;height:15em" />
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.ProductExplain, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.ProductExplain, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.ProductExplain, "", new { @class = "text-danger" })
+            </div>
         </div>
-    </div>-->
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.ProductPrice, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.ProductPrice, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.ProductPrice, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="editor-field">
+                @Html.LabelFor(model => model.ProductImg_DB, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @*Html.EditorFor(model => model.ProductImg_DB, new { htmlAttributes = new { @class = "form-control" } })*@
+                    @{
+                        byte[] img = Model.ProductImg_DB;
+
+                        var base64 = Convert.ToBase64String(img);
+                        string imageDate = String.Format("data: image / gif;base64,{0}", base64);
+                    }
                     <label class="btn btn-info"><input id="upload_img" style="display:none;" type="file"><i class="fa fa-photo"></i> 上傳圖片</label>
                     <input type="hidden" id="base64str" name="base64str" value="">
+                    <hr />
+                    <img src="@imageDate"/>
                     <hr />
                     <div id="oldImg"></div>
                     <hr />
                     <div id="newImg"></div>
                     <hr />
                     <div id="tinyImg"></div>
+                    @Html.ValidationMessageFor(model => model.ProductImg_DB, "", new { @class = "text-danger" })
                 </div>
-            </div>    
+            </div>
+            </div>
+
             <div class="form-group">
                 <div class="col-md-offset-2 col-md-10">
-                    <input type="submit" value="Create" class="btn btn-default" />
+                    <input type="submit" value="Save" class="btn btn-default" />
                 </div>
             </div>
         </div>
@@ -173,7 +156,7 @@
             // canvas 轉換為 blob 格式、上傳
             canvas.toBlob(function (blob) {
                 // 輸入上傳程式碼
-                
+
             }, "image/jpeg", compressRatio);
         };
     })(jQuery);
