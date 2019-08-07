@@ -49,4 +49,8 @@ namespace ShoppingCar.Models
 
         public virtual Product Product { get; set; }
     }
+    public class OrderDetailList
+    {
+        public List<OrderDetail> OrderDetails { get; set; }
+    }
 }

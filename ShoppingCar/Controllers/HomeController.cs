@@ -122,6 +122,48 @@ namespace ShoppingCar.Controllers
             return View("CreateProduct", "_LayoutAdmin");
         }
 
+        [HttpPost]
+        public ActionResult ImportProduct(HttpPostedFileBase ImportFile)
+        {
+            ExcelPackage ep = new ExcelPackage(ImportFile.InputStream);
+            var workbook = ep.Workbook;
+            if (workbook != null)
+            {
+                if (workbook.Worksheets.Count > 0)
+                {
+                    var currentWorkSheet = workbook.Worksheets.First();
+                    object colHeader = currentWorkSheet.Cells[2, 2].Value;
+                    int col = 1;
+                    int row = 2;
+                    foreach(var item in currentWorkSheet.Cells)
+                    {
+                        if (currentWorkSheet.Cells[row, col].Value != null)
+                        {
+                            Product product = new Product();
+                            product.ProductID= currentWorkSheet.Cells[row, col++].Value.ToString();
+                            product.ProductName= currentWorkSheet.Cells[row, col++].Value.ToString();
+                            product.ProductExplain= currentWorkSheet.Cells[row, col++].Value.ToString();
+                            product.ProductPrice= Convert.ToDecimal((double)currentWorkSheet.Cells[row, col++].Value);
+                            product.Create_Date = DateTime.Now;
+                            product.Delete_Flag = false;
+                            byte[] temp = BitConverter.GetBytes(0);
+                            product.ProductImg_DB = temp;
+                            db.Product.Add(product);
+                            col = 1;
+                            row++;
+
+                        }
+                        else
+                        {
+                            break;
+                        }
+                        db.SaveChanges();
+                    }
+                }
+            }
+            return RedirectToAction("ProductList");
+        }
+
         public ActionResult ProductList()
         {
             var products = db.Product.ToList<Product>();
@@ -316,17 +358,22 @@ namespace ShoppingCar.Controllers
             ExcelPackage ep = new ExcelPackage();
             ExcelWorksheet sheet = ep.Workbook.Worksheets.Add("FirstSheet");
             int col = 1;    //欄:直的，因為要從第1欄開始，所以初始為1
-            sheet.Cells[1, col++].Value = "訂單資訊";
+            sheet.Cells[1, col++].Value = "訂單編號";
             sheet.Cells[1, col++].Value = "收件人";
             sheet.Cells[1, col++].Value = "Email";
             sheet.Cells[1, col++].Value = "地址";
+            
+            sheet.Cells[1, col++].Value = "產品名稱";
+            sheet.Cells[1, col++].Value = "會員ID";
+            sheet.Cells[1, col++].Value = "數量";
+            sheet.Cells[1, col++].Value = "價錢";
             sheet.Cells[1, col++].Value = "建立日期";
             int row = 2;
-            col = 2;
-            sheet.Cells[row, col++].Value = orders.Receiver;
-            sheet.Cells[row, col++].Value = orders.Email;
-            sheet.Cells[row, col++].Value = orders.Address;
-            sheet.Cells[row, col++].Value = orders.Create_Date.ToString();
+            //col = 1;
+            //sheet.Cells[row, col++].Value = orders.OrderID;
+            //sheet.Cells[row, col++].Value = orders.Receiver;
+            //sheet.Cells[row, col++].Value = orders.Email;
+            //sheet.Cells[row, col++].Value = orders.Address;
             //第1列是標題列 
             //標題列部分，是取得DataAnnotations中的DisplayName，這樣比較一致，
             //這也可避免後期有修改欄位名稱需求，但匯出excel標題忘了改的問題發生。
@@ -336,18 +383,16 @@ namespace ShoppingCar.Controllers
             //sheet.Cells[1, col++].Value = DisplayAttributeHelper<OrderDetail>.GetDisplayName("ProductQty");
             //sheet.Cells[1, col++].Value = DisplayAttributeHelper<OrderDetail>.GetDisplayName("TotalPrice");
             //sheet.Cells[1, col++].Value = DisplayAttributeHelper<OrderDetail>.GetDisplayName("Create_Date");
-            col = 1;
-            sheet.Cells[3, col++].Value = "訂單明細";
-            sheet.Cells[3, col++].Value = "產品名稱";
-            sheet.Cells[3, col++].Value = "會員ID";
-            sheet.Cells[3, col++].Value = "數量";
-            sheet.Cells[3, col++].Value = "價錢";
-            sheet.Cells[3, col++].Value = "建立日期";
+            
 
-            row = 4;
+            
             foreach(OrderDetail item in orderDetails)
             {
-                col = 2;
+                col = 1;
+                sheet.Cells[row, col++].Value = orders.OrderID;
+                sheet.Cells[row, col++].Value = orders.Receiver;
+                sheet.Cells[row, col++].Value = orders.Email;
+                sheet.Cells[row, col++].Value = orders.Address;
                 sheet.Cells[row, col++].Value = item.ProductName;
                 sheet.Cells[row, col++].Value = item.UserID;
                 sheet.Cells[row, col++].Value = item.ProductQty;

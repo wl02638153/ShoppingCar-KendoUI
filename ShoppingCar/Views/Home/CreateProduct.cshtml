@@ -22,77 +22,90 @@
 
 <h2>CreateProduct</h2>
 
+<p>
+    <a href="~/Excel/ExcelCreateFormat.xlsx">下載Excel格式</a>
+</p>
+<hr />
+<form method="post" action="ImportProduct" enctype="multipart/form-data">
+    <label class="btn btn-default"><input id="ImportFile" name="ImportFile" style="display:none;" type="file"><i class="fa fa-photo"></i> 透過Excel新增產品</label>
+    <div class="form-group">
+        <div class="">
+            <input type="submit" value="匯入" class="btn btn-default" />
+        </div>
+    </div>
+</form>
+<hr />
 @using (Html.BeginForm("CreateProduct", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
     @Html.AntiForgeryToken()
 
-        <div class="form-horizontal">
-            <h4>Product</h4>
-            <hr />
-            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    <div class="form-horizontal">
+        <h4>Product</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
-            <div class="form-group">
-                @Html.LabelFor(model => model.ProductID, htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    @Html.EditorFor(model => model.ProductID, new { htmlAttributes = new { @class = "form-control" } })
-                    @Html.ValidationMessageFor(model => model.ProductID, "", new { @class = "text-danger" })
-                </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.ProductID, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.ProductID, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.ProductID, "", new { @class = "text-danger" })
             </div>
+        </div>
 
-            <div class="form-group">
-                @Html.LabelFor(model => model.ProductName, htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    @Html.EditorFor(model => model.ProductName, new { htmlAttributes = new { @class = "form-control" } })
-                    @Html.ValidationMessageFor(model => model.ProductName, "", new { @class = "text-danger" })
-                </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.ProductName, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.ProductName, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.ProductName, "", new { @class = "text-danger" })
             </div>
+        </div>
 
-            <div class="form-group">
-                @Html.LabelFor(model => model.ProductExplain, htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    @Html.EditorFor(model => model.ProductExplain, new { htmlAttributes = new { @class = "form-control" } })
-                    @Html.ValidationMessageFor(model => model.ProductExplain, "", new { @class = "text-danger" })
-                </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.ProductExplain, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.ProductExplain, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.ProductExplain, "", new { @class = "text-danger" })
             </div>
+        </div>
 
-            <div class="form-group">
-                @Html.LabelFor(model => model.ProductPrice, htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    @Html.EditorFor(model => model.ProductPrice, new { htmlAttributes = new { @class = "form-control" } })
-                    @Html.ValidationMessageFor(model => model.ProductPrice, "", new { @class = "text-danger" })
-                </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.ProductPrice, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.ProductPrice, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.ProductPrice, "", new { @class = "text-danger" })
             </div>
-            <div class="form-group">
-                @Html.LabelFor(model => model.ProductImg, htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    <!--<input type="file" name="ImgFile" id="ImgFile" accept="image/*" required />-->
-                    <!--<input type="file" name="ImgFile1New" id="ImgFile1New"/>-->
-                    <!-- <div class="col-lg-4">
-        <div class="thumbnail">
-            <img id="ImgOld" src="" alt="" style="width:70%;height:15em" />
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.ProductImg, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <!--<input type="file" name="ImgFile" id="ImgFile" accept="image/*" required />-->
+                <!--<input type="file" name="ImgFile1New" id="ImgFile1New"/>-->
+                <!-- <div class="col-lg-4">
+                    <div class="thumbnail">
+                        <img id="ImgOld" src="" alt="" style="width:70%;height:15em" />
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="thumbnail">
+                        <img id="Img" src="" alt="" style="width:70%;height:15em" />
+                    </div>
+                </div>-->
+                <label class="btn btn-info"><input id="upload_img" style="display:none;" type="file"><i class="fa fa-photo"></i> 上傳圖片</label>
+                <input type="hidden" id="base64str" name="base64str" value="">
+                <hr />
+                <div id="oldImg"></div>
+                <hr />
+                <div id="newImg"></div>
+                <hr />
+                <div id="tinyImg"></div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Create" class="btn btn-default" />
+            </div>
         </div>
     </div>
-    <div class="col-lg-4">
-        <div class="thumbnail">
-            <img id="Img" src="" alt="" style="width:70%;height:15em" />
-        </div>
-    </div>-->
-                    <label class="btn btn-info"><input id="upload_img" style="display:none;" type="file"><i class="fa fa-photo"></i> 上傳圖片</label>
-                    <input type="hidden" id="base64str" name="base64str" value="">
-                    <hr />
-                    <div id="oldImg"></div>
-                    <hr />
-                    <div id="newImg"></div>
-                    <hr />
-                    <div id="tinyImg"></div>
-                </div>
-            </div>    
-            <div class="form-group">
-                <div class="col-md-offset-2 col-md-10">
-                    <input type="submit" value="Create" class="btn btn-default" />
-                </div>
-            </div>
-        </div>
 }
 
 <div>
@@ -128,10 +141,10 @@
         img.onload = function () {
             var width = this.width, // 圖片原始寬度
                 height = this.height, // 圖片原始高度
-                imgNewWidth=width,
+                imgNewWidth = width,
                 imgNewHeight = imgNewWidth * height / width, // 圖片新高度
                 html = "",
-                newImg,tinyImg;
+                newImg, tinyImg;
 
             // 顯示預覽圖片
             html += "<img src='" + dataUrl + "'/>";
@@ -173,7 +186,7 @@
             // canvas 轉換為 blob 格式、上傳
             canvas.toBlob(function (blob) {
                 // 輸入上傳程式碼
-                
+
             }, "image/jpeg", compressRatio);
         };
     })(jQuery);
