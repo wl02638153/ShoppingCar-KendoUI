@@ -6,17 +6,21 @@ using System.Web.Mvc;
 using ShoppingCar.Models;
 using System.IO;
 using OfficeOpenXml;
+using OfficeOpenXml.Style;
+using OfficeOpenXml.Table;
 using System.Web.Helpers;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Reflection;
-
+using Newtonsoft.Json;
 
 namespace ShoppingCar.Controllers
 {
+    
     public class HomeController : Controller
     {
         dbShoppingCarEntities3 db = new dbShoppingCarEntities3();     //存取db
+        
         public ActionResult Index()
         {
             var products = db.Product.ToList();
@@ -83,6 +87,7 @@ namespace ShoppingCar.Controllers
             return View();
         }
 
+        //[Authorize]
         public ActionResult CreateProduct()
         {
             return View("CreateProduct", "_LayoutAdmin");
@@ -134,7 +139,7 @@ namespace ShoppingCar.Controllers
                     var currentWorkSheet = workbook.Worksheets.First();
                     object colHeader = currentWorkSheet.Cells[2, 2].Value;
                     int col = 1;
-                    int row = 2;
+                    int row = 3;
                     foreach(var item in currentWorkSheet.Cells)
                     {
                         if (currentWorkSheet.Cells[row, col].Value != null)
@@ -164,6 +169,41 @@ namespace ShoppingCar.Controllers
             return RedirectToAction("ProductList");
         }
 
+        [HttpPost]
+        public ActionResult ImportOrder(HttpPostedFileBase ImportOrder)
+        {
+            ExcelPackage ep = new ExcelPackage(ImportOrder.InputStream);
+            var workbook = ep.Workbook;
+            if (workbook != null)
+            {
+                if (workbook.Worksheets.Count > 0)
+                {
+                    var currentWorkSheet = workbook.Worksheets.First();
+
+                    int col = 1;
+                    int row = 2;
+                    foreach (var item in currentWorkSheet.Cells)
+                    {
+                        if (currentWorkSheet.Cells[row, col].Value != null)
+                        {
+                            string ProductID=currentWorkSheet.Cells[row, col].Value.ToString();
+
+                            Addcar(ProductID);
+                            row++;
+
+                        }
+                        else
+                        {
+                            break;
+                        }
+                        //db.SaveChanges();
+                    }
+                }
+            }
+            return RedirectToAction("CheckCar");
+        }
+
+        //[Authorize]
         public ActionResult ProductList()
         {
             var products = db.Product.ToList<Product>();
@@ -408,6 +448,68 @@ namespace ShoppingCar.Controllers
             return File(ms, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", filename);
         }
 
+        public ActionResult DownloadProductExcel()
+        {
+            var products = db.Product.ToList();
+            ExcelPackage ep = new ExcelPackage();
+            ExcelWorksheet sheet = ep.Workbook.Worksheets.Add("FirstSheet");
+            int col = 1;
+            sheet.Cells[1, col++].Value = "產品編號";
+            sheet.Cells[1, col++].Value = "產品名稱";
+            sheet.Cells[1, col++].Value = "產品說明";
+            sheet.Cells[1, col++].Value = "價錢";
+            int row = 2;
+            foreach (Product item in products)
+            {
+                col = 1;
+                sheet.Cells[row, col++].Value = item.ProductID;
+                sheet.Cells[row, col++].Value = item.ProductName;
+                sheet.Cells[row, col++].Value = item.ProductExplain;
+                sheet.Cells[row, col++].Value = item.ProductPrice;
+                row++;
+            }
+            MemoryStream ms = new MemoryStream();
+            ep.SaveAs(ms);
+            ep.Dispose();
+            ms.Position = 0;
+            string filename = "AllProductList.xlsx";
+            return File(ms, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", filename);
+        }
+
+        public ActionResult DownloadProductExcel2()
+        {
+            var products = db.Product.ToList();
+            string rng = "D" + (products.Count+1);
+            ExcelPackage ep = new ExcelPackage();
+            ExcelWorksheet sheet = ep.Workbook.Worksheets.Add("FirstSheet");
+            ExcelTableCollection tblcollection = sheet.Tables;
+            ExcelTable table= tblcollection.Add(sheet.Cells["A1:"+ rng],"Product");
+            int col = 1;
+            table.Columns[0].Name = "產品編號";
+            table.Columns[1].Name = "產品名稱";
+            table.Columns[2].Name = "產品說明";
+            table.Columns[3].Name = "價錢";
+            table.ShowFilter = true;
+            table.ShowTotal = true;
+            int row = 2;
+            foreach (Product item in products)
+            {
+                col = 1;
+
+                sheet.Cells[row, col++].Value = item.ProductID;
+                sheet.Cells[row, col++].Value = item.ProductName;
+                sheet.Cells[row, col++].Value = item.ProductExplain;
+                sheet.Cells[row, col++].Value = item.ProductPrice;
+                row++;
+            }
+            MemoryStream ms = new MemoryStream();
+            ep.SaveAs(ms);
+            ep.Dispose();
+            ms.Position = 0;
+            string filename = "AllProductList.xlsx";
+            return File(ms, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", filename);
+        }
+
         public ActionResult MemberList()
         {
             var member = db.Member.ToList();
@@ -449,12 +551,45 @@ namespace ShoppingCar.Controllers
             return RedirectToAction("CheckCar");
         }
 
+        public void Addcar(string ProductID)
+        {
+            string UserID = (Session["Member"] as Member).UserID;
+
+            var currentCar = db.OrderDetail.Where(m => m.ProductID == ProductID && m.Approved_Flag == false && m.UserID == UserID).FirstOrDefault();
+            if (currentCar == null)
+            {
+                var product = db.Product.Where(m => m.ProductID == ProductID).FirstOrDefault();
+                OrderDetail orderDetail = new OrderDetail();
+                orderDetail.UserID = UserID;
+                orderDetail.ProductID = product.ProductID;
+                orderDetail.ProductName = product.ProductName;
+                orderDetail.TotalPrice = product.ProductPrice;
+                orderDetail.ProductQty = 1;
+                orderDetail.Approved_Flag = false;
+                orderDetail.Create_Date = DateTime.Now;
+
+                db.OrderDetail.Add(orderDetail);
+            }
+            else
+            {
+                currentCar.ProductQty += 1;
+            }
+            try
+            {
+                db.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
         public ActionResult DeleteCar(int OrderDetailID)
         {
             var orderDetail = db.OrderDetail.Where(m => m.OrderDetailID == OrderDetailID).FirstOrDefault();
             db.OrderDetail.Remove(orderDetail);
             db.SaveChanges();
-            return RedirectToAction("ShoppingCar");
+            return RedirectToAction("CheckCar");
         }
 
         public ActionResult DeleteOrder(string OrderID)
