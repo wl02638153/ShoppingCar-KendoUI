@@ -184,15 +184,19 @@
     <Compile Include="Models\Member.cs">
       <DependentUpon>dbShoppingCaarModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Members.cs" />
     <Compile Include="Models\OrderDetail.cs">
       <DependentUpon>dbShoppingCaarModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\OrderDetails.cs" />
     <Compile Include="Models\OrderHeader.cs">
       <DependentUpon>dbShoppingCaarModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\OrderHeaders.cs" />
     <Compile Include="Models\Product.cs">
       <DependentUpon>dbShoppingCaarModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Products.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -227,6 +231,12 @@
     <Content Include="Models\dbShoppingCaarModel.edmx.diagram">
       <DependentUpon>dbShoppingCaarModel.edmx</DependentUpon>
     </Content>
+    <Content Include="NLog.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <None Include="NLog.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.3.1.js" />
     <Content Include="Scripts\jquery-3.3.1.min.js" />
@@ -269,6 +279,7 @@
   <ItemGroup>
     <Folder Include="Image\" />
     <Folder Include="Infrastructure\" />
+    <Folder Include="Logs\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />

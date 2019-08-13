@@ -20,9 +20,16 @@ namespace ShoppingCar.Controllers
     public class HomeController : Controller
     {
         dbShoppingCarEntities3 db = new dbShoppingCarEntities3();     //存取db
-        
+        private NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         public ActionResult Index()
         {
+            logger.Trace("**** Trace *** ");
+            logger.Debug("**** Debug ***");
+            logger.Info("**** Info ***");
+            logger.Warn("**** Warn ***");
+            logger.Error("**** Error ***");
+            logger.Fatal("**** Fatal ***");
             var products = db.Product.ToList();
 
             if (Session["Member"] == null)
