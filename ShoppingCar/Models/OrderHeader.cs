@@ -11,9 +11,7 @@ namespace ShoppingCar.Models
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel.DataAnnotations;
-    using System.ComponentModel.DataAnnotations.Schema;
-    using System.ComponentModel;
+    
     public partial class OrderHeader
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
@@ -23,7 +21,6 @@ namespace ShoppingCar.Models
         }
     
         public int ID { get; set; }
-        [Display(Name ="訂單編號")]
         public string OrderID { get; set; }
         public string UserID { get; set; }
         public string Receiver { get; set; }

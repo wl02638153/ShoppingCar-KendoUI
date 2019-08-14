@@ -12,6 +12,7 @@
         <AssociationConnector Association="dbShoppingCarModel.FK__OrderHead__UserI__6CA31EA0" ManuallyRouted="false" />
         <AssociationConnector Association="dbShoppingCarModel.FK__OrderDeta__Order__3429BB53" ManuallyRouted="false" />
         <AssociationConnector Association="dbShoppingCarModel.FK__OrderDeta__Produ__3335971A" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="dbShoppingCarModel.LogMessage" Width="1.5" PointX="10.875" PointY="1.375" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

@@ -13,6 +13,16 @@
         </script>
     }
 </head>
+<script>
+    function Confirm_insert() {
+        if (confirm("確定要新增到購物車嗎?")) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+</script>
 <h2>產品列表</h2>
 <p>
     @Html.ActionLink("下載產品Excel", "DownloadProductExcel2")
@@ -22,13 +32,15 @@
 </p>
 <hr />
 <form method="post" action="/Home/ImportOrder" enctype="multipart/form-data">
-    <label class="btn btn-default"><input id="ImportOrder" name="ImportOrder" style="display:none;" type="file"> 透過Excel新增購物車</label>
-    <p></p>
-    <div class="form-group">
-        <div class="">
-            <input type="submit" value="匯入" class="btn btn-default" />
+    @*<label class="btn btn-default"><input id="ImportOrder" name="ImportOrder" style="display:none;" type="file"> 透過Excel新增購物車</label>*@
+    <label class="btn btn-default">透過Excel新增購物車</label>
+        <input id="ImportOrder" name="ImportOrder" type="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+        <p></p>
+        <div class="form-group">
+            <div class="">
+                <input type="submit" value="匯入" class="btn btn-default" />
+            </div>
         </div>
-    </div>
 </form>
 <hr />
 <div class="row">
@@ -42,8 +54,18 @@
 
                     var base64 = Convert.ToBase64String(img);
                     string imageDate = String.Format("data: image / gif;base64,{0}", base64);
+
+                    if (item.ProductImg != null)
+                    {
+                        <img src="@Url.Content(item.ProductImg)?w=200&h=200&mode=cropyunits " />
+                    }
+                    else
+                    {
+                        <img src="~/Image/notImg_.jpg?w=200&h=200&mode=cropyunits" />
+                    }
                 }
-                <img src="@Url.Content(item.ProductImg)?w=200&h=200&mode=cropyunits "/>
+                @*<img src="@Url.Content(item.ProductImg)?w=200&h=200&mode=cropyunits " />*@
+                @*<img src="@Url.Content(imageDate)" />*@
                 <div class="caption">
                     <h4>名稱:@item.ProductName</h4>
                     <h4>售價:@item.ProductPrice</h4>
@@ -54,7 +76,7 @@
                     else
                     {
                         <p>
-                            <a href="@Url.Action("AddCar")?ProductID=@item.ProductID" class="btn btn-primary" onclick="">加入購物車</a>
+                            <a href="@Url.Action("AddCar")?ProductID=@item.ProductID" class="btn btn-primary" onclick="return confirm('確定要加入購物車嗎?')">加入購物車</a>
                         </p>
                     }
                 </div>

@@ -168,6 +168,9 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\ProductController.cs" />
+    <Compile Include="Filters\CreateProductFilter.cs" />
+    <Compile Include="Filters\MemberFilter.cs" />
     <Compile Include="Filters\MyFilter.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -186,6 +189,10 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>dbShoppingCaarModel.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="Models\FileUploadValidate.cs" />
+    <Compile Include="Models\LogMessage.cs">
+      <DependentUpon>dbShoppingCaarModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Member.cs">
       <DependentUpon>dbShoppingCaarModel.tt</DependentUpon>
@@ -285,6 +292,7 @@
   <ItemGroup>
     <Folder Include="Image\" />
     <Folder Include="Logs\" />
+    <Folder Include="Views\Product\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />

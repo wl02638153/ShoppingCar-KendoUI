@@ -14,6 +14,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Reflection;
 using Newtonsoft.Json;
 using System.ComponentModel;
+using ShoppingCar.Filters;
 
 namespace ShoppingCar.Controllers
 {
@@ -54,7 +55,7 @@ namespace ShoppingCar.Controllers
                 return View();
             }
             Session["Welcome"] = member.MemberName + "歡迎光臨";
-            Session["Member"] = member;
+            Session["Member"] = member.MemberName;
             TempData["LoginMessage"] = "登入成功";
             return RedirectToAction("Index");
         }
@@ -88,13 +89,13 @@ namespace ShoppingCar.Controllers
             ViewBag.Message = "此帳號已有人使用，註冊失敗";
             return View();
         }
-
-        //[Authorize]
+        
         public ActionResult CreateProduct()
         {
             return View("CreateProduct", "_LayoutAdmin");
         }
-        [HttpPost]
+        /*[HttpPost]
+        [CreateProductFilter]
         public ActionResult CreateProduct(Product cProduct, string base64str)
         {
             if (base64str != null && base64str.Length > 0)
@@ -117,19 +118,13 @@ namespace ShoppingCar.Controllers
                 cProduct.Create_Date = DateTime.Now;
                 cProduct.Delete_Flag = false;
                 db.Product.Add(cProduct);
-                try
-                {
-                    db.SaveChanges();
-                }
-                catch (Exception ex)
-                {
-                    throw;
-                }
+                db.SaveChanges();
             }
             return View("CreateProduct", "_LayoutAdmin");
-        }
+        }*/
 
         [HttpPost]
+        [CreateProductFilter]
         public ActionResult ImportProduct(HttpPostedFileBase ImportFile)
         {
             ExcelPackage ep = new ExcelPackage(ImportFile.InputStream);
@@ -172,6 +167,7 @@ namespace ShoppingCar.Controllers
         }
 
         [HttpPost]
+        [Filters.MemberFilter]
         public ActionResult ImportOrder(HttpPostedFileBase ImportOrder)
         {
             ExcelPackage ep = new ExcelPackage(ImportOrder.InputStream);
@@ -264,7 +260,7 @@ namespace ShoppingCar.Controllers
             System.Drawing.Image image = System.Drawing.Image.FromStream(ms, true);
             return image;
         }
-        /*[HttpPost]
+        [HttpPost]
         public ActionResult CreateProduct(HttpPostedFileBase ImgFile, Product cProduct, string base64str)
         {
             
@@ -298,8 +294,8 @@ namespace ShoppingCar.Controllers
             }
 
             return View("CreateProduct", "_LayoutAdmin");
-        }*/
-
+        }
+        [Filters.MemberFilter]
         public ActionResult ShoppingCar()
         {
             string UserID = (Session["Member"] as Member).UserID;
@@ -336,7 +332,7 @@ namespace ShoppingCar.Controllers
             /*string UserID = (Session["Member"] as Member).UserID;
             var orderDetails = db.OrderDetail.Where(m => m.UserID == UserID && m.Approved_Flag == false).ToList();
             return View("CheckCar", "_LayoutMember", orderDetails);*/
-            string UserID = (Session["Member"] as Member).UserID;
+            string UserID = Session["Member"].ToString();
             OrderDetailList detailList = new OrderDetailList();
             detailList.OrderDetails = db.OrderDetail.Where(m => m.UserID == UserID && m.OrderID == null).ToList<OrderDetail>();
             return View("CheckCar", "_LayoutMember", detailList);
@@ -380,7 +376,7 @@ namespace ShoppingCar.Controllers
 
         public ActionResult OrderList()
         {
-            string UserID = (Session["Member"] as Member).UserID;
+            string UserID = Session["Member"].ToString();
             var orders = db.OrderHeader.Where(m => m.UserID == UserID && m.Delete_Flag != true).OrderByDescending(m => m.Create_Date).ToList();  //取出order依照create date排序
             return View("OrderList","_LayoutMember",orders);
         }
@@ -518,7 +514,7 @@ namespace ShoppingCar.Controllers
 
         public ActionResult AddCar(string ProductID)
         {
-            string UserID = (Session["Member"] as Member).UserID;
+            string UserID = Session["Member"].ToString();
 
             var currentCar = db.OrderDetail.Where(m=>m.ProductID==ProductID&&m.Approved_Flag==false&&m.UserID==UserID).FirstOrDefault();
             if (currentCar == null)
@@ -553,7 +549,7 @@ namespace ShoppingCar.Controllers
 
         public void Add_car(string ProductID)
         {
-            string UserID = (Session["Member"] as Member).UserID;
+            string UserID = Session["Member"].ToString();
 
             var currentCar = db.OrderDetail.Where(m => m.ProductID == ProductID && m.Approved_Flag == false && m.UserID == UserID).FirstOrDefault();
             if (currentCar == null)

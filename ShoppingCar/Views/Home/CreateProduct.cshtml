@@ -17,7 +17,14 @@
             reader.readAsDataURL(file.files[0]);
         }
     }
-
+    function Confirm_insert() {
+        if (confirm("確定要新增嗎?")) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
 </script>
 
 <h2>CreateProduct</h2>
@@ -27,7 +34,9 @@
 </p>
 <hr />
 <form method="post" action="ImportProduct" enctype="multipart/form-data">
-    <label class="btn btn-default"><input id="ImportFile" name="ImportFile" style="display:none;" type="file"><i class="fa fa-photo"></i> 透過Excel新增產品</label>
+    @*<label class="btn btn-default"><input id="ImportFile" name="ImportFile" style="display:none;" type="file"><i class="fa fa-photo"></i> 透過Excel新增產品</label>*@
+    <label class="btn btn-default">透過Excel新增產品</label>
+    <input id="ImportFile" name="ImportFile" type="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
     <p></p>
     <div class="form-group">
         <div class="">
@@ -36,7 +45,7 @@
     </div>
 </form>
 <hr />
-@using (Html.BeginForm("CreateProduct", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+@using (Html.BeginForm("CreateProduct", "Home", FormMethod.Post, new { enctype = "multipart/form-data" ,onsubmit= "return Confirm_insert()" }))
 {
     @Html.AntiForgeryToken()
 
@@ -48,7 +57,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.ProductID, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.ProductID, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.EditorFor(model => model.ProductID, new { htmlAttributes = new { @class = "form-control", required = "required" } })
                 @Html.ValidationMessageFor(model => model.ProductID, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -56,7 +65,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.ProductName, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.ProductName, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.EditorFor(model => model.ProductName, new { htmlAttributes = new { @class = "form-control", required = "required" } })
                 @Html.ValidationMessageFor(model => model.ProductName, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -64,7 +73,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.ProductExplain, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.ProductExplain, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.EditorFor(model => model.ProductExplain, new { htmlAttributes = new { @class = "form-control", required = "required" } })
                 @Html.ValidationMessageFor(model => model.ProductExplain, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -72,7 +81,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.ProductPrice, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.ProductPrice, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.EditorFor(model => model.ProductPrice, new { htmlAttributes = new { @class = "form-control", type = "number", step = "0.01", required = "required" } })
                 @Html.ValidationMessageFor(model => model.ProductPrice, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -103,7 +112,7 @@
         </div>
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Create" class="btn btn-default" />
+                <input type="submit" value="Create" class="btn btn-default"/>
             </div>
         </div>
     </div>

@@ -8,8 +8,17 @@
     <script src="~/Scripts/bootstrap.min.js"></script>
 </head>
 <h2>ProductEdit</h2>
-
-@using (Html.BeginForm("ProductEdit", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+<script>
+    function Confirm_insert() {
+        if (confirm("確定要更新嗎?")) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+</script>
+@using (Html.BeginForm("ProductEdit", "Home", FormMethod.Post, new { enctype = "multipart/form-data",onsubmit= "Confirm_insert()" }))
 {
     @Html.AntiForgeryToken()
     

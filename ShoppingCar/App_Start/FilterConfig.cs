@@ -9,7 +9,7 @@ namespace ShoppingCar
         public static void RegisterGlobalFilters(GlobalFilterCollection filters)
         {
             filters.Add(new HandleErrorAttribute());
-            filters.Add(new MyFilter());
+            //filters.Add(new MyFilter());
         }
     }
 }

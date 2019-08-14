@@ -11,8 +11,7 @@ namespace ShoppingCar.Models
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel;
-
+    
     public partial class Member
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
@@ -22,15 +21,10 @@ namespace ShoppingCar.Models
         }
     
         public int ID { get; set; }
-        [DisplayName("帳號")]
         public string UserID { get; set; }
-        [DisplayName("密碼")]
         public string Password { get; set; }
-        [DisplayName("姓名")]
         public string MemberName { get; set; }
-        [DisplayName("電子郵件")]
         public string Email { get; set; }
-        [DisplayName("電話號碼")]
         public string Phone { get; set; }
         public Nullable<System.DateTime> Create_Date { get; set; }
         public Nullable<System.DateTime> Modify_Date { get; set; }

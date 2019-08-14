@@ -11,9 +11,7 @@ namespace ShoppingCar.Models
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel;
-    using System.ComponentModel.DataAnnotations;
-    using OfficeOpenXml;
+    
     public partial class Product
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
@@ -33,7 +31,7 @@ namespace ShoppingCar.Models
         public Nullable<bool> Delete_Flag { get; set; }
         public Nullable<System.DateTime> Modify_Date { get; set; }
         public byte[] ProductImg_DB { get; set; }
-        
+    
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<OrderDetail> OrderDetail { get; set; }
     }
