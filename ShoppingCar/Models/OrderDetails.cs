@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
@@ -14,24 +15,24 @@ namespace ShoppingCar.Models
     public partial class OrderDetailMetaData
     {
         public int OrderDetailID { get; set; }
-
+        [DisplayName("訂單編號")]
         public string OrderID { get; set; }
 
-        [Display(Name = "會員ID")]
+        [DisplayName("會員ID")]
         public string UserID { get; set; }
-
+        [DisplayName("產品編號")]
         public string ProductID { get; set; }
 
-        [Display(Name = "產品名稱")]
+        [DisplayName("產品名稱")]
         public string ProductName { get; set; }
 
-        [Display(Name = "數量")]
+        [DisplayName("數量")]
         public Nullable<int> ProductQty { get; set; }
 
-        [Display(Name = "價錢")]
+        [DisplayName("價錢")]
         public Nullable<decimal> TotalPrice { get; set; }
 
-        [Display(Name = "下訂日期")]
+        [DisplayName("下訂日期")]
         public Nullable<System.DateTime> Create_Date { get; set; }
 
         public Nullable<System.DateTime> Modify_Date { get; set; }

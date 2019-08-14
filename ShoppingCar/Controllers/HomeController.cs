@@ -13,6 +13,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Reflection;
 using Newtonsoft.Json;
+using System.ComponentModel;
 
 namespace ShoppingCar.Controllers
 {
@@ -24,12 +25,6 @@ namespace ShoppingCar.Controllers
 
         public ActionResult Index()
         {
-            logger.Trace("**** Trace *** ");
-            logger.Debug("**** Debug ***");
-            logger.Info("**** Info ***");
-            logger.Warn("**** Warn ***");
-            logger.Error("**** Error ***");
-            logger.Fatal("**** Fatal ***");
             var products = db.Product.ToList();
 
             if (Session["Member"] == null)
@@ -195,7 +190,7 @@ namespace ShoppingCar.Controllers
                         {
                             string ProductID=currentWorkSheet.Cells[row, col].Value.ToString();
 
-                            Addcar(ProductID);
+                            Add_car(ProductID);
                             row++;
 
                         }
@@ -404,32 +399,26 @@ namespace ShoppingCar.Controllers
 
             ExcelPackage ep = new ExcelPackage();
             ExcelWorksheet sheet = ep.Workbook.Worksheets.Add("FirstSheet");
+            string rng = "J" + (orderDetails.Count + 1 +1);  //excel col    //array+1  orders+1
+            ExcelTableCollection tblcollection = sheet.Tables;
+            ExcelTable table = tblcollection.Add(sheet.Cells["A1:" + rng], "Order");
+
+            var tOH = typeof(OrderHeaderMetaData);
+            var tOD = typeof(OrderDetailMetaData);
+
             int col = 1;    //欄:直的，因為要從第1欄開始，所以初始為1
-            sheet.Cells[1, col++].Value = "訂單編號";
-            sheet.Cells[1, col++].Value = "收件人";
-            sheet.Cells[1, col++].Value = "Email";
-            sheet.Cells[1, col++].Value = "地址";
-            
-            sheet.Cells[1, col++].Value = "產品名稱";
-            sheet.Cells[1, col++].Value = "會員ID";
-            sheet.Cells[1, col++].Value = "數量";
-            sheet.Cells[1, col++].Value = "價錢";
-            sheet.Cells[1, col++].Value = "建立日期";
+            table.Columns[0].Name = tOH.GetProperty("OrderID").GetCustomAttribute<DisplayNameAttribute>().DisplayName;
+            table.Columns[1].Name = tOH.GetProperty("Receiver").GetCustomAttribute<DisplayNameAttribute>().DisplayName;
+            table.Columns[2].Name = tOH.GetProperty("Email").GetCustomAttribute<DisplayNameAttribute>().DisplayName;
+            table.Columns[3].Name = tOH.GetProperty("Address").GetCustomAttribute<DisplayNameAttribute>().DisplayName;
+
+            table.Columns[4].Name = tOD.GetProperty("ProductID").GetCustomAttribute<DisplayNameAttribute>().DisplayName;
+            table.Columns[5].Name = tOD.GetProperty("ProductName").GetCustomAttribute<DisplayNameAttribute>().DisplayName;
+            table.Columns[6].Name = tOD.GetProperty("UserID").GetCustomAttribute<DisplayNameAttribute>().DisplayName;
+            table.Columns[7].Name = tOD.GetProperty("ProductQty").GetCustomAttribute<DisplayNameAttribute>().DisplayName;
+            table.Columns[8].Name = tOD.GetProperty("TotalPrice").GetCustomAttribute<DisplayNameAttribute>().DisplayName;
+            table.Columns[9].Name = tOD.GetProperty("Create_Date").GetCustomAttribute<DisplayNameAttribute>().DisplayName;
             int row = 2;
-            //col = 1;
-            //sheet.Cells[row, col++].Value = orders.OrderID;
-            //sheet.Cells[row, col++].Value = orders.Receiver;
-            //sheet.Cells[row, col++].Value = orders.Email;
-            //sheet.Cells[row, col++].Value = orders.Address;
-            //第1列是標題列 
-            //標題列部分，是取得DataAnnotations中的DisplayName，這樣比較一致，
-            //這也可避免後期有修改欄位名稱需求，但匯出excel標題忘了改的問題發生。
-            //取得做法可參考最後的參考連結。
-            //sheet.Cells[1, col++].Value = DisplayAttributeHelper<OrderDetail>.GetDisplayName("ProductName");
-            //sheet.Cells[1, col++].Value = DisplayAttributeHelper<OrderDetail>.GetDisplayName("UserID");
-            //sheet.Cells[1, col++].Value = DisplayAttributeHelper<OrderDetail>.GetDisplayName("ProductQty");
-            //sheet.Cells[1, col++].Value = DisplayAttributeHelper<OrderDetail>.GetDisplayName("TotalPrice");
-            //sheet.Cells[1, col++].Value = DisplayAttributeHelper<OrderDetail>.GetDisplayName("Create_Date");
             
 
             
@@ -440,6 +429,7 @@ namespace ShoppingCar.Controllers
                 sheet.Cells[row, col++].Value = orders.Receiver;
                 sheet.Cells[row, col++].Value = orders.Email;
                 sheet.Cells[row, col++].Value = orders.Address;
+                sheet.Cells[row, col++].Value = item.ProductID;
                 sheet.Cells[row, col++].Value = item.ProductName;
                 sheet.Cells[row, col++].Value = item.UserID;
                 sheet.Cells[row, col++].Value = item.ProductQty;
@@ -486,16 +476,19 @@ namespace ShoppingCar.Controllers
         public ActionResult DownloadProductExcel2()
         {
             var products = db.Product.ToList();
-            string rng = "D" + (products.Count+1);
+            string rng = "D" + (products.Count+1);  //excel col
             ExcelPackage ep = new ExcelPackage();
             ExcelWorksheet sheet = ep.Workbook.Worksheets.Add("FirstSheet");
             ExcelTableCollection tblcollection = sheet.Tables;
             ExcelTable table= tblcollection.Add(sheet.Cells["A1:"+ rng],"Product");
+
+            //get product attribute
+            var t = typeof(ProductMetaData);
             int col = 1;
-            table.Columns[0].Name = "產品編號";
-            table.Columns[1].Name = "產品名稱";
-            table.Columns[2].Name = "產品說明";
-            table.Columns[3].Name = "價錢";
+            table.Columns[0].Name = t.GetProperty("ProductID").GetCustomAttribute<DisplayNameAttribute>().DisplayName;
+            table.Columns[1].Name = t.GetProperty("ProductName").GetCustomAttribute<DisplayNameAttribute>().DisplayName;
+            table.Columns[2].Name = t.GetProperty("ProductExplain").GetCustomAttribute<DisplayNameAttribute>().DisplayName;
+            table.Columns[3].Name = t.GetProperty("ProductPrice").GetCustomAttribute<DisplayNameAttribute>().DisplayName;
             table.ShowFilter = true;
             table.ShowTotal = true;
             int row = 2;
@@ -558,7 +551,7 @@ namespace ShoppingCar.Controllers
             return RedirectToAction("CheckCar");
         }
 
-        public void Addcar(string ProductID)
+        public void Add_car(string ProductID)
         {
             string UserID = (Session["Member"] as Member).UserID;
 
