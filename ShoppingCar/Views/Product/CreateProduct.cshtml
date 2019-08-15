@@ -34,6 +34,14 @@
 </p>
 <hr />
 <form method="post" action="ImportProduct" enctype="multipart/form-data">
+    @if (ViewBag.ResultErrorMessage != null)
+    {
+        <script type="text/javascript">
+            window.onload = function () {
+                alert("@ViewBag.ResultErrorMessage");
+            };
+        </script>
+    }
     <label class="btn btn-default">透過Excel新增產品</label>
     <input id="ImportFile" name="ImportFile" type="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
     <p></p>
@@ -44,7 +52,7 @@
     </div>
 </form>
 <hr />
-@using (Html.BeginForm("CreateProduct", "Home", FormMethod.Post, new { enctype = "multipart/form-data" ,onsubmit= "return Confirm_insert()" }))
+@using (Html.BeginForm("CreateProduct", "Product", FormMethod.Post, new { enctype = "multipart/form-data" ,onsubmit= "return Confirm_insert()" }))
 {
     @Html.AntiForgeryToken()
 

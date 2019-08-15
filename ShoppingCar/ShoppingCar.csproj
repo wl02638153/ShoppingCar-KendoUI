@@ -171,6 +171,7 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\MemberController.cs" />
     <Compile Include="Controllers\ProductController.cs" />
     <Compile Include="Filters\CreateProductFilter.cs" />
     <Compile Include="Filters\MemberFilter.cs" />
@@ -279,23 +280,22 @@
     <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Shared\_LayoutMember.cshtml" />
-    <Content Include="Views\Home\Login.cshtml" />
-    <Content Include="Views\Home\Register.cshtml" />
-    <Content Include="Views\Home\CreateProduct.cshtml" />
-    <Content Include="Views\Home\ImgTest.cshtml" />
-    <Content Include="Views\Home\ShoppingCar.cshtml" />
-    <Content Include="Views\Home\OrderList.cshtml" />
+    <Content Include="Views\Product\CreateProduct.cshtml" />
     <Content Include="Views\Shared\_LayoutAdmin.cshtml" />
-    <Content Include="Views\Home\OrderListDetail.cshtml" />
-    <Content Include="Views\Home\MemberList.cshtml" />
+    <Content Include="Views\Product\ProductList.cshtml" />
+    <Content Include="Views\Product\ProductEdit.cshtml" />
+    <Content Include="Views\Member\Login.cshtml" />
+    <Content Include="Views\Member\Index.cshtml" />
+    <Content Include="Views\Member\Register.cshtml" />
+    <Content Include="Views\Member\MemberList.cshtml" />
     <Content Include="Views\Home\CheckCar.cshtml" />
-    <Content Include="Views\Home\ProductList.cshtml" />
-    <Content Include="Views\Home\ProductEdit.cshtml" />
+    <Content Include="Views\Home\OrderList.cshtml" />
+    <Content Include="Views\Home\OrderListDetail.cshtml" />
+    <Content Include="Views\Home\ShoppingCar.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Image\" />
     <Folder Include="Logs\" />
-    <Folder Include="Views\Product\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
