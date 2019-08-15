@@ -15,10 +15,14 @@ using System.Reflection;
 using Newtonsoft.Json;
 using System.ComponentModel;
 using ShoppingCar.Filters;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.Drawing.Drawing2D;
+using ImageMagick;
 
 namespace ShoppingCar.Controllers
 {
-    
+
     public class HomeController : Controller
     {
         dbShoppingCarEntities3 db = new dbShoppingCarEntities3();     //存取db
@@ -30,9 +34,9 @@ namespace ShoppingCar.Controllers
 
             if (Session["Member"] == null)
             {
-                return View("Index","_Layout",products);
+                return View("Index", "_Layout", products);
             }
-            else if(Session["Welcome"].ToString()== "Admin歡迎光臨")
+            else if (Session["Welcome"].ToString() == "Admin歡迎光臨")
             {
                 return View("Index", "_LayoutAdmin", products);
             }
@@ -45,7 +49,7 @@ namespace ShoppingCar.Controllers
         }
 
         [HttpPost]
-        public ActionResult Login(string UserID,string Password)
+        public ActionResult Login(string UserID, string Password)
         {
             var member = db.Member.Where(m => m.UserID == UserID && m.Password == Password).FirstOrDefault(); //取得會員並指定給member
 
@@ -78,7 +82,7 @@ namespace ShoppingCar.Controllers
                 return View();
             }
             var member = db.Member.Where(m => m.UserID == rMember.UserID).FirstOrDefault();     //if member ==null 代表未註冊
-            if(member == null)
+            if (member == null)
             {
                 rMember.Create_Date = DateTime.Now;
                 rMember.Delete_Flag = false;
@@ -89,7 +93,7 @@ namespace ShoppingCar.Controllers
             ViewBag.Message = "此帳號已有人使用，註冊失敗";
             return View();
         }
-        
+
         public ActionResult CreateProduct()
         {
             return View("CreateProduct", "_LayoutAdmin");
@@ -127,6 +131,15 @@ namespace ShoppingCar.Controllers
         [CreateProductFilter]
         public ActionResult ImportProduct(HttpPostedFileBase ImportFile)
         {
+            //check file format
+            FileUploadValidate fs = new FileUploadValidate();
+            fs.filesize = 550;
+            string us = fs.UploadUserFile(ImportFile);
+            if (us != null)
+            {
+                ViewBag.ResultErrorMessage = fs.ErrorMessage;
+            }
+
             ExcelPackage ep = new ExcelPackage(ImportFile.InputStream);
             var workbook = ep.Workbook;
             if (workbook != null)
@@ -137,15 +150,15 @@ namespace ShoppingCar.Controllers
                     object colHeader = currentWorkSheet.Cells[2, 2].Value;
                     int col = 1;
                     int row = 3;
-                    foreach(var item in currentWorkSheet.Cells)
+                    foreach (var item in currentWorkSheet.Cells)
                     {
                         if (currentWorkSheet.Cells[row, col].Value != null)
                         {
                             Product product = new Product();
-                            product.ProductID= currentWorkSheet.Cells[row, col++].Value.ToString();
-                            product.ProductName= currentWorkSheet.Cells[row, col++].Value.ToString();
-                            product.ProductExplain= currentWorkSheet.Cells[row, col++].Value.ToString();
-                            product.ProductPrice= Convert.ToDecimal((double)currentWorkSheet.Cells[row, col++].Value);
+                            product.ProductID = currentWorkSheet.Cells[row, col++].Value.ToString();
+                            product.ProductName = currentWorkSheet.Cells[row, col++].Value.ToString();
+                            product.ProductExplain = currentWorkSheet.Cells[row, col++].Value.ToString();
+                            product.ProductPrice = Convert.ToDecimal((double)currentWorkSheet.Cells[row, col++].Value);
                             product.Create_Date = DateTime.Now;
                             product.Delete_Flag = false;
                             byte[] temp = BitConverter.GetBytes(0);
@@ -184,7 +197,7 @@ namespace ShoppingCar.Controllers
                     {
                         if (currentWorkSheet.Cells[row, col].Value != null)
                         {
-                            string ProductID=currentWorkSheet.Cells[row, col].Value.ToString();
+                            string ProductID = currentWorkSheet.Cells[row, col].Value.ToString();
 
                             Add_car(ProductID);
                             row++;
@@ -253,7 +266,7 @@ namespace ShoppingCar.Controllers
 
         public System.Drawing.Image Base64ToImage(string base64str)
         {
-            
+
             byte[] imageBytes = Convert.FromBase64String(base64str);
             MemoryStream ms = new MemoryStream(imageBytes, 0, imageBytes.Length);
             ms.Write(imageBytes, 0, imageBytes.Length);
@@ -263,14 +276,42 @@ namespace ShoppingCar.Controllers
         [HttpPost]
         public ActionResult CreateProduct(HttpPostedFileBase ImgFile, Product cProduct, string base64str)
         {
-            
-            if (ImgFile != null && ImgFile.ContentLength > 0) 
+
+            if (ImgFile != null && ImgFile.ContentLength > 0)
             {
                 //local
-                string fileName = cProduct.ProductID+".PNG";
+                string str="";
+                string type = ImgFile.ContentType;
+                if (ImgFile.ContentType == "image/jpg") str = ".jpg";
+                else if (ImgFile.ContentType == "image/jpeg") str = ".jpeg";
+                else if (ImgFile.ContentType == "image/png") str = ".png";
+                string fileName = cProduct.ProductID + str;
                 var path = Path.Combine(Server.MapPath("~/Image"), fileName);
                 ImgFile.SaveAs(path);
                 cProduct.ProductImg = "~/Image/" + fileName;
+
+                //compress
+                //logger.Info("-------------------------------------------");
+                //FileInfo info = new FileInfo(path);
+                //logger.Info("Bytes before:" + info.Length);
+                //ImageOptimizer optimizer = new ImageOptimizer();
+                //optimizer.Compress(info);
+                //info.Refresh(); //覆蓋檔案
+                //logger.Info("Bytes after:" + info.Length);
+                //logger.Info("fileName:" + fileName);
+                //logger.Info("-------------------------------------------");
+
+                using (ImageMagick.MagickImage oImage = new ImageMagick.MagickImage(path))
+                {
+                    oImage.Format = ImageMagick.MagickFormat.Jpg;
+                    oImage.ColorSpace = ImageMagick.ColorSpace.sRGB;  //色盤採用sRGB
+                    oImage.Quality = 80;    //壓縮率
+                    oImage.Strip();
+                    oImage.Write(path);
+                    //ImageOptimizer optimizer = new ImageOptimizer();
+                    //optimizer.Compress(info);
+                    //info.Refresh();
+                }
 
                 //db
                 byte[] FileBytes;
@@ -284,26 +325,19 @@ namespace ShoppingCar.Controllers
             cProduct.Create_Date = DateTime.Now;
             cProduct.Delete_Flag = false;
             db.Product.Add(cProduct);
-            try
-            {
-                db.SaveChanges();
-            }
-            catch(Exception ex)
-            {
-                throw;
-            }
+            db.SaveChanges();
 
             return View("CreateProduct", "_LayoutAdmin");
         }
         [Filters.MemberFilter]
         public ActionResult ShoppingCar()
         {
-            string UserID = (Session["Member"] as Member).UserID;
-            var orderDetails = db.OrderDetail.Where(m => m.UserID==UserID&&m.Approved_Flag==true).ToList();
+            string UserID = Session["Member"].ToString();
+            var orderDetails = db.OrderDetail.Where(m => m.UserID == UserID && m.Approved_Flag == true).ToList();
             return View("ShoppingCar", "_LayoutMember", orderDetails);
         }
         [HttpPost]
-        public ActionResult ShoppingCar(string Receiver,string Email,string Address)    //產生orderHeader
+        public ActionResult ShoppingCar(string Receiver, string Email, string Address)    //產生orderHeader
         {
             string UserID = (Session["Member"] as Member).UserID;
             string guid = Guid.NewGuid().ToString();        //產生唯一的guid變數 for OrderID
@@ -318,7 +352,7 @@ namespace ShoppingCar.Controllers
             db.OrderHeader.Add(orderHeader);
             var carList = db.OrderDetail.Where(m => m.Approved_Flag == true && m.UserID == UserID).ToList();
 
-            foreach(var item in carList)
+            foreach (var item in carList)
             {
                 item.OrderID = guid;
                 item.Approved_Flag = true;
@@ -340,7 +374,7 @@ namespace ShoppingCar.Controllers
         [HttpPost]
         public ActionResult CheckCar(OrderDetailList list)
         {
-            string UserID = (Session["Member"] as Member).UserID;
+            string UserID = Session["Member"].ToString();
             var orderDetails = db.OrderDetail.Where(m => m.UserID == UserID && m.Approved_Flag == false).ToList<OrderDetail>();
             var selected = list.OrderDetails.ToList<OrderDetail>();
             /*var q = from od in orderDetails
@@ -361,15 +395,15 @@ namespace ShoppingCar.Controllers
                 {
                     check.Approved_Flag = true;
                 }
-                else if(item.Approved_Flag == false)
+                else if (item.Approved_Flag == false)
                 {
                     check.Approved_Flag = false;
                 }
-                
+
             }
             db.SaveChanges();
 
-            var orderDetailsNew = db.OrderDetail.Where(m => m.UserID == UserID && m.Approved_Flag == true&&m.Delete_Flag!=true&&m.OrderID==null).ToList();
+            var orderDetailsNew = db.OrderDetail.Where(m => m.UserID == UserID && m.Approved_Flag == true && m.Delete_Flag != true && m.OrderID == null).ToList();
             //return View("ShoppingCar", "_LayoutMember", orderDetailsNew);
             return RedirectToAction("ShoppingCar", "Home", orderDetailsNew);
         }
@@ -378,12 +412,12 @@ namespace ShoppingCar.Controllers
         {
             string UserID = Session["Member"].ToString();
             var orders = db.OrderHeader.Where(m => m.UserID == UserID && m.Delete_Flag != true).OrderByDescending(m => m.Create_Date).ToList();  //取出order依照create date排序
-            return View("OrderList","_LayoutMember",orders);
+            return View("OrderList", "_LayoutMember", orders);
         }
 
         public ActionResult OrderListDetail(string OrderID)
         {
-            var orderDetails = db.OrderDetail.Where(m => m.OrderID == OrderID&&m.Delete_Flag!=true).ToList();
+            var orderDetails = db.OrderDetail.Where(m => m.OrderID == OrderID && m.Delete_Flag != true).ToList();
             return View("OrderListDetail", "_LayoutMember", orderDetails);
         }
 
@@ -395,7 +429,7 @@ namespace ShoppingCar.Controllers
 
             ExcelPackage ep = new ExcelPackage();
             ExcelWorksheet sheet = ep.Workbook.Worksheets.Add("FirstSheet");
-            string rng = "J" + (orderDetails.Count + 1 +1);  //excel col    //array+1  orders+1
+            string rng = "J" + (orderDetails.Count + 1 + 1);  //excel col    //array+1  orders+1
             ExcelTableCollection tblcollection = sheet.Tables;
             ExcelTable table = tblcollection.Add(sheet.Cells["A1:" + rng], "Order");
 
@@ -415,10 +449,10 @@ namespace ShoppingCar.Controllers
             table.Columns[8].Name = tOD.GetProperty("TotalPrice").GetCustomAttribute<DisplayNameAttribute>().DisplayName;
             table.Columns[9].Name = tOD.GetProperty("Create_Date").GetCustomAttribute<DisplayNameAttribute>().DisplayName;
             int row = 2;
-            
 
-            
-            foreach(OrderDetail item in orderDetails)
+
+
+            foreach (OrderDetail item in orderDetails)
             {
                 col = 1;
                 sheet.Cells[row, col++].Value = orders.OrderID;
@@ -472,11 +506,11 @@ namespace ShoppingCar.Controllers
         public ActionResult DownloadProductExcel2()
         {
             var products = db.Product.ToList();
-            string rng = "D" + (products.Count+1);  //excel col
+            string rng = "D" + (products.Count + 1);  //excel col
             ExcelPackage ep = new ExcelPackage();
             ExcelWorksheet sheet = ep.Workbook.Worksheets.Add("FirstSheet");
             ExcelTableCollection tblcollection = sheet.Tables;
-            ExcelTable table= tblcollection.Add(sheet.Cells["A1:"+ rng],"Product");
+            ExcelTable table = tblcollection.Add(sheet.Cells["A1:" + rng], "Product");
 
             //get product attribute
             var t = typeof(ProductMetaData);
@@ -516,7 +550,7 @@ namespace ShoppingCar.Controllers
         {
             string UserID = Session["Member"].ToString();
 
-            var currentCar = db.OrderDetail.Where(m=>m.ProductID==ProductID&&m.Approved_Flag==false&&m.UserID==UserID).FirstOrDefault();
+            var currentCar = db.OrderDetail.Where(m => m.ProductID == ProductID && m.Approved_Flag == false && m.UserID == UserID).FirstOrDefault();
             if (currentCar == null)
             {
                 var product = db.Product.Where(m => m.ProductID == ProductID).FirstOrDefault();
@@ -527,8 +561,8 @@ namespace ShoppingCar.Controllers
                 orderDetail.TotalPrice = product.ProductPrice;
                 orderDetail.ProductQty = 1;
                 orderDetail.Approved_Flag = false;
-                orderDetail.Create_Date= DateTime.Now;
-                
+                orderDetail.Create_Date = DateTime.Now;
+
                 db.OrderDetail.Add(orderDetail);
             }
             else
@@ -592,7 +626,7 @@ namespace ShoppingCar.Controllers
         {
             var order = db.OrderHeader.Where(m => m.OrderID == OrderID).FirstOrDefault();
             var orderDetail = db.OrderDetail.Where(m => m.OrderID == OrderID).ToList();
-            foreach(var item in orderDetail)
+            foreach (var item in orderDetail)
             {
                 item.Delete_Date = DateTime.Now;
                 item.Delete_Flag = true;
@@ -618,5 +652,6 @@ namespace ShoppingCar.Controllers
             return View();
         }
         
+
     }
 }
