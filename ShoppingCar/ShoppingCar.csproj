@@ -173,6 +173,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MemberController.cs" />
     <Compile Include="Controllers\ProductController.cs" />
+    <Compile Include="Controllers\Shopping_CarController.cs" />
     <Compile Include="Filters\CreateProductFilter.cs" />
     <Compile Include="Filters\MemberFilter.cs" />
     <Compile Include="Filters\MyFilter.cs" />
@@ -288,10 +289,10 @@
     <Content Include="Views\Member\Index.cshtml" />
     <Content Include="Views\Member\Register.cshtml" />
     <Content Include="Views\Member\MemberList.cshtml" />
-    <Content Include="Views\Home\CheckCar.cshtml" />
-    <Content Include="Views\Home\OrderList.cshtml" />
-    <Content Include="Views\Home\OrderListDetail.cshtml" />
-    <Content Include="Views\Home\ShoppingCar.cshtml" />
+    <Content Include="Views\Shopping_Car\CheckCar.cshtml" />
+    <Content Include="Views\Shopping_Car\OrderList.cshtml" />
+    <Content Include="Views\Shopping_Car\OrderListDetail.cshtml" />
+    <Content Include="Views\Shopping_Car\ShoppingCar.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Image\" />

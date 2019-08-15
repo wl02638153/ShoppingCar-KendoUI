@@ -31,7 +31,7 @@
     <a href="~/Excel/ExcelCreateOrderFormate.xlsx">下載訂單Excel格式</a>
 </p>
 <hr />
-<form method="post" action="/Home/ImportOrder" enctype="multipart/form-data">
+<form method="post" action="/Shopping_Car/ImportOrder" enctype="multipart/form-data">
     @*<label class="btn btn-default"><input id="ImportOrder" name="ImportOrder" style="display:none;" type="file"> 透過Excel新增購物車</label>*@
     <label class="btn btn-default">透過Excel新增購物車</label>
         <input id="ImportOrder" name="ImportOrder" type="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
@@ -76,7 +76,7 @@
                     else
                     {
                         <p>
-                            <a href="@Url.Action("AddCar")?ProductID=@item.ProductID" class="btn btn-primary" onclick="return confirm('確定要加入購物車嗎?')">加入購物車</a>
+                            <a href="@Url.Action("AddCar","Shopping_Car")?ProductID=@item.ProductID" class="btn btn-primary" onclick="return confirm('確定要加入購物車嗎?')">加入購物車</a>
                         </p>
                     }
                 </div>
