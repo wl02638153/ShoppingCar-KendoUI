@@ -18,7 +18,7 @@ namespace ShoppingCar.Filters
             WriteLog("OnActionExecuting", filterContext.RouteData);
             if (filterContext.HttpContext.Session["Member"] == null)
             {
-                filterContext.Result = new RedirectToRouteResult(new RouteValueDictionary(new { action = "Login", controller = "Home" }));
+                filterContext.Result = new RedirectToRouteResult(new RouteValueDictionary(new { action = "Login", controller = "Member" }));
             }
         }
         public void WriteLog(string methodName, RouteData routeData)

@@ -19,23 +19,23 @@ namespace ShoppingCar.Models
                 var fileExt = System.IO.Path.GetExtension(file.FileName).Substring(1);
                 if (!supportedTypes.Contains(fileExt))
                 {
-                    ErrorMessage = "File Extension Is InValid - Only Upload EXCEL File";
+                    ErrorMessage = "只允許 EXCEL 檔案";
                     return ErrorMessage;
                 }
                 else if (file.ContentLength > (filesize * 1024))
                 {
-                    ErrorMessage = "File size Should Be UpTo " + filesize + "KB";
+                    ErrorMessage = "檔案限制最高 " + filesize + "KB";
                     return ErrorMessage;
                 }
                 else
                 {
-                    ErrorMessage = "File Is Successfully Uploaded";
+                    ErrorMessage = "";//檔案合法
                     return ErrorMessage;
                 }
             }
             catch (Exception ex)
             {
-                ErrorMessage = "Upload Container Should Not Be Empty or Contact Admin";
+                ErrorMessage = "檔案不能為空的";
                 return ErrorMessage;
             }
         }

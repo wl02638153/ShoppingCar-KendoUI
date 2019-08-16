@@ -19,6 +19,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Drawing.Drawing2D;
 using ImageMagick;
+using System.Data.Entity.Validation;
 
 namespace ShoppingCar.Controllers
 {
@@ -64,6 +65,68 @@ namespace ShoppingCar.Controllers
             }
             return View("CreateProduct", "_LayoutAdmin");
         }*/
+        [HttpPost]
+        public ActionResult CreateProduct(HttpPostedFileBase ImgFile, Product cProduct, string base64str)
+        {
+
+            if (ImgFile != null && ImgFile.ContentLength > 0)
+            {
+                //local
+                string str = "";
+                string type = ImgFile.ContentType;
+                if (ImgFile.ContentType == "image/jpg") str = ".jpg";
+                else if (ImgFile.ContentType == "image/jpeg") str = ".jpeg";
+                else if (ImgFile.ContentType == "image/png") str = ".png";
+                string fileName = cProduct.ProductID + str;
+                var path = Path.Combine(Server.MapPath("~/Image"), fileName);
+                ImgFile.SaveAs(path);
+                cProduct.ProductImg = "~/Image/" + fileName;
+
+                //compress
+                using (ImageMagick.MagickImage oImage = new ImageMagick.MagickImage(path))
+                {
+                    oImage.Format = ImageMagick.MagickFormat.Jpg;
+                    oImage.ColorSpace = ImageMagick.ColorSpace.sRGB;  //色盤採用sRGB
+                    oImage.Quality = 80;    //壓縮率
+                    oImage.Resize(200, 0);
+                    oImage.Strip();
+                    oImage.Write(path);
+                }
+                //db
+                byte[] FileBytes;
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    ImgFile.InputStream.CopyTo(ms);
+                    FileBytes = ms.GetBuffer();
+                }
+                cProduct.ProductImg_DB = FileBytes;
+            }
+            cProduct.Create_Date = DateTime.Now;
+            cProduct.Delete_Flag = false;
+            if (ModelState.IsValid)
+            {
+                if (db.Product.Any(p => p.ProductID.Equals(cProduct.ProductID)))    //判斷資料是否重複
+                {
+                    ViewBag.DBResultErrorMessage = cProduct.ProductID+"資料已重複";
+                    return View("CreateProduct", Session["UserTag"].ToString());
+                }
+                try
+                {
+                    db.Product.Add(cProduct);
+                    db.SaveChanges();
+                }
+                catch (Exception ex)
+                {
+                    logger.Error(ex.Message);
+                    ViewBag.DBResultErrorMessage = ex.Message;
+                    return View("CreateProduct", Session["UserTag"].ToString());
+                }
+
+                ViewBag.DBResultErrorMessage = cProduct.ProductID+"新增成功!";
+            }
+
+            return View("CreateProduct", Session["UserTag"].ToString());
+        }
 
         [HttpPost]
         [CreateProductFilter]
@@ -73,11 +136,10 @@ namespace ShoppingCar.Controllers
             FileUploadValidate fs = new FileUploadValidate();
             fs.filesize = 550;
             string us = fs.UploadUserFile(ImportFile);
+            string message = "";
             if (us != null)
             {
-                ViewBag.ResultErrorMessage = fs.ErrorMessage;
-                //return View("CreateProduct");
-            }
+                message += fs.ErrorMessage;
                 ExcelPackage ep = new ExcelPackage(ImportFile.InputStream);
                 var workbook = ep.Workbook;
                 if (workbook != null)
@@ -90,9 +152,9 @@ namespace ShoppingCar.Controllers
                         int row = 3;
                         foreach (var item in currentWorkSheet.Cells)
                         {
+                            Product product = new Product();
                             if (currentWorkSheet.Cells[row, col].Value != null)
                             {
-                                Product product = new Product();
                                 product.ProductID = currentWorkSheet.Cells[row, col++].Value.ToString();
                                 product.ProductName = currentWorkSheet.Cells[row, col++].Value.ToString();
                                 product.ProductExplain = currentWorkSheet.Cells[row, col++].Value.ToString();
@@ -101,25 +163,41 @@ namespace ShoppingCar.Controllers
                                 product.Delete_Flag = false;
                                 byte[] temp = BitConverter.GetBytes(0);
                                 product.ProductImg_DB = temp;
-                                db.Product.Add(product);
                                 col = 1;
                                 row++;
-
                             }
                             else
                             {
                                 break;
                             }
-                            db.SaveChanges();
+                            if (ModelState.IsValid)
+                            {
+                                if (db.Product.Any(p => p.ProductID.Equals(product.ProductID)))    //判斷資料是否重複
+                                {
+                                    message += "<p>" + product.ProductID + "資料已重複<p/>";   //ViewBag.DBResultErrorMessage
+                                    continue;
+                                }
+                                try
+                                {
+                                    db.Product.Add(product);
+                                    db.SaveChanges();
+                                    message += "<p>" + product.ProductID+ "上傳成功<p/>";
+                                }
+                                catch (Exception ex)
+                                {
+                                    logger.Error(ex.Message);
+                                    ViewBag.ExcelResultErrorMessage = ex.Message;
+                                    return View("CreateProduct", Session["UserTag"].ToString());
+                                }
+                            }
                         }
+                        ViewBag.ExcelResultErrorMessage = message;
                     }
                 }
-                return RedirectToAction("ProductList");
-
-
+            }
+            return View("CreateProduct", Session["UserTag"].ToString());
         }
-
-        //[Authorize]
+        
         public ActionResult ProductList()
         {
             var products = db.Product.ToList<Product>();
@@ -132,7 +210,7 @@ namespace ShoppingCar.Controllers
             return View("ProductEdit", Session["UserTag"].ToString(), Product);
         }
         [HttpPost]
-        public ActionResult ProductEdit(Product product, string base64str)   //string ProductExplain,string ProductName,decimal ProductPrice, string ProductID
+        public ActionResult ProductEdit(Product product, string base64str)  
         {
             var Product = db.Product.Where(m => m.ProductID == product.ProductID).FirstOrDefault();
             if (base64str != null && base64str.Length > 0)
@@ -158,11 +236,16 @@ namespace ShoppingCar.Controllers
                 Product.ProductPrice = product.ProductPrice;
                 try
                 {
-                    db.SaveChanges();
+                    if (ModelState.IsValid)
+                    {
+                        db.SaveChanges();
+                    }
                 }
                 catch (Exception ex)
                 {
-                    throw;
+                    logger.Error(ex.Message);
+                    ViewBag.ExcelResultErrorMessage = ex.Message;
+                    return View();
                 }
             }
             db.SaveChanges();
@@ -177,62 +260,6 @@ namespace ShoppingCar.Controllers
             ms.Write(imageBytes, 0, imageBytes.Length);
             System.Drawing.Image image = System.Drawing.Image.FromStream(ms, true);
             return image;
-        }
-        [HttpPost]
-        public ActionResult CreateProduct(HttpPostedFileBase ImgFile, Product cProduct, string base64str)
-        {
-
-            if (ImgFile != null && ImgFile.ContentLength > 0)
-            {
-                //local
-                string str = "";
-                string type = ImgFile.ContentType;
-                if (ImgFile.ContentType == "image/jpg") str = ".jpg";
-                else if (ImgFile.ContentType == "image/jpeg") str = ".jpeg";
-                else if (ImgFile.ContentType == "image/png") str = ".png";
-                string fileName = cProduct.ProductID + str;
-                var path = Path.Combine(Server.MapPath("~/Image"), fileName);
-                ImgFile.SaveAs(path);
-                cProduct.ProductImg = "~/Image/" + fileName;
-
-                //compress
-                //logger.Info("-------------------------------------------");
-                //FileInfo info = new FileInfo(path);
-                //logger.Info("Bytes before:" + info.Length);
-                //ImageOptimizer optimizer = new ImageOptimizer();
-                //optimizer.Compress(info);
-                //info.Refresh(); //覆蓋檔案
-                //logger.Info("Bytes after:" + info.Length);
-                //logger.Info("fileName:" + fileName);
-                //logger.Info("-------------------------------------------");
-
-                using (ImageMagick.MagickImage oImage = new ImageMagick.MagickImage(path))
-                {
-                    oImage.Format = ImageMagick.MagickFormat.Jpg;
-                    oImage.ColorSpace = ImageMagick.ColorSpace.sRGB;  //色盤採用sRGB
-                    oImage.Quality = 80;    //壓縮率
-                    oImage.Strip();
-                    oImage.Write(path);
-                    //ImageOptimizer optimizer = new ImageOptimizer();
-                    //optimizer.Compress(info);
-                    //info.Refresh();
-                }
-
-                //db
-                byte[] FileBytes;
-                using (MemoryStream ms = new MemoryStream())
-                {
-                    ImgFile.InputStream.CopyTo(ms);
-                    FileBytes = ms.GetBuffer();
-                }
-                cProduct.ProductImg_DB = FileBytes;
-            }
-            cProduct.Create_Date = DateTime.Now;
-            cProduct.Delete_Flag = false;
-            db.Product.Add(cProduct);
-            db.SaveChanges();
-
-            return View("CreateProduct", Session["UserTag"].ToString());
         }
 
         public ActionResult DownloadProductExcel()

@@ -23,17 +23,26 @@ namespace ShoppingCar.Controllers
         [HttpPost]
         public ActionResult Login(string UserID, string Password)
         {
-            var member = db.Member.Where(m => m.UserID == UserID && m.Password == Password).FirstOrDefault(); //取得會員並指定給member
-
-            if (member == null)
+            try
             {
-                ViewBag.Message = "帳號密碼錯誤，登入失敗，請重新輸入";
-                return View();
+                var member = db.Member.Where(m => m.UserID == UserID && m.Password == Password).FirstOrDefault(); //取得會員並指定給member
+
+                if (member == null)
+                {
+                    ViewBag.Message = "帳號密碼錯誤，登入失敗，請重新輸入";
+                    return View();
+                }
+                Session["Welcome"] = member.MemberName + "歡迎光臨";
+                Session["Member"] = member.MemberName;
+                TempData["LoginMessage"] = "登入成功";
+                return RedirectToAction("Index", "Home");
             }
-            Session["Welcome"] = member.MemberName + "歡迎光臨";
-            Session["Member"] = member.MemberName;
-            TempData["LoginMessage"] = "登入成功";
-            return RedirectToAction("Index", "Home");
+            catch(Exception ex)
+            {
+                logger.Error(ex.Message);
+                return RedirectToAction("Index", "Home");
+            }
+
         }
 
         public ActionResult Logout()

@@ -42,6 +42,14 @@
             };
         </script>
     }
+    @if (ViewBag.DBResultErrorMessage != null)
+    {
+        <script type="text/javascript">
+            window.onload = function () {
+                alert("@ViewBag.DBResultErrorMessage");
+            };
+        </script>
+    }
     <label class="btn btn-default">透過Excel新增產品</label>
     <input id="ImportFile" name="ImportFile" type="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
     <p></p>
@@ -49,10 +57,11 @@
         <div class="">
             <input type="submit" value="匯入" class="btn btn-default" />
         </div>
+        @Html.Raw(ViewBag.ExcelResultErrorMessage)
     </div>
 </form>
 <hr />
-@using (Html.BeginForm("CreateProduct", "Product", FormMethod.Post, new { enctype = "multipart/form-data" ,onsubmit= "return Confirm_insert()" }))
+@using (Html.BeginForm("CreateProduct", "Product", FormMethod.Post, new { enctype = "multipart/form-data", onsubmit = "return Confirm_insert()" }))
 {
     @Html.AntiForgeryToken()
 
@@ -108,18 +117,18 @@
                     </div>
                 </div>-->
                 @*<label class="btn btn-info"><input id="upload_img" style="display:none;" type="file"><i class="fa fa-photo"></i> 上傳圖片</label>
-                <input type="hidden" id="base64str" name="base64str" value="">*@
+                    <input type="hidden" id="base64str" name="base64str" value="">*@
                 @*<hr />*@
                 @*<div id="oldImg"></div>
-                <hr />
-                <div id="newImg"></div>
-                <hr />
-                <div id="tinyImg"></div>*@
+                    <hr />
+                    <div id="newImg"></div>
+                    <hr />
+                    <div id="tinyImg"></div>*@
             </div>
         </div>
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Create" class="btn btn-default"/>
+                <input type="submit" value="Create" class="btn btn-default" />
             </div>
         </div>
     </div>
