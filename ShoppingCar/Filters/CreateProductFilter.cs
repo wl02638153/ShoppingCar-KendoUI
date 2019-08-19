@@ -15,7 +15,8 @@ namespace ShoppingCar.Filters
     public class CreateProductFilter : ActionFilterAttribute, IActionFilter
     {
         private NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
-        dbShoppingCarEntities3 db = new dbShoppingCarEntities3();     //存取db
+        //dbShoppingCarEntities3 db = new dbShoppingCarEntities3();     //存取db
+        ShoppingCartEntities db = new ShoppingCartEntities();
         public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
             string UserID = filterContext.HttpContext.Session["Member"].ToString();
