@@ -180,21 +180,6 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\dbShoppingCaarModel.Context.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>dbShoppingCaarModel.Context.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\dbShoppingCaarModel.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>dbShoppingCaarModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\dbShoppingCaarModel.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>dbShoppingCaarModel.edmx</DependentUpon>
-    </Compile>
     <Compile Include="Models\dbShoppingCartModel.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -245,16 +230,6 @@
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
-    <Content Include="Models\dbShoppingCaarModel.Context.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>dbShoppingCaarModel.edmx</DependentUpon>
-      <LastGenOutput>dbShoppingCaarModel.Context.cs</LastGenOutput>
-    </Content>
-    <Content Include="Models\dbShoppingCaarModel.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>dbShoppingCaarModel.edmx</DependentUpon>
-      <LastGenOutput>dbShoppingCaarModel.cs</LastGenOutput>
-    </Content>
     <Content Include="Models\dbShoppingCartModel.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>dbShoppingCartModel.edmx</DependentUpon>
@@ -267,13 +242,6 @@
     </Content>
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
-    <EntityDeploy Include="Models\dbShoppingCaarModel.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>dbShoppingCaarModel.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-    <Content Include="Models\dbShoppingCaarModel.edmx.diagram">
-      <DependentUpon>dbShoppingCaarModel.edmx</DependentUpon>
-    </Content>
     <Content Include="NLog.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
