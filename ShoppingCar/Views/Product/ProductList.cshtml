@@ -49,14 +49,14 @@
 
                 var base64 = Convert.ToBase64String(img);
                 string imageDate = String.Format("data: image / gif;base64,{0}", base64);
-
+                
                 if (item.ProductImg != null)
                 {
                     <img src="@Url.Content(item.ProductImg)?w=70&h=70&mode=cropyunits " />
                 }
                 else
                 {
-                    <img src="" />
+                    <img src="~/Image/notImg_.jpg?w=70&h=70&mode=cropyunits" />
                 }
             }
         </td>

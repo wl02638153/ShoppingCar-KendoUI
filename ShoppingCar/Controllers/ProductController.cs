@@ -109,7 +109,7 @@ namespace ShoppingCar.Controllers
             {
                 if (db.Product.Any(p => p.ProductID.Equals(cProduct.ProductID)))    //判斷資料是否重複
                 {
-                    ViewBag.DBResultErrorMessage = cProduct.ProductID+"資料已重複";
+                    ViewBag.DBResultErrorMessage = cProduct.ProductID+"資料已重複，請重新輸入";
                     return View("CreateProduct", Session["UserTag"].ToString());
                 }
                 try
