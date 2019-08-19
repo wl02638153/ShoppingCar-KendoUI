@@ -25,8 +25,8 @@ namespace ShoppingCar.Controllers
 
     public class HomeController : Controller
     {
-        dbShoppingCarEntities3 db = new dbShoppingCarEntities3();     //存取db
-        
+        //dbShoppingCarEntities3 db = new dbShoppingCarEntities3();     //存取db
+        ShoppingCartEntities db = new ShoppingCartEntities();
         private NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
         public ActionResult Index()
         {

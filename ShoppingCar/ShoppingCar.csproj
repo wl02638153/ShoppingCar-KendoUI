@@ -195,24 +195,39 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>dbShoppingCaarModel.edmx</DependentUpon>
     </Compile>
+    <Compile Include="Models\dbShoppingCartModel.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>dbShoppingCartModel.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\dbShoppingCartModel.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>dbShoppingCartModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\dbShoppingCartModel.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>dbShoppingCartModel.edmx</DependentUpon>
+    </Compile>
     <Compile Include="Models\FileUploadValidate.cs" />
     <Compile Include="Models\LogMessage.cs">
-      <DependentUpon>dbShoppingCaarModel.tt</DependentUpon>
+      <DependentUpon>dbShoppingCartModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Member.cs">
-      <DependentUpon>dbShoppingCaarModel.tt</DependentUpon>
+      <DependentUpon>dbShoppingCartModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Members.cs" />
     <Compile Include="Models\OrderDetail.cs">
-      <DependentUpon>dbShoppingCaarModel.tt</DependentUpon>
+      <DependentUpon>dbShoppingCartModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\OrderDetails.cs" />
     <Compile Include="Models\OrderHeader.cs">
-      <DependentUpon>dbShoppingCaarModel.tt</DependentUpon>
+      <DependentUpon>dbShoppingCartModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\OrderHeaders.cs" />
     <Compile Include="Models\Product.cs">
-      <DependentUpon>dbShoppingCaarModel.tt</DependentUpon>
+      <DependentUpon>dbShoppingCartModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Products.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -240,6 +255,16 @@
       <DependentUpon>dbShoppingCaarModel.edmx</DependentUpon>
       <LastGenOutput>dbShoppingCaarModel.cs</LastGenOutput>
     </Content>
+    <Content Include="Models\dbShoppingCartModel.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>dbShoppingCartModel.edmx</DependentUpon>
+      <LastGenOutput>dbShoppingCartModel.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="Models\dbShoppingCartModel.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>dbShoppingCartModel.edmx</DependentUpon>
+      <LastGenOutput>dbShoppingCartModel.cs</LastGenOutput>
+    </Content>
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <EntityDeploy Include="Models\dbShoppingCaarModel.edmx">
@@ -251,6 +276,13 @@
     </Content>
     <Content Include="NLog.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <EntityDeploy Include="Models\dbShoppingCartModel.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>dbShoppingCartModel.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <Content Include="Models\dbShoppingCartModel.edmx.diagram">
+      <DependentUpon>dbShoppingCartModel.edmx</DependentUpon>
     </Content>
     <None Include="NLog.xsd">
       <SubType>Designer</SubType>

@@ -24,7 +24,8 @@ namespace ShoppingCar.Controllers
 {
     public class Shopping_CarController : Controller
     {
-        dbShoppingCarEntities3 db = new dbShoppingCarEntities3();     //存取db
+        //dbShoppingCarEntities3 db = new dbShoppingCarEntities3();     //存取db
+        ShoppingCartEntities db = new ShoppingCartEntities();
         private NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
         // GET: Shopping_Car
         public ActionResult Index()

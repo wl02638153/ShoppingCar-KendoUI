@@ -21,11 +21,13 @@ using System.Drawing.Drawing2D;
 using ImageMagick;
 using System.Data.Entity.Validation;
 
+
 namespace ShoppingCar.Controllers
 {
     public class ProductController : Controller
     {
-        dbShoppingCarEntities3 db = new dbShoppingCarEntities3();     //存取db
+        //dbShoppingCarEntities3 db = new dbShoppingCarEntities3();     //存取db
+        ShoppingCartEntities db = new ShoppingCartEntities();
         private NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
         // GET: Product
         public ActionResult Index()
