@@ -68,6 +68,7 @@ namespace ShoppingCar.Controllers
             return View("CreateProduct", "_LayoutAdmin");
         }*/
         [HttpPost]
+        [CreateProductFilter]
         public ActionResult CreateProduct(HttpPostedFileBase ImgFile, Product cProduct, string base64str)
         {
 
@@ -91,7 +92,7 @@ namespace ShoppingCar.Controllers
                     oImage.ColorSpace = ImageMagick.ColorSpace.sRGB;  //色盤採用sRGB
                     oImage.Quality = 80;    //壓縮率
                     oImage.Resize(200, 0);
-                    oImage.Strip();
+                    oImage.Strip(); //去除圖片profile
                     oImage.Write(path);
                 }
                 //db

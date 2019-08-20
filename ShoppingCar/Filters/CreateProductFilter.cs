@@ -9,6 +9,9 @@ using System.Web.Routing;
 using ShoppingCar.Models;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
+using System.Reflection;
 
 namespace ShoppingCar.Filters
 {
@@ -20,23 +23,45 @@ namespace ShoppingCar.Filters
         public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
             string UserID = filterContext.HttpContext.Session["Member"].ToString();
-            WriteLog("OnActionExecuting", filterContext.RouteData,UserID);
+            string parameter = JsonConvert.SerializeObject(filterContext.ActionParameters, new JsonSerializerSettings()
+            {
+                ContractResolver = new ReadablePropertiesOnlyResolver()
+            });
+            WriteLog("OnActionExecuting", filterContext.RouteData,UserID,parameter);
             //OnActionExecuting(filterContext);
         }
-        public void WriteLog(string methodName, RouteData routeData,string UserID)
+        public void WriteLog(string methodName, RouteData routeData,string UserID,string parameter)
         {
             var controllerName = routeData.Values["controller"];
             var actionName = routeData.Values["action"];
             logger.Info("-----------" + methodName + "-----------");
-            logger.Info("Controller : " + controllerName);
-            logger.Info("Action : " + actionName);
             logger.Info("UserID : " + UserID);
+            logger.Info("Date Time : " + DateTime.Now);
             LogMessage log = new LogMessage();
             log.ActionID = actionName.ToString();
             log.UserID = UserID;
             log.Date = DateTime.Now;
+            log.Message = string.Format("{0}.{1}() => {2}", controllerName, actionName, string.IsNullOrEmpty(parameter) ? "(void)" : parameter);
+            logger.Info("Message : " + log.Message);
             db.LogMessage.Add(log);
             db.SaveChanges();
+        }
+    }
+
+    class ReadablePropertiesOnlyResolver : DefaultContractResolver
+    {
+        /// <summary>
+        /// 建立可呈現（解析）的屬性
+        /// </summary>
+        /// <returns>呈現的屬性</returns>
+        protected override JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)
+        {
+            JsonProperty property = base.CreateProperty(member, memberSerialization);
+            if (typeof(Stream).IsAssignableFrom(property.PropertyType))
+            {
+                property.Ignored = true;
+            }
+            return property;
         }
     }
 }

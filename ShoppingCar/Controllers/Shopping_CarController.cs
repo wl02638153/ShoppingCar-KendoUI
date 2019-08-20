@@ -72,7 +72,7 @@ namespace ShoppingCar.Controllers
         public ActionResult ShoppingCar()
         {
             string UserID = Session["Member"].ToString();
-            var orderDetails = db.OrderDetail.Where(m => m.UserID == UserID && m.Approved_Flag == true).ToList();
+            var orderDetails = db.OrderDetail.Where(m => m.UserID == UserID && m.Approved_Flag == true&&m.OrderID==null).ToList();//
             return View("ShoppingCar", Session["UserTag"].ToString(), orderDetails);
         }
         [HttpPost]
@@ -89,7 +89,7 @@ namespace ShoppingCar.Controllers
             orderHeader.Address = Address;
             orderHeader.Create_Date = DateTime.Now;
             db.OrderHeader.Add(orderHeader);
-            var carList = db.OrderDetail.Where(m => m.Approved_Flag == true && m.UserID == UserID).ToList();
+            var carList = db.OrderDetail.Where(m => m.Approved_Flag == true && m.UserID == UserID&&m.OrderID==null).ToList();
 
             foreach (var item in carList)
             {
@@ -162,7 +162,7 @@ namespace ShoppingCar.Controllers
 
         public ActionResult DownloadOrderExcel(string OrderID)
         {
-            string UserID = (Session["Member"] as Member).UserID;
+            string UserID = Session["Member"].ToString();
             var orders = db.OrderHeader.Where(m => m.UserID == UserID && m.OrderID == OrderID).FirstOrDefault();
             var orderDetails = db.OrderDetail.Where(m => m.OrderID == OrderID && m.Delete_Flag != true).ToList();
 
@@ -213,6 +213,76 @@ namespace ShoppingCar.Controllers
             string filename = OrderID + ".xlsx";
             return File(ms, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", filename);
         }
+
+        public ActionResult Download_ALL_Order()
+        {
+            string UserID = Session["Member"].ToString();
+            var orders = db.OrderHeader.Where(m => m.UserID == UserID).ToList();
+            var orderDetails = db.OrderDetail.Where(m => m.OrderID !=null && m.Delete_Flag != true&&m.UserID==UserID).ToList();
+            var q = from od in orderDetails
+                    join os in orders on od.OrderID equals os.OrderID
+                    select new
+                    {
+                        OrderId = os.OrderID,
+                        Receiver = os.Receiver,
+                        Email = os.Email,
+                        Address = os.Address,
+                        ProductID = od.ProductID,
+                        ProductName = od.ProductName,
+                        UserID = od.UserID,
+                        ProductQty = od.ProductQty,
+                        TotalPrice = od.TotalPrice,
+                        Create_Date = od.Create_Date
+                    };
+            
+            ExcelPackage ep = new ExcelPackage();
+            ExcelWorksheet sheet = ep.Workbook.Worksheets.Add("FirstSheet");
+            string rng = "J" + (orderDetails.Count + 1 + 1);  //excel col    //array+1  orders+1
+            ExcelTableCollection tblcollection = sheet.Tables;
+            ExcelTable table = tblcollection.Add(sheet.Cells["A1:" + rng], "Order");
+
+            var tOH = typeof(OrderHeaderMetaData);
+            var tOD = typeof(OrderDetailMetaData);
+
+            int col = 1;    //欄:直的，因為要從第1欄開始，所以初始為1
+            table.Columns[0].Name = tOH.GetProperty("OrderID").GetCustomAttribute<DisplayNameAttribute>().DisplayName;
+            table.Columns[1].Name = tOH.GetProperty("Receiver").GetCustomAttribute<DisplayNameAttribute>().DisplayName;
+            table.Columns[2].Name = tOH.GetProperty("Email").GetCustomAttribute<DisplayNameAttribute>().DisplayName;
+            table.Columns[3].Name = tOH.GetProperty("Address").GetCustomAttribute<DisplayNameAttribute>().DisplayName;
+
+            table.Columns[4].Name = tOD.GetProperty("ProductID").GetCustomAttribute<DisplayNameAttribute>().DisplayName;
+            table.Columns[5].Name = tOD.GetProperty("ProductName").GetCustomAttribute<DisplayNameAttribute>().DisplayName;
+            table.Columns[6].Name = tOD.GetProperty("UserID").GetCustomAttribute<DisplayNameAttribute>().DisplayName;
+            table.Columns[7].Name = tOD.GetProperty("ProductQty").GetCustomAttribute<DisplayNameAttribute>().DisplayName;
+            table.Columns[8].Name = tOD.GetProperty("TotalPrice").GetCustomAttribute<DisplayNameAttribute>().DisplayName;
+            table.Columns[9].Name = tOD.GetProperty("Create_Date").GetCustomAttribute<DisplayNameAttribute>().DisplayName;
+            int row = 2;
+
+
+
+            foreach (var item in q)
+            {
+                col = 1;
+                sheet.Cells[row, col++].Value = item.OrderId;
+                sheet.Cells[row, col++].Value = item.Receiver;
+                sheet.Cells[row, col++].Value = item.Email;
+                sheet.Cells[row, col++].Value = item.Address;
+                sheet.Cells[row, col++].Value = item.ProductID;
+                sheet.Cells[row, col++].Value = item.ProductName;
+                sheet.Cells[row, col++].Value = item.UserID;
+                sheet.Cells[row, col++].Value = item.ProductQty;
+                sheet.Cells[row, col++].Value = item.TotalPrice;
+                sheet.Cells[row, col++].Value = item.Create_Date.ToString();
+                row++;
+            }
+            MemoryStream ms = new MemoryStream();
+            ep.SaveAs(ms);
+            ep.Dispose();
+            ms.Position = 0;
+            string filename = UserID + ".xlsx";
+            return File(ms, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", filename);
+        }
+        
 
         public ActionResult AddCar(string ProductID)
         {

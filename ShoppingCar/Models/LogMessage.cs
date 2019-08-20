@@ -18,5 +18,6 @@ namespace ShoppingCar.Models
         public string ActionID { get; set; }
         public string UserID { get; set; }
         public System.DateTime Date { get; set; }
+        public string Message { get; set; }
     }
 }
