@@ -20,6 +20,10 @@ namespace ShoppingCar.Filters
             {
                 filterContext.Result = new RedirectToRouteResult(new RouteValueDictionary(new { action = "Login", controller = "Member" }));
             }
+            else
+            {
+                
+            }
         }
         public void WriteLog(string methodName, RouteData routeData)
         {

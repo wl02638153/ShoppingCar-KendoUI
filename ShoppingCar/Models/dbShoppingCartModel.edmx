@@ -29,6 +29,7 @@
           <Property Name="Modify_Date" Type="datetime" />
           <Property Name="Delete_Date" Type="nvarchar" MaxLength="50" />
           <Property Name="Delete_Flag" Type="bit" />
+          <Property Name="Password2" Type="nvarchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="OrderDetail">
           <Key>
@@ -169,6 +170,7 @@
           <Property Name="Delete_Date" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="Delete_Flag" Type="Boolean" />
           <NavigationProperty Name="OrderHeader" Relationship="Self.FK__OrderHead__UserI__4CA06362" FromRole="Member" ToRole="OrderHeader" />
+          <Property Name="Password2" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="OrderDetail">
           <Key>
@@ -305,6 +307,7 @@
           <EntitySetMapping Name="Member">
             <EntityTypeMapping TypeName="ShoppingCartModel.Member">
               <MappingFragment StoreEntitySet="Member">
+                <ScalarProperty Name="Password2" ColumnName="Password2" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="UserID" ColumnName="UserID" />
                 <ScalarProperty Name="Password" ColumnName="Password" />

@@ -19,6 +19,8 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Drawing.Drawing2D;
 using ImageMagick;
+using PagedList;
+using PagedList.Mvc;
 
 namespace ShoppingCar.Controllers
 {
@@ -28,10 +30,13 @@ namespace ShoppingCar.Controllers
         //dbShoppingCarEntities3 db = new dbShoppingCarEntities3();     //存取db
         ShoppingCartEntities db = new ShoppingCartEntities();
         private NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
-        public ActionResult Index()
-        {
-            var products = db.Product.ToList();
+        int pageSize = 9;
 
+        public ActionResult Index(int page=1)
+        {
+            int currentPage = page < 1 ? 1 : page;
+            var products = db.Product.ToList();
+            //var result = products.ToPagedList(currentPage, pageSize);
             if (Session["Member"] == null)
             {
                 Session["UserTag"]= "_Layout";

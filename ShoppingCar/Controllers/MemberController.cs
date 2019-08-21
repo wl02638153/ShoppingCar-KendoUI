@@ -49,6 +49,7 @@ namespace ShoppingCar.Controllers
         public ActionResult Logout()
         {
             Session.Clear();
+            TempData["LogoutMessage"] = "成功登出";
             return RedirectToAction("Index", "Home");
         }
 
@@ -72,7 +73,7 @@ namespace ShoppingCar.Controllers
                 db.SaveChanges();
                 return RedirectToAction("Login");
             }
-            ViewBag.Message = "此帳號已有人使用，註冊失敗";
+            ViewBag.RegisterMessage = "此帳號已有人使用，註冊失敗";
             return View();
         }
 

@@ -22,6 +22,7 @@ using ImageMagick;
 
 namespace ShoppingCar.Controllers
 {
+    [Filters.MemberFilter]
     public class Shopping_CarController : Controller
     {
         //dbShoppingCarEntities3 db = new dbShoppingCarEntities3();     //存取db localdb
@@ -34,7 +35,7 @@ namespace ShoppingCar.Controllers
         }
 
         [HttpPost]
-        [Filters.MemberFilter]
+        //[Filters.MemberFilter]
         public ActionResult ImportOrder(HttpPostedFileBase ImportOrder)
         {
             ExcelPackage ep = new ExcelPackage(ImportOrder.InputStream);
@@ -68,7 +69,7 @@ namespace ShoppingCar.Controllers
             return RedirectToAction("CheckCar");
         }
 
-        [Filters.MemberFilter]
+        //[Filters.MemberFilter]
         public ActionResult ShoppingCar()
         {
             string UserID = Session["Member"].ToString();
@@ -217,27 +218,46 @@ namespace ShoppingCar.Controllers
         public ActionResult Download_ALL_Order()
         {
             string UserID = Session["Member"].ToString();
-            var orders = db.OrderHeader.Where(m => m.UserID == UserID).ToList();
-            var orderDetails = db.OrderDetail.Where(m => m.OrderID !=null && m.Delete_Flag != true&&m.UserID==UserID).ToList();
-            var q = from od in orderDetails
-                    join os in orders on od.OrderID equals os.OrderID
-                    select new
-                    {
-                        OrderId = os.OrderID,
-                        Receiver = os.Receiver,
-                        Email = os.Email,
-                        Address = os.Address,
-                        ProductID = od.ProductID,
-                        ProductName = od.ProductName,
-                        UserID = od.UserID,
-                        ProductQty = od.ProductQty,
-                        TotalPrice = od.TotalPrice,
-                        Create_Date = od.Create_Date
-                    };
-            
+            //var orders = db.OrderHeader.Where(m => m.UserID == UserID).ToList();
+            //var orderDetails = db.OrderDetail.Where(m => m.OrderID !=null && m.Delete_Flag != true&&m.UserID==UserID).ToList();
+            //var q = from od in orderDetails
+            //        join os in orders on od.OrderID equals os.OrderID
+            //        select new
+            //        {
+            //            OrderId = os.OrderID,
+            //            Receiver = os.Receiver,
+            //            Email = os.Email,
+            //            Address = os.Address,
+            //            ProductID = od.ProductID,
+            //            ProductName = od.ProductName,
+            //            UserID = od.UserID,
+            //            ProductQty = od.ProductQty,
+            //            TotalPrice = od.TotalPrice,
+            //            Create_Date = od.Create_Date
+            //        };
+
+
+            var q = (from od in db.OrderDetail
+                     join os in db.OrderHeader on od.OrderID equals os.OrderID
+                     where od.OrderID==os.OrderID && od.UserID.Equals(UserID)  
+                     select new
+                     {
+                         OrderId = os.OrderID,
+                         Receiver = os.Receiver,
+                         Email = os.Email,
+                         Address = os.Address,
+                         ProductID = od.ProductID,
+                         ProductName = od.ProductName,
+                         UserID = od.UserID,
+                         ProductQty = od.ProductQty,
+                         TotalPrice = od.TotalPrice,
+                         Create_Date = od.Create_Date
+                     }).ToList();
+
             ExcelPackage ep = new ExcelPackage();
             ExcelWorksheet sheet = ep.Workbook.Worksheets.Add("FirstSheet");
-            string rng = "J" + (orderDetails.Count + 1 + 1);  //excel col    //array+1  orders+1
+            //string rng = "J" + (orderDetails.Count + 1 + 1);  //excel col    //array+1  orders+1
+            string rng = "J" + (q.Count + 1 + 1);  //excel col    //array+1  orders+1
             ExcelTableCollection tblcollection = sheet.Tables;
             ExcelTable table = tblcollection.Add(sheet.Cells["A1:" + rng], "Order");
 

@@ -6,9 +6,6 @@
 
 <h2>ProductList</h2>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
 <table class="table">
     <tr>
         <th>
@@ -86,7 +83,7 @@
         </td>
         <td>
             @Html.ActionLink("Edit", "ProductEdit", new { ProductID = item.ProductID })
-            @Html.ActionLink("Delete", "Delete", new { ProductID = item.ProductID })
+            @*@Html.ActionLink("Delete", "Delete", new { ProductID = item.ProductID })*@
         </td>
     </tr>
 }

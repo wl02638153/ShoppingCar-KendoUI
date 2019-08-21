@@ -24,6 +24,7 @@ using System.Data.Entity.Validation;
 
 namespace ShoppingCar.Controllers
 {
+    [Filters.MemberFilter]
     public class ProductController : Controller
     {
         //dbShoppingCarEntities3 db = new dbShoppingCarEntities3();     //存取db
@@ -88,10 +89,10 @@ namespace ShoppingCar.Controllers
                 //compress
                 using (ImageMagick.MagickImage oImage = new ImageMagick.MagickImage(path))
                 {
-                    oImage.Format = ImageMagick.MagickFormat.Jpg;
+                    oImage.Format = MagickFormat.Jpg;
                     oImage.ColorSpace = ImageMagick.ColorSpace.sRGB;  //色盤採用sRGB
                     oImage.Quality = 80;    //壓縮率
-                    oImage.Resize(200, 0);
+                    //oImage.Resize(200, 0);
                     oImage.Strip(); //去除圖片profile
                     oImage.Write(path);
                 }

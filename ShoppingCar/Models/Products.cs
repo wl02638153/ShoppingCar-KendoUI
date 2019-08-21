@@ -15,13 +15,26 @@ namespace ShoppingCar.Models
     {
         public int ID { get; set; }
         [DisplayName("產品編號")]
+        [Required(ErrorMessage = "產品編號不可空白")]
+        [DataType(DataType.Text, ErrorMessage = "請輸入文字格式")]
+        [StringLength(15, ErrorMessage = "帳號必須大於2個字元小於15個字元", MinimumLength = 2)]
         public string ProductID { get; set; }
+
         [DisplayName("產品名稱")]
+        [Required(ErrorMessage = "產品名稱不可空白")]
+        [DataType(DataType.Text, ErrorMessage = "請輸入文字格式")]
+        [StringLength(15, ErrorMessage = "帳號必須大於4個字元小於15個字元", MinimumLength = 2)]
         public string ProductName { get; set; }
+
         [DisplayName("產品說明")]
+        [DataType(DataType.Text,ErrorMessage ="請輸入文字格式")]
         public string ProductExplain { get; set; }
+
         [DisplayName("產品售價")]
+        [Required(ErrorMessage = "產品售價不可空白")]
+        [DataType(DataType.Currency)]
         public Nullable<decimal> ProductPrice { get; set; }
+
         [DisplayName("產品圖片")]
         public string ProductImg { get; set; }
         public Nullable<System.DateTime> Create_Date { get; set; }

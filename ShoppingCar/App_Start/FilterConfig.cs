@@ -10,6 +10,7 @@ namespace ShoppingCar
         {
             filters.Add(new HandleErrorAttribute());
             //filters.Add(new MyFilter());
+
         }
     }
 }

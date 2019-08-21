@@ -24,11 +24,14 @@
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
                 <input type="submit" value="登入" class="btn btn-default" />
-                <input type="button" value="註冊" class="btn btn-default" onclick="location.href='@Url.Action("Register","Home")'" />
+                <input type="button" value="註冊" class="btn btn-default" onclick="location.href='@Url.Action("Register","Member")'" />
                 <hr />
                 @ViewBag.Message
             </div>
         </div>
+        <p class="text-danger">管理員帳號可使用全部功能</p>
+        <p>帳號:Admin</p>
+        <p>密碼:Admin</p>
     </div>
 
 </form>
