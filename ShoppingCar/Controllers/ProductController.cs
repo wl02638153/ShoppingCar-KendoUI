@@ -153,7 +153,7 @@ namespace ShoppingCar.Controllers
                         var currentWorkSheet = workbook.Worksheets.First();
                         object colHeader = currentWorkSheet.Cells[2, 2].Value;
                         int col = 1;
-                        int row = 3;
+                        int row = 2;
                         foreach (var item in currentWorkSheet.Cells)
                         {
                             Product product = new Product();

@@ -1,5 +1,6 @@
-﻿@model IEnumerable<ShoppingCar.Models.OrderHeader>
-
+﻿@model IPagedList<ShoppingCar.Models.OrderHeader>
+@using PagedList
+@using PagedList.Mvc
 @{
     ViewBag.Title = "訂單列表";
 }
@@ -20,46 +21,49 @@
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.ID)
+            @Html.DisplayNameFor(model => model.FirstOrDefault().ID)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Receiver)
+            @Html.DisplayNameFor(model => model.FirstOrDefault().Receiver)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Email)
+            @Html.DisplayNameFor(model => model.FirstOrDefault().Email)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Address)
+            @Html.DisplayNameFor(model => model.FirstOrDefault().Address)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Create_Date)
+            @Html.DisplayNameFor(model => model.FirstOrDefault().Create_Date)
         </th>
         <th></th>
     </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.ID)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Receiver)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Email)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Address)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Create_Date)
-        </td>
-        <td>
-            @Html.ActionLink("Details", "OrderListDetail", new { OrderID = item.OrderID }) |
-            @Html.ActionLink("Delete", "DeleteOrder", new { OrderID = item.OrderID })  |
-            @Html.ActionLink("DownLoad Excel", "DownloadOrderExcel", new { OrderID = item.OrderID })
-        </td>
-    </tr>
-}
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.ID)
+
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Receiver)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Email)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Address)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Create_Date)
+            </td>
+            <td>
+                @Html.ActionLink("Details", "OrderListDetail", new { OrderID = item.OrderID }) |
+                @Html.ActionLink("Delete", "DeleteOrder", new { OrderID = item.OrderID })  |
+                @Html.ActionLink("DownLoad Excel", "DownloadOrderExcel", new { OrderID = item.OrderID })
+            </td>
+        </tr>
+    }
 
 </table>
+@Html.PagedListPager(Model, page => Url.Action("OrderList", new { page }))

@@ -37,7 +37,7 @@
 </script>
 <h2>產品列表</h2>
 <p>
-    @Html.ActionLink("下載產品Excel", "DownloadProductExcel2")
+    @Html.ActionLink("下載產品Excel", "DownloadProductExcel2", "Product")
 </p>
 <p>
     <a href="~/Excel/ExcelCreateOrderFormate.xlsx">下載訂單Excel格式</a>
@@ -56,7 +56,7 @@
 </form>
 <hr />
 <div class="row">
-    @foreach (var item in Model)
+    @foreach (var item in ViewBag.PageOfProduct)
     {
         <div class="col-lg-4">
             <div class="thumbnail">
@@ -95,5 +95,5 @@
             </div>
         </div>
     }
-    @*@Html.PagedListPager(Model, page => Url.Action("Index", new { page }))*@
+    @Html.PagedListPager((IPagedList)ViewBag.PageOfProduct, page => Url.Action("Index", new { page }))
 </div>

@@ -19,6 +19,8 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Drawing.Drawing2D;
 using ImageMagick;
+using PagedList;
+using PagedList.Mvc;
 
 namespace ShoppingCar.Controllers
 {
@@ -148,11 +150,14 @@ namespace ShoppingCar.Controllers
             return RedirectToAction("ShoppingCar", "Shopping_Car", orderDetailsNew);
         }
 
-        public ActionResult OrderList()
+        public ActionResult OrderList(int page = 1)
         {
+            int pageSize = 5;
+            int currentPage = page < 1 ? 1 : page;
             string UserID = Session["Member"].ToString();
             var orders = db.OrderHeader.Where(m => m.UserID == UserID && m.Delete_Flag != true).OrderByDescending(m => m.Create_Date).ToList();  //取出order依照create date排序
-            return View("OrderList", Session["UserTag"].ToString(), orders);
+            ViewBag.PageOfOrder= orders.ToPagedList(currentPage, pageSize);
+            return View("OrderList", Session["UserTag"].ToString(), ViewBag.PageOfOrder);
         }
 
         public ActionResult OrderListDetail(string OrderID)
