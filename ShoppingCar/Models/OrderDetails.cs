@@ -41,6 +41,7 @@ namespace ShoppingCar.Models
 
         public Nullable<bool> Delete_Flag { get; set; }
 
+        //[DisplayName("選擇商品")]
         public bool Approved_Flag { get; set; }
 
         public virtual OrderHeader OrderHeader { get; set; }

@@ -12,9 +12,9 @@
         <th>
             @Html.DisplayNameFor(model => model.ID)
         </th>
-        <th>
+        @*<th>
             @Html.DisplayNameFor(model => model.Password)
-        </th>
+        </th>*@
         <th>
             @Html.DisplayNameFor(model => model.MemberName)
         </th>
@@ -27,15 +27,6 @@
         <th>
             @Html.DisplayNameFor(model => model.Create_Date)
         </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Modify_Date)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Delete_Date)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Delete_Flag)
-        </th>
         <th></th>
     </tr>
 
@@ -44,9 +35,9 @@
         <td>
             @Html.DisplayFor(modelItem => item.ID)
         </td>
-        <td>
+        @*<td>
             @Html.DisplayFor(modelItem => item.Password)
-        </td>
+        </td>*@
         <td>
             @Html.DisplayFor(modelItem => item.MemberName)
         </td>
@@ -58,15 +49,6 @@
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.Create_Date)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Modify_Date)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Delete_Date)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Delete_Flag)
         </td>
         <td>
             @*@Html.ActionLink("Details", "Details", new { id=item.UserID })*@

@@ -1,62 +1,71 @@
 ﻿@model ShoppingCar.Models.OrderDetailList
-@{
-                /**/
 
-                ViewBag.Title = "購物車";
+@{
+    /**/
+
+    ViewBag.Title = "購物車";
 }
 <h2>購物車</h2>
 
+@if (ViewBag.CheckCarMessage != null)
+{
+    <script type="text/javascript">
+            window.onload = function () {
+                alert("@ViewBag.CheckCarMessage");
+            };
+    </script>
+}
 @using (Html.BeginForm())
 {
     <table class="table form-group" id="list">
         <tr>
             <th>
-                UserID@*Html.DisplayNameFor(model => model.UserID)*@
+                會員ID@*@Html.DisplayNameFor(model => model.Product.UesrID)*@
             </th>
             <th>
-                ProductName@*Html.DisplayNameFor(model => model.Product.ProductName)*@
+                產品名稱@*@Html.DisplayNameFor(model => model.Product.ProductName)*@
             </th>
             <th>
-                ProductQty@*Html.DisplayNameFor(model => model.ProductQty)*@
+                數量@*@Html.DisplayNameFor(model => model.ProductQty)*@
             </th>
             <th>
-                Price@*Html.DisplayNameFor(model => model.TotalPrice)*@
+                價錢@*@Html.DisplayNameFor(model => model.TotalPrice)*@
             </th>
             <th>
-                Create_Date@*Html.DisplayNameFor(model => model.Create_Date)*@
+                下訂日期@*@Html.DisplayNameFor(model => model.Create_Date)*@
             </th>
             <th>
-                Approved_Flag@*Html.DisplayNameFor(model => model.Approved_Flag)*@
+                選擇商品@*@Html.DisplayNameFor(model => model.Approved_Flag)*@
             </th>
             <th></th>
         </tr>
 
-        @for(int i=0;i<Model.OrderDetails.Count; i++)
+        @for (int i = 0; i < Model.OrderDetails.Count; i++)
         {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => modelItem.OrderDetails[i].UserID)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => modelItem.OrderDetails[i].ProductName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => modelItem.OrderDetails[i].ProductQty)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => modelItem.OrderDetails[i].TotalPrice)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => modelItem.OrderDetails[i].Create_Date)
-            </td>
-            <td>
-                @Html.CheckBoxFor(modelItem => modelItem.OrderDetails[i].Approved_Flag)
-                @Html.HiddenFor(modelItem => modelItem.OrderDetails[i].OrderDetailID)
-            </td>
-            <td>
-                <a href="@Url.Action("DeleteCar")?OrderDetailID=@Model.OrderDetails[i].OrderDetailID" class="btn btn-danger">刪除</a>
-            </td>
-        </tr>
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => modelItem.OrderDetails[i].UserID)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => modelItem.OrderDetails[i].ProductName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => modelItem.OrderDetails[i].ProductQty)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => modelItem.OrderDetails[i].TotalPrice)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => modelItem.OrderDetails[i].Create_Date)
+                </td>
+                <td>
+                    @Html.CheckBoxFor(modelItem => modelItem.OrderDetails[i].Approved_Flag)
+                    @Html.HiddenFor(modelItem => modelItem.OrderDetails[i].OrderDetailID)
+                </td>
+                <td>
+                    <a href="@Url.Action("DeleteCar")?OrderDetailID=@Model.OrderDetails[i].OrderDetailID" class="btn btn-danger">刪除</a>
+                </td>
+            </tr>
         }
 
     </table>
@@ -65,7 +74,7 @@
         <div class="form-group">
             <span class="control-label col-md-2">商品小計</span>
             <div class="col-md-10">
-                <input type="number" step="0.01" id="TotalPrice" name="TotalPrice" class="form-control" readonly value="0"/>
+                <input type="number" step="0.01" id="TotalPrice" name="TotalPrice" class="form-control" readonly value="0" />
             </div>
         </div>
         <div class="form-group">

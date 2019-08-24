@@ -36,7 +36,7 @@ namespace ShoppingCar.Controllers
         {
             int currentPage = page < 1 ? 1 : page;
             var products = db.Product.ToList();
-            //var result = products.ToPagedList(currentPage, pageSize);
+            ViewBag.PageOfProduct = products.ToPagedList(currentPage, pageSize);
             if (Session["Member"] == null)
             {
                 Session["UserTag"]= "_Layout";
@@ -48,7 +48,7 @@ namespace ShoppingCar.Controllers
                 return View("Index", Session["UserTag"].ToString(), products);
             }
             Session["UserTag"] = "_LayoutMember";
-            return View("Index", Session["UserTag"].ToString(), products);
+            return View("Index", Session["UserTag"].ToString());
         }
 
         

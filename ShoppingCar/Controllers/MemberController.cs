@@ -76,7 +76,7 @@ namespace ShoppingCar.Controllers
             ViewBag.RegisterMessage = "此帳號已有人使用，註冊失敗";
             return View();
         }
-
+        [Filters.MemberFilter]
         public ActionResult MemberList()
         {
             var member = db.Member.ToList();

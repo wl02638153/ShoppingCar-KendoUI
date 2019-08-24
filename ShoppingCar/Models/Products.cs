@@ -17,13 +17,13 @@ namespace ShoppingCar.Models
         [DisplayName("產品編號")]
         [Required(ErrorMessage = "產品編號不可空白")]
         [DataType(DataType.Text, ErrorMessage = "請輸入文字格式")]
-        [StringLength(15, ErrorMessage = "帳號必須大於2個字元小於15個字元", MinimumLength = 2)]
+        [StringLength(15, ErrorMessage = "產品編號必須大於2個字元小於15個字元", MinimumLength = 2)]
         public string ProductID { get; set; }
 
         [DisplayName("產品名稱")]
         [Required(ErrorMessage = "產品名稱不可空白")]
         [DataType(DataType.Text, ErrorMessage = "請輸入文字格式")]
-        [StringLength(15, ErrorMessage = "帳號必須大於4個字元小於15個字元", MinimumLength = 2)]
+        [StringLength(15, ErrorMessage = "產品名稱必須大於2個字元小於15個字元", MinimumLength = 2)]
         public string ProductName { get; set; }
 
         [DisplayName("產品說明")]
@@ -41,6 +41,7 @@ namespace ShoppingCar.Models
         public Nullable<System.DateTime> Delete_Date { get; set; }
         public Nullable<bool> Delete_Flag { get; set; }
         public Nullable<System.DateTime> Modify_Date { get; set; }
+        [DisplayName("產品圖片")]
         public byte[] ProductImg_DB { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

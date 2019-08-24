@@ -25,6 +25,9 @@
             return false;
         }
     }
+    function buttonShow() {
+        $("#ImportFileSubmit").show();
+    }
 </script>
 
 <h2>CreateProduct</h2>
@@ -50,14 +53,22 @@
             };
         </script>
     }
+    @if (ViewBag.ExcelResultErrorMessage != null)
+    {
+        <script type="text/javascript">
+            window.onload = function () {
+                alert("@ViewBag.ExcelResultErrorMessage");
+            };
+        </script>
+    }
     <label class="btn btn-default">透過Excel新增產品</label>
-    <input id="ImportFile" name="ImportFile" type="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+    <input id="ImportFile" name="ImportFile" type="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" onchange="buttonShow()">
     <p></p>
     <div class="form-group">
         <div class="">
-            <input type="submit" value="匯入" class="btn btn-default" />
+            <input type="submit" id="ImportFileSubmit" value="匯入" class="btn btn-default" style="display:none" />
         </div>
-        @Html.Raw(ViewBag.ExcelResultErrorMessage)
+        @Html.Raw(ViewBag.ExcelResultMessage)
     </div>
 </form>
 <hr />
@@ -134,9 +145,6 @@
     </div>
 }
 
-<div>
-    @Html.ActionLink("Back to List", "Index")
-</div>
 <script>
     (function ($) {
         var compressRatio = 0.5, // 圖片壓縮比例

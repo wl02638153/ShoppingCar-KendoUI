@@ -19,6 +19,8 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Drawing.Drawing2D;
 using ImageMagick;
+using PagedList;
+using PagedList.Mvc;
 
 namespace ShoppingCar.Controllers
 {
@@ -38,35 +40,47 @@ namespace ShoppingCar.Controllers
         //[Filters.MemberFilter]
         public ActionResult ImportOrder(HttpPostedFileBase ImportOrder)
         {
-            ExcelPackage ep = new ExcelPackage(ImportOrder.InputStream);
-            var workbook = ep.Workbook;
-            if (workbook != null)
+            FileUploadValidate fs = new FileUploadValidate();
+            fs.filesize = 550;
+            string message = "";
+            if (fs.UploadUserFile(ImportOrder))
             {
-                if (workbook.Worksheets.Count > 0)
+                ExcelPackage ep = new ExcelPackage(ImportOrder.InputStream);
+                var workbook = ep.Workbook;
+                if (workbook != null)
                 {
-                    var currentWorkSheet = workbook.Worksheets.First();
-
-                    int col = 1;
-                    int row = 2;
-                    foreach (var item in currentWorkSheet.Cells)
+                    if (workbook.Worksheets.Count > 0)
                     {
-                        if (currentWorkSheet.Cells[row, col].Value != null)
-                        {
-                            string ProductID = currentWorkSheet.Cells[row, col].Value.ToString();
+                        var currentWorkSheet = workbook.Worksheets.First();
 
-                            Add_car(ProductID);
-                            row++;
-
-                        }
-                        else
+                        int col = 1;
+                        int row = 2;
+                        foreach (var item in currentWorkSheet.Cells)
                         {
-                            break;
+                            if (currentWorkSheet.Cells[row, col].Value != null)
+                            {
+                                string ProductID = currentWorkSheet.Cells[row, col].Value.ToString();
+
+                                Add_car(ProductID);
+                                row++;
+
+                            }
+                            else
+                            {
+                                break;
+                            }
+                            //db.SaveChanges();
                         }
-                        //db.SaveChanges();
                     }
                 }
+                return RedirectToAction("CheckCar");
             }
-            return RedirectToAction("CheckCar");
+            else
+            {
+                //ViewBag.ExcelResultErrorMessage = fs.ErrorMessage;
+                TempData["ExcelResultErrorMessage"] = fs.ErrorMessage;
+                return RedirectToAction("Index","Home");
+            }
         }
 
         //[Filters.MemberFilter]
@@ -116,43 +130,47 @@ namespace ShoppingCar.Controllers
         {
             string UserID = Session["Member"].ToString();
             var orderDetails = db.OrderDetail.Where(m => m.UserID == UserID && m.Approved_Flag == false).ToList<OrderDetail>();
-            var selected = list.OrderDetails.ToList<OrderDetail>();
-            /*var q = from od in orderDetails
-                    join s in selected on od.OrderDetailID equals s.OrderDetailID into check
-                    select new
+            var selected = list.OrderDetails.Where(m=>m.Approved_Flag==true).ToList<OrderDetail>();
+            var str = selected.Count;
+            if (selected.Count > 0)
+            {
+                foreach (var item in selected)
+                {
+                    var check = db.OrderDetail.Where(m => m.OrderDetailID == item.OrderDetailID).FirstOrDefault();
+                    if (item.Approved_Flag == true)
                     {
-                        od.Approved_Flag
-                    };
-            foreach(var item in q)
-            {
-                item.Approved_Flag = true;
-            }*/
+                        check.Approved_Flag = true;
+                    }
+                    else if (item.Approved_Flag == false)
+                    {
+                        check.Approved_Flag = false;
+                    }
 
-            foreach (var item in selected)
-            {
-                var check = db.OrderDetail.Where(m => m.OrderDetailID == item.OrderDetailID).FirstOrDefault();
-                if (item.Approved_Flag == true)
-                {
-                    check.Approved_Flag = true;
                 }
-                else if (item.Approved_Flag == false)
-                {
-                    check.Approved_Flag = false;
-                }
+                db.SaveChanges();
 
+                var orderDetailsNew = db.OrderDetail.Where(m => m.UserID == UserID && m.Approved_Flag == true && m.Delete_Flag != true && m.OrderID == null).ToList();
+                //return View("ShoppingCar", "_LayoutMember", orderDetailsNew);
+                return RedirectToAction("ShoppingCar", "Shopping_Car", orderDetailsNew);
             }
-            db.SaveChanges();
-
-            var orderDetailsNew = db.OrderDetail.Where(m => m.UserID == UserID && m.Approved_Flag == true && m.Delete_Flag != true && m.OrderID == null).ToList();
-            //return View("ShoppingCar", "_LayoutMember", orderDetailsNew);
-            return RedirectToAction("ShoppingCar", "Shopping_Car", orderDetailsNew);
+            else
+            {
+                ViewBag.CheckCarMessage = "請選擇商品";
+                OrderDetailList detailList = new OrderDetailList();
+                detailList.OrderDetails = db.OrderDetail.Where(m => m.UserID == UserID && m.OrderID == null).ToList<OrderDetail>();
+                return View("CheckCar", Session["UserTag"].ToString(), detailList);
+            }
+            
         }
 
-        public ActionResult OrderList()
+        public ActionResult OrderList(int page = 1)
         {
+            int pageSize = 5;
+            int currentPage = page < 1 ? 1 : page;
             string UserID = Session["Member"].ToString();
             var orders = db.OrderHeader.Where(m => m.UserID == UserID && m.Delete_Flag != true).OrderByDescending(m => m.Create_Date).ToList();  //取出order依照create date排序
-            return View("OrderList", Session["UserTag"].ToString(), orders);
+            ViewBag.PageOfOrder= orders.ToPagedList(currentPage, pageSize);
+            return View("OrderList", Session["UserTag"].ToString(), ViewBag.PageOfOrder);
         }
 
         public ActionResult OrderListDetail(string OrderID)
@@ -303,7 +321,6 @@ namespace ShoppingCar.Controllers
             return File(ms, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", filename);
         }
         
-
         public ActionResult AddCar(string ProductID)
         {
             string UserID = Session["Member"].ToString();

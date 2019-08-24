@@ -72,7 +72,6 @@ namespace ShoppingCar.Controllers
         [CreateProductFilter]
         public ActionResult CreateProduct(HttpPostedFileBase ImgFile, Product cProduct, string base64str)
         {
-
             if (ImgFile != null && ImgFile.ContentLength > 0)
             {
                 //local
@@ -139,11 +138,12 @@ namespace ShoppingCar.Controllers
             //check file format
             FileUploadValidate fs = new FileUploadValidate();
             fs.filesize = 550;
-            string us = fs.UploadUserFile(ImportFile);
+
+            //string us = fs.UploadUserFile(ImportFile);
             string message = "";
-            if (us != null)
+            //message += fs.ErrorMessage;
+            if (fs.UploadUserFile(ImportFile))  //判斷檔案是否合法
             {
-                message += fs.ErrorMessage;
                 ExcelPackage ep = new ExcelPackage(ImportFile.InputStream);
                 var workbook = ep.Workbook;
                 if (workbook != null)
@@ -153,12 +153,13 @@ namespace ShoppingCar.Controllers
                         var currentWorkSheet = workbook.Worksheets.First();
                         object colHeader = currentWorkSheet.Cells[2, 2].Value;
                         int col = 1;
-                        int row = 3;
+                        int row = 2;
                         foreach (var item in currentWorkSheet.Cells)
                         {
                             Product product = new Product();
                             if (currentWorkSheet.Cells[row, col].Value != null)
                             {
+
                                 product.ProductID = currentWorkSheet.Cells[row, col++].Value.ToString();
                                 product.ProductName = currentWorkSheet.Cells[row, col++].Value.ToString();
                                 product.ProductExplain = currentWorkSheet.Cells[row, col++].Value.ToString();
@@ -185,20 +186,30 @@ namespace ShoppingCar.Controllers
                                 {
                                     db.Product.Add(product);
                                     db.SaveChanges();
-                                    message += "<p>" + product.ProductID+ "上傳成功<p/>";
+                                    message += "<p>" + product.ProductID + "上傳成功<p/>";
                                 }
                                 catch (Exception ex)
                                 {
                                     logger.Error(ex.Message);
-                                    ViewBag.ExcelResultErrorMessage = ex.Message;
+                                    ViewBag.ExcelResultErrorMessage = "請確認資料格式是否正確";
+                                    message+= "<p>1.產品編號必須大於2個字元小於15個字元 <p/>";
+                                    message+= "<p>2.產品名稱必須大於4個字元小於15個字元 <p/>";
+                                    message+= "<p>3.產品售價不可空白 <p/>";
+                                    ViewBag.ExcelResultMessage = message;
                                     return View("CreateProduct", Session["UserTag"].ToString());
                                 }
                             }
+                            
                         }
-                        ViewBag.ExcelResultErrorMessage = message;
+                        ViewBag.ExcelResultMessage = message;
                     }
                 }
             }
+            else
+            {
+                ViewBag.ExcelResultErrorMessage = fs.ErrorMessage;
+            }
+ 
             return View("CreateProduct", Session["UserTag"].ToString());
         }
         

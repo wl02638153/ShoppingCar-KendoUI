@@ -24,6 +24,14 @@
                 alert(message);
         </script>
     }
+    @if (TempData["ExcelResultErrorMessage"] != null)
+    {
+        <script type="text/javascript">
+            window.onload = function () {
+                alert("@TempData["ExcelResultErrorMessage"]");
+            };
+        </script>
+    }
 </head>
 <script>
     function Confirm_insert() {
@@ -34,29 +42,33 @@
             return false;
         }
     }
+    function buttonShow() {
+        $("#ImportOrderSubmit").show();
+    }
+
 </script>
 <h2>產品列表</h2>
 <p>
-    @Html.ActionLink("下載產品Excel", "DownloadProductExcel2")
+    @Html.ActionLink("下載產品Excel", "DownloadProductExcel2", "Product")
 </p>
 <p>
     <a href="~/Excel/ExcelCreateOrderFormate.xlsx">下載訂單Excel格式</a>
 </p>
 <hr />
-<form method="post" action="/Shopping_Car/ImportOrder" enctype="multipart/form-data">
-    @*<label class="btn btn-default"><input id="ImportOrder" name="ImportOrder" style="display:none;" type="file"> 透過Excel新增購物車</label>*@
+<form method="post" action="~/Shopping_Car/ImportOrder" enctype="multipart/form-data">
     <label class="btn btn-default">透過Excel新增購物車</label>
-    <input id="ImportOrder" name="ImportOrder" type="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+    <input id="ImportOrder" name="ImportOrder" type="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" onchange="buttonShow()">
     <p></p>
     <div class="form-group">
         <div class="">
-            <input type="submit" value="匯入" class="btn btn-default" />
+            <input type="submit" id="ImportOrderSubmit" value="匯入" class="btn btn-default" style="display:none" />
         </div>
     </div>
+    <p>@ViewBag.ExcelResultErrorMessage</p>
 </form>
 <hr />
 <div class="row">
-    @foreach (var item in Model)
+    @foreach (var item in ViewBag.PageOfProduct)
     {
         <div class="col-lg-4">
             <div class="thumbnail">
@@ -88,12 +100,12 @@
                     else
                     {
                         <p>
-                            <a href="@Url.Action("AddCar","Shopping_Car")?ProductID=@item.ProductID" class="btn btn-primary" onclick="return confirm('確定要加入購物車嗎?')">加入購物車</a>
+                            <a href="@Url.Action("AddCar", "Shopping_Car")?ProductID=@item.ProductID" class="btn btn-primary" onclick="return confirm('確定要加入購物車嗎?')">加入購物車</a>
                         </p>
                     }
                 </div>
             </div>
         </div>
     }
-    @*@Html.PagedListPager(Model, page => Url.Action("Index", new { page }))*@
 </div>
+@Html.PagedListPager((IPagedList)ViewBag.PageOfProduct, page => Url.Action("Index", new { page }))

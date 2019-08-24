@@ -11,7 +11,7 @@ namespace ShoppingCar.Models
     {
         public string ErrorMessage { get; set; }
         public decimal filesize { get; set; }
-        public string UploadUserFile(HttpPostedFileBase file)
+        public bool UploadUserFile(HttpPostedFileBase file)
         {
             try
             {
@@ -20,23 +20,23 @@ namespace ShoppingCar.Models
                 if (!supportedTypes.Contains(fileExt))
                 {
                     ErrorMessage = "只允許 EXCEL 檔案";
-                    return ErrorMessage;
+                    return false;
                 }
                 else if (file.ContentLength > (filesize * 1024))
                 {
                     ErrorMessage = "檔案限制最高 " + filesize + "KB";
-                    return ErrorMessage;
+                    return false;
                 }
                 else
                 {
                     ErrorMessage = "";//檔案合法
-                    return ErrorMessage;
+                    return true;
                 }
             }
             catch (Exception ex)
             {
                 ErrorMessage = "檔案不能為空的";
-                return ErrorMessage;
+                return false;
             }
         }
     }
