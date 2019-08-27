@@ -94,7 +94,7 @@
     </div>
 </form>
 <hr />
-@using (Html.BeginForm("CreateProduct", "Product", FormMethod.Post, new { enctype = "multipart/form-data", onsubmit = "return Confirm_custom('確定要新增嗎?')" }))
+@using (Html.BeginForm("CreateProduct", "Product", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
     @Html.AntiForgeryToken()
 
@@ -122,7 +122,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.ProductExplain, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.ProductExplain, new { htmlAttributes = new { @class = "form-control", required = "required" } })
+                @Html.TextAreaFor(model => model.ProductExplain, new { htmlAttributes = new { @class = "form-control",cols="37",rows="10" } })
                 @Html.ValidationMessageFor(model => model.ProductExplain, "", new { @class = "text-danger" })
             </div>
         </div>

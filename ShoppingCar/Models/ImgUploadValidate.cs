@@ -34,6 +34,7 @@ namespace ShoppingCar.Models
             catch (Exception ex)
             {
                 ErrorMessage = "檔案不能為空的";
+                //ErrorMessage = ex.Message;
                 return false;
             }
         }

@@ -5,98 +5,133 @@
 }
 <head>
     <script src="~/Scripts/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" src="~/Scripts/jquery.blockUI.js"></script>
     <script src="~/Scripts/bootstrap.min.js"></script>
 </head>
 <h2>ProductEdit</h2>
+@if (ViewBag.EditImgValidate != null)
+{
+    <script type="text/javascript">
+            window.onload = function () {
+                alert("@ViewBag.EditImgValidate");
+            };
+    </script>
+}
 <script>
-    function Confirm_insert() {
-        if (confirm("確定要更新嗎?")) {
+    function Confirm_custom(str) {
+        if (confirm(str)) {
+            onSubmitBlock();
             return true;
         }
         else {
             return false;
         }
     }
+    function onSubmitBlock() {
+        $.blockUI({
+            message: "請稍等..."
+        });
+    }
+    function readURL(input) {   
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                $("#Img").attr("src", e.target.result);
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
 </script>
-@using (Html.BeginForm("ProductEdit", "Product", FormMethod.Post, new { enctype = "multipart/form-data",onsubmit= "Confirm_insert()" }))
+
+@using (Html.BeginForm("ProductEdit", "Product", FormMethod.Post, new { enctype = "multipart/form-data", onsubmit = "return Confirm_custom('確定要更新嗎?')" }))
 {
     @Html.AntiForgeryToken()
-    
-<div class="form-horizontal">
-    <h4>Product</h4>
-    <hr />
-    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
-    @Html.HiddenFor(model => model.ProductID)
-    <div class="form-group">
-        @Html.LabelFor(model => model.ProductID, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.EditorFor(model => model.ProductID, new { htmlAttributes = new { @class = "form-control",disabled= "disabled" } })
-            @Html.ValidationMessageFor(model => model.ProductID, "", new { @class = "text-danger" })
-        </div>
-    </div>
-    <div class="form-group">
-        @Html.LabelFor(model => model.ProductName, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.EditorFor(model => model.ProductName, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.ProductName, "", new { @class = "text-danger" })
-        </div>
-    </div>
+    <div class="form-horizontal">
+        <h4>Product</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
-    <div class="form-group">
-        @Html.LabelFor(model => model.ProductExplain, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @*@Html.EditorFor(model => model.ProductExplain, new { htmlAttributes = new { @class = "form-control" } })*@
-            <style>
-                textarea {
-                    resize: none;
-                }
-            </style>
-            @Html.TextArea("ProductExplain", Model.ProductExplain, new { @class = "form-controll", cols = "37", rows = "10" })
-            @Html.ValidationMessageFor(model => model.ProductExplain, "", new { @class = "text-danger" })
-        </div>
-    </div>
-
-    <div class="form-group">
-        @Html.LabelFor(model => model.ProductPrice, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.EditorFor(model => model.ProductPrice, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.ProductPrice, "", new { @class = "text-danger" })
-        </div>
-    </div>
-
-    <div class="form-group">
-        <div class="editor-field">
-            @Html.LabelFor(model => model.ProductImg_DB, htmlAttributes: new { @class = "control-label col-md-2" })
+        @Html.HiddenFor(model => model.ProductID)
+        <div class="form-group">
+            @Html.LabelFor(model => model.ProductID, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @*Html.EditorFor(model => model.ProductImg_DB, new { htmlAttributes = new { @class = "form-control" } })*@
-                @{
-                    byte[] img = Model.ProductImg_DB;
+                @Html.EditorFor(model => model.ProductID, new { htmlAttributes = new { @class = "form-control", disabled = "disabled" } })
+                @Html.ValidationMessageFor(model => model.ProductID, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.ProductName, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.ProductName, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.ProductName, "", new { @class = "text-danger" })
+            </div>
+        </div>
 
-                    var base64 = Convert.ToBase64String(img);
-                    string imageDate = String.Format("data: image / gif;base64,{0}", base64);
-                }
-                <label class="btn btn-info"><input id="upload_img" style="display:none;" type="file"><i class="fa fa-photo"></i> 上傳圖片</label>
-                <input type="hidden" id="base64str" name="base64str" value="">
-                <hr />
-                <img src="@imageDate" />
-                <hr />
-                <div id="oldImg"></div>
-                <hr />
-                <div id="newImg"></div>
-                <hr />
-                <div id="tinyImg"></div>
-                @Html.ValidationMessageFor(model => model.ProductImg_DB, "", new { @class = "text-danger" })
+        <div class="form-group">
+            @Html.LabelFor(model => model.ProductExplain, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @*@Html.EditorFor(model => model.ProductExplain, new { htmlAttributes = new { @class = "form-control" } })*@
+                <style>
+                    textarea {
+                        resize: none;
+                    }
+                </style>
+                @Html.TextAreaFor(model => model.ProductExplain, new { @class = "form-controll", cols = "37", rows = "10" })
+                @Html.ValidationMessageFor(model => model.ProductExplain, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.ProductPrice, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.ProductPrice, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.ProductPrice, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="editor-field">
+                @Html.LabelFor(model => model.ProductImg_DB, htmlAttributes: new { @class = "control-label col-md-2" })
+                <input type="file" name="ImgFile" id="ImgFile" accept="image/*" onchange="readURL(this)" />
+                <div class="col-md-10">
+                    @{
+                        //byte[] img = Model.ProductImg_DB;
+
+                        //var base64 = Convert.ToBase64String(img);
+                        //string imageDate = String.Format("data: image / gif;base64,{0}", base64);
+
+                        if (Model.ProductImg != null)
+                        {
+                            <img id="Img" src="@Url.Content(Model.ProductImg)?w=200&h=200&mode=cropyunits " />
+                        }
+                        else
+                        {
+                            <img id="Img" src="~/Image/notImg_.jpg?w=200&h=200&mode=cropyunits" />
+                        }
+                    }
+                    @*<label class="btn btn-info"><input id="upload_img" style="display:none;" type="file"><i class="fa fa-photo"></i> 上傳圖片</label>
+                        <input type="hidden" id="base64str" name="base64str" value="">
+                        <hr />
+                        <img src="@imageDate" />
+                        <hr />
+                        <div id="oldImg"></div>
+                        <hr />
+                        <div id="newImg"></div>
+                        <hr />
+                        <div id="tinyImg"></div>*@
+                    @Html.ValidationMessageFor(model => model.ProductImg_DB, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="儲存" class="btn btn-default"/>
             </div>
         </div>
     </div>
-
-    <div class="form-group">
-        <div class="col-md-offset-2 col-md-10">
-            <input type="submit" value="Save" class="btn btn-default" />
-        </div>
-    </div>
-</div>
 }
 
 <script>
@@ -129,10 +164,10 @@
         img.onload = function () {
             var width = this.width, // 圖片原始寬度
                 height = this.height, // 圖片原始高度
-                imgNewWidth=width,
+                imgNewWidth = width,
                 imgNewHeight = imgNewWidth * height / width, // 圖片新高度
                 html = "",
-                newImg,tinyImg;
+                newImg, tinyImg;
 
             // 顯示預覽圖片
             html += "<img src='" + dataUrl + "'/>";
