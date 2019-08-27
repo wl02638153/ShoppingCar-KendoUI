@@ -35,7 +35,7 @@ namespace ShoppingCar.Controllers
         public ActionResult Index(int page=1)
         {
             int currentPage = page < 1 ? 1 : page;
-            var products = db.Product.ToList();
+            var products = db.Product.Where(m => m.Delete_Flag == false).OrderByDescending(m => m.Create_Date).ToList();
             ViewBag.PageOfProduct = products.ToPagedList(currentPage, pageSize);
             if (Session["Member"] == null)
             {
@@ -48,7 +48,7 @@ namespace ShoppingCar.Controllers
                 return View("Index", Session["UserTag"].ToString(), products);
             }
             Session["UserTag"] = "_LayoutMember";
-            return View("Index", Session["UserTag"].ToString());
+            return View("Index", Session["UserTag"].ToString(), products);
         }
 
         

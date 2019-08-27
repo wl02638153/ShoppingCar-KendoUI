@@ -50,7 +50,8 @@
                     @Html.DisplayFor(modelItem => modelItem.OrderDetails[i].ProductName)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => modelItem.OrderDetails[i].ProductQty)
+                    <input id="ProductQty" type="number" class="form-control" value="@Html.DisplayFor(modelItem => modelItem.OrderDetails[i].ProductQty)" />
+                    
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => modelItem.OrderDetails[i].TotalPrice)

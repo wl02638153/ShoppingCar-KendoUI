@@ -9,6 +9,8 @@
 }
 <head>
     <script src="@Url.Content("~/Scripts/jquery-3.3.1.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/jquery.blockUI.js")" type="text/javascript"></script>
+    
     <link href="~/Content/PagedList.css" rel="stylesheet" />
     @if (TempData["LoginMessage"] != null)
     {
@@ -45,7 +47,6 @@
     function buttonShow() {
         $("#ImportOrderSubmit").show();
     }
-
 </script>
 <h2>產品列表</h2>
 <p>

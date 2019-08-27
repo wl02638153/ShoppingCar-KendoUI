@@ -3,7 +3,27 @@
 @{
     ViewBag.Title = "ProductList";
 }
-
+<head>
+    <script src="~/Scripts/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" src="~/Scripts/jquery.blockUI.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+</head>
+<script>
+    function Confirm_custom(str) {
+        if (confirm(str)) {
+            onSubmitBlock();
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    function onSubmitBlock() {
+        $.blockUI({
+            message: "請稍等..."
+        });
+    }
+</script>
 <h2>ProductList</h2>
 
 <table class="table">
@@ -52,7 +72,13 @@
             @Html.DisplayFor(modelItem => item.ProductName)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.ProductExplain)
+            @*@Html.DisplayFor(modelItem => item.ProductExplain)*@
+            <style>
+                textarea {
+                    resize: none;
+                }
+            </style>
+            @Html.TextArea("ProductExplain", item.ProductExplain, new { @class="form-controll", cols = "35", rows = "5", disabled = "disabled" })
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.ProductPrice)
@@ -65,7 +91,7 @@
         </td>
         <td>
             @Html.ActionLink("Edit", "ProductEdit", new { ProductID = item.ProductID })
-            @*@Html.ActionLink("Delete", "Delete", new { ProductID = item.ProductID })*@
+            @Html.ActionLink("Delete", "DeleteProduct", new {ProductID = item.ProductID },new { onclick = "return Confirm_custom('確定要刪除嗎?')" })
         </td>
     </tr>
 }

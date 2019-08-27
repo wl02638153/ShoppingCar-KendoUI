@@ -72,63 +72,75 @@ namespace ShoppingCar.Controllers
         [CreateProductFilter]
         public ActionResult CreateProduct(HttpPostedFileBase ImgFile, Product cProduct, string base64str)
         {
-            if (ImgFile != null && ImgFile.ContentLength > 0)
-            {
-                //local
-                string str = "";
-                string type = ImgFile.ContentType;
-                if (ImgFile.ContentType == "image/jpg") str = ".jpg";
-                else if (ImgFile.ContentType == "image/jpeg") str = ".jpeg";
-                else if (ImgFile.ContentType == "image/png") str = ".png";
-                string fileName = cProduct.ProductID + str;
-                var path = Path.Combine(Server.MapPath("~/Image"), fileName);
-                ImgFile.SaveAs(path);
-                cProduct.ProductImg = "~/Image/" + fileName;
+            //if (ImgFile != null && ImgFile.ContentLength > 0)
+            //{
+                //驗證檔案
+                ImgUploadValidate ImgV = new ImgUploadValidate();
+                ImgV.filesize = 2000;//限制2mb
+                if (ImgV.UploadUserFile(ImgFile))
+                {
+                    //local
+                    string str = "";
+                    string type = ImgFile.ContentType;
+                    if (ImgFile.ContentType == "image/jpg") str = ".jpg";
+                    else if (ImgFile.ContentType == "image/jpeg") str = ".jpeg";
+                    else if (ImgFile.ContentType == "image/png") str = ".png";
+                    string fileName = cProduct.ProductID + str;
+                    var path = Path.Combine(Server.MapPath("~/Image"), fileName);
+                    ImgFile.SaveAs(path);
+                    cProduct.ProductImg = "~/Image/" + fileName;
 
-                //compress
-                using (ImageMagick.MagickImage oImage = new ImageMagick.MagickImage(path))
-                {
-                    oImage.Format = MagickFormat.Jpg;
-                    oImage.ColorSpace = ImageMagick.ColorSpace.sRGB;  //色盤採用sRGB
-                    oImage.Quality = 80;    //壓縮率
-                    //oImage.Resize(200, 0);
-                    oImage.Strip(); //去除圖片profile
-                    oImage.Write(path);
+                    //compress
+                    using (ImageMagick.MagickImage oImage = new ImageMagick.MagickImage(path))
+                    {
+                        oImage.Format = MagickFormat.Jpg;
+                        oImage.ColorSpace = ImageMagick.ColorSpace.sRGB;  //色盤採用sRGB
+                        oImage.Quality = 80;    //壓縮率
+                        if(oImage.Height<200)
+                            oImage.Resize(0, 200);
+                        oImage.Strip(); //去除圖片profile
+                        oImage.Write(path);
+                    }
+                    //db
+                    byte[] FileBytes;
+                    using (MemoryStream ms = new MemoryStream())
+                    {
+                        ImgFile.InputStream.CopyTo(ms);
+                        FileBytes = ms.GetBuffer();
+                    }
+                    cProduct.ProductImg_DB = FileBytes;
+
+                    cProduct.Create_Date = DateTime.Now;
+                    cProduct.Delete_Flag = false;
+                    if (ModelState.IsValid)
+                    {
+                        if (db.Product.Any(p => p.ProductID.Equals(cProduct.ProductID)))    //判斷資料是否重複
+                        {
+                            ViewBag.DBResultErrorMessage = cProduct.ProductID + "資料已重複，請重新輸入";
+                            return View("CreateProduct", Session["UserTag"].ToString());
+                        }
+                        try
+                        {
+                            db.Product.Add(cProduct);
+                            db.SaveChanges();
+                        }
+                        catch (Exception ex)
+                        {
+                            logger.Error(ex.Message);
+                            ViewBag.DBResultErrorMessage = ex.Message;
+                            return View("CreateProduct", Session["UserTag"].ToString());
+                        }
+                        ViewBag.DBResultErrorMessage = cProduct.ProductID + "新增成功!";
+                    }
+                var products = db.Product.Where(m => m.Delete_Flag == false).OrderByDescending(m => m.Create_Date).ToList<Product>();
+                return View("ProductList", Session["UserTag"].ToString(), products);
                 }
-                //db
-                byte[] FileBytes;
-                using (MemoryStream ms = new MemoryStream())
+                else
                 {
-                    ImgFile.InputStream.CopyTo(ms);
-                    FileBytes = ms.GetBuffer();
-                }
-                cProduct.ProductImg_DB = FileBytes;
-            }
-            cProduct.Create_Date = DateTime.Now;
-            cProduct.Delete_Flag = false;
-            if (ModelState.IsValid)
-            {
-                if (db.Product.Any(p => p.ProductID.Equals(cProduct.ProductID)))    //判斷資料是否重複
-                {
-                    ViewBag.DBResultErrorMessage = cProduct.ProductID+"資料已重複，請重新輸入";
+                    ViewBag.ImgValidate = ImgV.ErrorMessage;
                     return View("CreateProduct", Session["UserTag"].ToString());
                 }
-                try
-                {
-                    db.Product.Add(cProduct);
-                    db.SaveChanges();
-                }
-                catch (Exception ex)
-                {
-                    logger.Error(ex.Message);
-                    ViewBag.DBResultErrorMessage = ex.Message;
-                    return View("CreateProduct", Session["UserTag"].ToString());
-                }
-
-                ViewBag.DBResultErrorMessage = cProduct.ProductID+"新增成功!";
-            }
-
-            return View("CreateProduct", Session["UserTag"].ToString());
+            //}
         }
 
         [HttpPost]
@@ -137,7 +149,7 @@ namespace ShoppingCar.Controllers
         {
             //check file format
             FileUploadValidate fs = new FileUploadValidate();
-            fs.filesize = 550;
+            fs.filesize = 2000;
 
             //string us = fs.UploadUserFile(ImportFile);
             string message = "";
@@ -215,7 +227,7 @@ namespace ShoppingCar.Controllers
         
         public ActionResult ProductList()
         {
-            var products = db.Product.ToList<Product>();
+            var products = db.Product.Where(m=>m.Delete_Flag==false).OrderByDescending(m=>m.Create_Date).ToList<Product>();
             return View("ProductList", Session["UserTag"].ToString(), products);
         }
 
@@ -340,6 +352,15 @@ namespace ShoppingCar.Controllers
             ms.Position = 0;
             string filename = "AllProductList.xlsx";
             return File(ms, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", filename);
+        }
+
+        public ActionResult DeleteProduct(string ProductID)
+        {
+            var Product = db.Product.Where(m => m.ProductID == ProductID).FirstOrDefault();
+            Product.Delete_Flag = true;
+            db.SaveChanges();
+            var products = db.Product.Where(m => m.Delete_Flag == false).OrderByDescending(m => m.Create_Date).ToList<Product>();
+            return View("ProductList", Session["UserTag"].ToString(), products);
         }
     }
 }

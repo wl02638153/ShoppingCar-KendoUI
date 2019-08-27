@@ -5,9 +5,17 @@
 }
 <head>
     <script src="~/Scripts/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" src="~/Scripts/jquery.blockUI.js"></script>
     <script src="~/Scripts/bootstrap.min.js"></script>
 </head>
-<script>
+<script type="text/javascript">
+    //$(document).ready(function () {
+    //    $("#InsertProduct").click(function () {
+    //        $.blockUI({
+    //            message: "請稍等..."
+    //        });
+    //    });
+    //});
     function readImg(file) {
         if (file.files && file.files[0]) {
             var reader = new FileReader();
@@ -17,16 +25,22 @@
             reader.readAsDataURL(file.files[0]);
         }
     }
-    function Confirm_insert() {
-        if (confirm("確定要新增嗎?")) {
+    function Confirm_custom(str) {
+        if (confirm(str)) {
+            onSubmitBlock();
             return true;
         }
         else {
             return false;
         }
     }
+    function onSubmitBlock() {
+        $.blockUI({
+            message: "請稍等..."
+        });
+    }
     function buttonShow() {
-        $("#ImportFileSubmit").show();
+        $("#ImportFileSubmit").removeAttr("disabled");
     }
 </script>
 
@@ -36,7 +50,7 @@
     <a href="~/Excel/ExcelCreateFormat.xlsx">下載Excel格式</a>
 </p>
 <hr />
-<form method="post" action="ImportProduct" enctype="multipart/form-data">
+<form method="post" action="ImportProduct" enctype="multipart/form-data" onsubmit="onSubmitBlock()">
     @if (ViewBag.ResultErrorMessage != null)
     {
         <script type="text/javascript">
@@ -61,18 +75,26 @@
             };
         </script>
     }
+    @if (ViewBag.ImgValidate != null)
+    {
+        <script type="text/javascript">
+            window.onload = function () {
+                alert("@ViewBag.ImgValidate");
+            };
+        </script>
+    }
     <label class="btn btn-default">透過Excel新增產品</label>
     <input id="ImportFile" name="ImportFile" type="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" onchange="buttonShow()">
     <p></p>
     <div class="form-group">
         <div class="">
-            <input type="submit" id="ImportFileSubmit" value="匯入" class="btn btn-default" style="display:none" />
+            <input type="submit" id="ImportFileSubmit" value="匯入" class="btn btn-default" disabled="disabled" onsubmit="Confirm_custom('確定要匯入嗎?')"/>
         </div>
         @Html.Raw(ViewBag.ExcelResultMessage)
     </div>
 </form>
 <hr />
-@using (Html.BeginForm("CreateProduct", "Product", FormMethod.Post, new { enctype = "multipart/form-data", onsubmit = "return Confirm_insert()" }))
+@using (Html.BeginForm("CreateProduct", "Product", FormMethod.Post, new { enctype = "multipart/form-data", onsubmit = "return Confirm_custom('確定要新增嗎?')" }))
 {
     @Html.AntiForgeryToken()
 
@@ -139,12 +161,12 @@
         </div>
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Create" class="btn btn-default" />
+                <input type="submit" name="InsertProduct" id="InsertProduct" value="Create" class="btn btn-default"/>
+
             </div>
         </div>
     </div>
 }
-
 <script>
     (function ($) {
         var compressRatio = 0.5, // 圖片壓縮比例
