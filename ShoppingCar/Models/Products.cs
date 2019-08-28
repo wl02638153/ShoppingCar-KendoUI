@@ -28,9 +28,11 @@ namespace ShoppingCar.Models
 
         [DisplayName("產品說明")]
         [DataType(DataType.Text,ErrorMessage ="請輸入文字格式")]
+        [StringLength(4000,ErrorMessage ="字數最多為4000字",MinimumLength =0)]
         public string ProductExplain { get; set; }
 
         [DisplayName("產品售價")]
+        [Range(1,1000000,ErrorMessage = "產品售價必須介於1-1000000")]
         [Required(ErrorMessage = "產品售價不可空白")]
         [DataType(DataType.Currency)]
         public Nullable<decimal> ProductPrice { get; set; }

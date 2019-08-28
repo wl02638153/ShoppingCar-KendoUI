@@ -9,13 +9,6 @@
     <script src="~/Scripts/bootstrap.min.js"></script>
 </head>
 <script type="text/javascript">
-    //$(document).ready(function () {
-    //    $("#InsertProduct").click(function () {
-    //        $.blockUI({
-    //            message: "請稍等..."
-    //        });
-    //    });
-    //});
     function readImg(file) {
         if (file.files && file.files[0]) {
             var reader = new FileReader();
@@ -43,54 +36,60 @@
         $("#ImportFileSubmit").removeAttr("disabled");
     }
 </script>
-
+@if (TempData["ResultErrorMessage"] != null)
+{
+    <script type="text/javascript">
+            window.onload = function () {
+                alert("@TempData["ResultErrorMessage"]");
+            };
+    </script>
+}
+@if (TempData["DBResultErrorMessage"] != null)
+{
+    <script type="text/javascript">
+            window.onload = function () {
+                alert("@TempData["DBResultErrorMessage"]");
+            };
+    </script>
+}
+@if (TempData["ExcelResultErrorMessage"] != null)
+{
+    <script type="text/javascript">
+            window.onload = function () {
+                alert("@TempData["ExcelResultErrorMessage"]");
+            };
+    </script>
+}
+@if (TempData["ImgValidate"] != null)
+{
+    <script type="text/javascript">
+            window.onload = function () {
+                alert("@TempData["ImgValidate"]");
+            };
+    </script>
+}
 <h2>CreateProduct</h2>
-
+<hr />
+<h3>資料格式限制</h3>
+<p>1.產品編號必須大於2個字元小於15個字元</p>
+<p>2.產品編號必須大於2個字元小於15個字元</p>
+<p>3.產品說明最多為4000字</p>
+<p>4.產品售價介於1~1000000</p>
+<p>4.圖片格式限制 jpg,png,jpeg,jfif</p>
 <p>
     <a href="~/Excel/ExcelCreateFormat.xlsx">下載Excel格式</a>
 </p>
+
 <hr />
 <form method="post" action="ImportProduct" enctype="multipart/form-data" onsubmit="onSubmitBlock()">
-    @if (ViewBag.ResultErrorMessage != null)
-    {
-        <script type="text/javascript">
-            window.onload = function () {
-                alert("@ViewBag.ResultErrorMessage");
-            };
-        </script>
-    }
-    @if (ViewBag.DBResultErrorMessage != null)
-    {
-        <script type="text/javascript">
-            window.onload = function () {
-                alert("@ViewBag.DBResultErrorMessage");
-            };
-        </script>
-    }
-    @if (ViewBag.ExcelResultErrorMessage != null)
-    {
-        <script type="text/javascript">
-            window.onload = function () {
-                alert("@ViewBag.ExcelResultErrorMessage");
-            };
-        </script>
-    }
-    @if (ViewBag.ImgValidate != null)
-    {
-        <script type="text/javascript">
-            window.onload = function () {
-                alert("@ViewBag.ImgValidate");
-            };
-        </script>
-    }
-    <label class="btn btn-default">透過Excel新增產品</label>
+    <h4>透過Excel新增產品</h4>
     <input id="ImportFile" name="ImportFile" type="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" onchange="buttonShow()">
     <p></p>
     <div class="form-group">
         <div class="">
-            <input type="submit" id="ImportFileSubmit" value="匯入" class="btn btn-default" disabled="disabled" onsubmit="Confirm_custom('確定要匯入嗎?')"/>
+            <input type="submit" id="ImportFileSubmit" value="匯入" class="btn btn-default" disabled="disabled" onsubmit="Confirm_custom('確定要匯入嗎?')" />
         </div>
-        @Html.Raw(ViewBag.ExcelResultMessage)
+        <div style="overflow:auto;width:50%;height:100px;">@Html.Raw(TempData["ExcelResultMessage"])</div>
     </div>
 </form>
 <hr />
@@ -99,8 +98,7 @@
     @Html.AntiForgeryToken()
 
     <div class="form-horizontal">
-        <h4>Product</h4>
-        <hr />
+        <h4>新增單筆產品</h4>
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
         <div class="form-group">
@@ -118,11 +116,15 @@
                 @Html.ValidationMessageFor(model => model.ProductName, "", new { @class = "text-danger" })
             </div>
         </div>
-
+        <style>
+            textarea {
+                resize: none;
+            }
+        </style>
         <div class="form-group">
             @Html.LabelFor(model => model.ProductExplain, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.TextAreaFor(model => model.ProductExplain, new { htmlAttributes = new { @class = "form-control",cols="37",rows="10" } })
+                @Html.TextAreaFor(model => model.ProductExplain, new { htmlAttributes = new { @class = "form-control" }, cols = "37", rows = "10" })
                 @Html.ValidationMessageFor(model => model.ProductExplain, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -138,112 +140,13 @@
             @Html.LabelFor(model => model.ProductImg, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 <input type="file" name="ImgFile" id="ImgFile" accept="image/*" required />
-                <!--<input type="file" name="ImgFile1New" id="ImgFile1New"/>-->
-                <!-- <div class="col-lg-4">
-                    <div class="thumbnail">
-                        <img id="ImgOld" src="" alt="" style="width:70%;height:15em" />
-                    </div>
-                </div>
-                <div class="col-lg-4">
-                    <div class="thumbnail">
-                        <img id="Img" src="" alt="" style="width:70%;height:15em" />
-                    </div>
-                </div>-->
-                @*<label class="btn btn-info"><input id="upload_img" style="display:none;" type="file"><i class="fa fa-photo"></i> 上傳圖片</label>
-                    <input type="hidden" id="base64str" name="base64str" value="">*@
-                @*<hr />*@
-                @*<div id="oldImg"></div>
-                    <hr />
-                    <div id="newImg"></div>
-                    <hr />
-                    <div id="tinyImg"></div>*@
             </div>
         </div>
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" name="InsertProduct" id="InsertProduct" value="Create" class="btn btn-default"/>
+                <input type="submit" name="InsertProduct" id="InsertProduct" value="Create" class="btn btn-default" />
 
             </div>
         </div>
     </div>
 }
-<script>
-    (function ($) {
-        var compressRatio = 0.5, // 圖片壓縮比例
-            img = new Image(),
-            canvas = document.createElement("canvas"),
-            context = canvas.getContext("2d"),
-            file, fileReader, dataUrl;
-
-        // 上傳檔案
-        $("#upload_img").change(function () {
-            file = this.files[0];
-            // 圖片才處理
-            if (file && file.type.indexOf("image") == 0) {
-                fileReader = new FileReader();
-                fileReader.onload = getFileInfo;
-                fileReader.readAsDataURL(file);
-            }
-        });
-
-        function getFileInfo(evt) {
-            dataUrl = evt.target.result,
-
-                // 取得圖片
-                img.src = dataUrl;
-        }
-
-        // 圖片載入後
-        img.onload = function () {
-            var width = this.width, // 圖片原始寬度
-                height = this.height, // 圖片原始高度
-                imgNewWidth = width,
-                imgNewHeight = imgNewWidth * height / width, // 圖片新高度
-                html = "",
-                newImg, tinyImg;
-
-            // 顯示預覽圖片
-            html += "<img src='" + dataUrl + "'/>";
-            html += "<p>這裡是原始圖片尺寸 " + width + "x" + height + "</p>";
-            html += "<p>檔案大小約 " + Math.round(file.size / 1000) + "k</p>";
-            $("#oldImg").html(html);
-
-            // 使用 canvas 調整圖片寬高
-            canvas.width = imgNewWidth;
-            canvas.height = imgNewHeight;
-            context.clearRect(0, 0, imgNewWidth, imgNewHeight);
-
-            // 調整圖片尺寸
-            context.drawImage(img, 0, 0, imgNewWidth, imgNewHeight);
-
-            // 顯示新圖片
-            newImg = canvas.toDataURL("image/jpeg", compressRatio);
-            $("#base64str").val(newImg);
-            html = "";
-            html += "<img src='" + newImg + "'/>";
-            html += "<p>這裡是新圖片尺寸 " + imgNewWidth + "x" + imgNewHeight + "</p>";
-            html += "<p>檔案大小約 " + Math.round(0.75 * newImg.length / 1000) + "k</p>"; // 出處 https://stackoverflow.com/questions/18557497/how-to-get-html5-canvas-todataurl-file-size-in-javascript
-            $("#newImg").html(html);
-
-            //tinyimg
-            imgNewWidth = 200;
-            imgNewHeight = 200;
-            canvas.width = imgNewWidth;
-            canvas.height = imgNewHeight;
-            context.clearRect(0, 0, imgNewWidth, imgNewHeight);
-            context.drawImage(img, 0, 0, imgNewWidth, imgNewHeight);
-            tinyImg = canvas.toDataURL("image/jpeg", compressRatio);
-            html = "";
-            html += "<img src='" + tinyImg + "'/>";
-            html += "<p>這裡是新圖片尺寸 " + imgNewWidth + "x" + imgNewHeight + "</p>";
-            html += "<p>檔案大小約 " + Math.round(0.75 * tinyImg.length / 1000) + "k</p>"; // 出處 https://stackoverflow.com/questions/18557497/how-to-get-html5-canvas-todataurl-file-size-in-javascript
-            $("#tinyImg").html(html);
-
-            // canvas 轉換為 blob 格式、上傳
-            canvas.toBlob(function (blob) {
-                // 輸入上傳程式碼
-
-            }, "image/jpeg", compressRatio);
-        };
-    })(jQuery);
-</script>

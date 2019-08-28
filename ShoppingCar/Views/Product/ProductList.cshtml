@@ -86,7 +86,7 @@
                         resize: none;
                     }
                 </style>
-                @Html.TextArea("ProductExplain", item.ProductExplain, new { @class = "form-controll", cols = "35", rows = "5", disabled = "disabled" })
+                @Html.TextAreaFor(model=> item.ProductExplain, new { @class = "form-controll", cols = "35", rows = "5", disabled = "disabled" })
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.ProductPrice)

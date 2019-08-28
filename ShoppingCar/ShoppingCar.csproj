@@ -201,6 +201,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>dbShoppingCartModel.edmx</DependentUpon>
     </Compile>
+    <Compile Include="Models\ExcelValidate.cs" />
     <Compile Include="Models\FileUploadValidate.cs" />
     <Compile Include="Models\ImgUploadValidate.cs" />
     <Compile Include="Models\LogMessage.cs">

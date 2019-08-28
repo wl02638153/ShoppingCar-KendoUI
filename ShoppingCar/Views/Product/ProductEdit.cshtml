@@ -111,16 +111,6 @@
                             <img id="Img" src="~/Image/notImg_.jpg?w=200&h=200&mode=cropyunits" />
                         }
                     }
-                    @*<label class="btn btn-info"><input id="upload_img" style="display:none;" type="file"><i class="fa fa-photo"></i> 上傳圖片</label>
-                        <input type="hidden" id="base64str" name="base64str" value="">
-                        <hr />
-                        <img src="@imageDate" />
-                        <hr />
-                        <div id="oldImg"></div>
-                        <hr />
-                        <div id="newImg"></div>
-                        <hr />
-                        <div id="tinyImg"></div>*@
                     @Html.ValidationMessageFor(model => model.ProductImg_DB, "", new { @class = "text-danger" })
                 </div>
             </div>
