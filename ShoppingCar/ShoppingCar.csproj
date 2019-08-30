@@ -186,6 +186,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\ShoppingCarLists.cs" />
     <Compile Include="Models\dbShoppingCartModel.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
