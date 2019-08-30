@@ -223,6 +223,9 @@
       <DependentUpon>dbShoppingCartModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Products.cs" />
+    <Compile Include="Models\ShoppingCarList.cs">
+      <DependentUpon>dbShoppingCartModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

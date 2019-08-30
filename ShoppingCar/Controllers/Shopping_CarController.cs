@@ -117,9 +117,6 @@ namespace ShoppingCar.Controllers
 
         public ActionResult CheckCar()
         {
-            /*string UserID = (Session["Member"] as Member).UserID;
-            var orderDetails = db.OrderDetail.Where(m => m.UserID == UserID && m.Approved_Flag == false).ToList();
-            return View("CheckCar", "_LayoutMember", orderDetails);*/
             string UserID = Session["Member"].ToString();
             OrderDetailList detailList = new OrderDetailList();
             detailList.OrderDetails = db.OrderDetail.Where(m => m.UserID == UserID && m.OrderID == null).ToList<OrderDetail>();
@@ -218,10 +215,10 @@ namespace ShoppingCar.Controllers
                 sheet.Cells[row, col++].Value = orders.Email;
                 sheet.Cells[row, col++].Value = orders.Address;
                 sheet.Cells[row, col++].Value = item.ProductID;
-                sheet.Cells[row, col++].Value = item.ProductName;
+                sheet.Cells[row, col++].Value = item.Product.ProductName;
                 sheet.Cells[row, col++].Value = item.UserID;
                 sheet.Cells[row, col++].Value = item.ProductQty;
-                sheet.Cells[row, col++].Value = item.TotalPrice;
+                sheet.Cells[row, col++].Value = item.Product.ProductPrice;
                 sheet.Cells[row, col++].Value = item.Create_Date.ToString();
                 row++;
             }
@@ -236,24 +233,6 @@ namespace ShoppingCar.Controllers
         public ActionResult Download_ALL_Order()
         {
             string UserID = Session["Member"].ToString();
-            //var orders = db.OrderHeader.Where(m => m.UserID == UserID).ToList();
-            //var orderDetails = db.OrderDetail.Where(m => m.OrderID !=null && m.Delete_Flag != true&&m.UserID==UserID).ToList();
-            //var q = from od in orderDetails
-            //        join os in orders on od.OrderID equals os.OrderID
-            //        select new
-            //        {
-            //            OrderId = os.OrderID,
-            //            Receiver = os.Receiver,
-            //            Email = os.Email,
-            //            Address = os.Address,
-            //            ProductID = od.ProductID,
-            //            ProductName = od.ProductName,
-            //            UserID = od.UserID,
-            //            ProductQty = od.ProductQty,
-            //            TotalPrice = od.TotalPrice,
-            //            Create_Date = od.Create_Date
-            //        };
-
 
             var q = (from od in db.OrderDetail
                      join os in db.OrderHeader on od.OrderID equals os.OrderID
@@ -265,10 +244,10 @@ namespace ShoppingCar.Controllers
                          Email = os.Email,
                          Address = os.Address,
                          ProductID = od.ProductID,
-                         ProductName = od.ProductName,
+                         ProductName = od.Product.ProductName,
                          UserID = od.UserID,
                          ProductQty = od.ProductQty,
-                         TotalPrice = od.TotalPrice,
+                         TotalPrice = od.Product.ProductPrice,
                          Create_Date = od.Create_Date
                      }).ToList();
 
@@ -332,8 +311,8 @@ namespace ShoppingCar.Controllers
                 OrderDetail orderDetail = new OrderDetail();
                 orderDetail.UserID = UserID;
                 orderDetail.ProductID = product.ProductID;
-                orderDetail.ProductName = product.ProductName;
-                orderDetail.TotalPrice = product.ProductPrice;
+                orderDetail.Product.ProductName = product.ProductName;
+                orderDetail.Product.ProductPrice = product.ProductPrice;
                 orderDetail.ProductQty = 1;
                 orderDetail.Approved_Flag = false;
                 orderDetail.Create_Date = DateTime.Now;
@@ -367,8 +346,8 @@ namespace ShoppingCar.Controllers
                 OrderDetail orderDetail = new OrderDetail();
                 orderDetail.UserID = UserID;
                 orderDetail.ProductID = product.ProductID;
-                orderDetail.ProductName = product.ProductName;
-                orderDetail.TotalPrice = product.ProductPrice;
+                orderDetail.Product.ProductName = product.ProductName;
+                orderDetail.Product.ProductPrice = product.ProductPrice;
                 orderDetail.ProductQty = 1;
                 orderDetail.Approved_Flag = false;
                 orderDetail.Create_Date = DateTime.Now;

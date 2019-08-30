@@ -23,14 +23,14 @@ namespace ShoppingCar.Models
         [DisplayName("產品編號")]
         public string ProductID { get; set; }
 
-        [DisplayName("產品名稱")]
-        public string ProductName { get; set; }
+        //[DisplayName("產品名稱")]
+        //public string ProductName { get; set; }
 
         [DisplayName("數量")]
         public Nullable<int> ProductQty { get; set; }
 
-        [DisplayName("價錢")]
-        public Nullable<decimal> TotalPrice { get; set; }
+        //[DisplayName("價錢")]
+        //public Nullable<decimal> TotalPrice { get; set; }
 
         [DisplayName("下訂日期")]
         public Nullable<System.DateTime> Create_Date { get; set; }

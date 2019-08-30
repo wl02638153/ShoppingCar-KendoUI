@@ -13,6 +13,10 @@
         <AssociationConnector Association="ShoppingCartModel.FK__OrderHead__UserI__4CA06362" ManuallyRouted="false" />
         <AssociationConnector Association="ShoppingCartModel.FK__OrderDeta__Order__5165187F" ManuallyRouted="false" />
         <AssociationConnector Association="ShoppingCartModel.FK__OrderDeta__Produ__5070F446" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="ShoppingCartModel.ShoppingCarList" Width="1.5" PointX="12.25" PointY="3.125" />
+        <AssociationConnector Association="ShoppingCartModel.FK_OrderDetail_Member" />
+        <AssociationConnector Association="ShoppingCartModel.FK_ShoppingCar_Member" />
+        <AssociationConnector Association="ShoppingCartModel.FK__ShoppingC__Produ__5812160E" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

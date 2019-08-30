@@ -30,5 +30,6 @@ namespace ShoppingCar.Models
         public virtual DbSet<OrderDetail> OrderDetail { get; set; }
         public virtual DbSet<OrderHeader> OrderHeader { get; set; }
         public virtual DbSet<Product> Product { get; set; }
+        public virtual DbSet<ShoppingCarList> ShoppingCarList { get; set; }
     }
 }

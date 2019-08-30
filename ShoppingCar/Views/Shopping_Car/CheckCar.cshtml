@@ -133,7 +133,7 @@
                     }
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.ProductName)
+                    @Html.DisplayFor(modelItem => item.Product.ProductName)
                 </td>
                 <td>
                     @Html.TextBoxFor(modelItem => item.ProductQty, new { type = "number", min = "1", id = item.ProductID + "_textbox_qty", onchange = "return checkboxclick('" + item.ProductID + "','" + item.Product.ProductPrice + "')" })

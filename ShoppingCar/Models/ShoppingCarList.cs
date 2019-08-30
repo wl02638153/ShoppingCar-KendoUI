@@ -12,21 +12,16 @@ namespace ShoppingCar.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class OrderDetail
+    public partial class ShoppingCarList
     {
-        public int OrderDetailID { get; set; }
-        public string OrderID { get; set; }
+        public int ShoppingCarID { get; set; }
         public string UserID { get; set; }
         public string ProductID { get; set; }
         public Nullable<int> ProductQty { get; set; }
         public Nullable<System.DateTime> Create_Date { get; set; }
-        public Nullable<System.DateTime> Modify_Date { get; set; }
-        public Nullable<System.DateTime> Delete_Date { get; set; }
-        public Nullable<bool> Delete_Flag { get; set; }
-        public bool Approved_Flag { get; set; }
+        public Nullable<bool> Order_Flag { get; set; }
     
-        public virtual OrderHeader OrderHeader { get; set; }
-        public virtual Product Product { get; set; }
         public virtual Member Member { get; set; }
+        public virtual Product Product { get; set; }
     }
 }
