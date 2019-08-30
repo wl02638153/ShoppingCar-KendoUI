@@ -1,12 +1,17 @@
-﻿@model IEnumerable<ShoppingCar.Models.Product>
-
+﻿@*@model IEnumerable<ShoppingCar.Models.Product>*@
+@model IPagedList<ShoppingCar.Models.Product>
+@using ImageResizer;
+@using PagedList
+@using PagedList.Mvc
 @{
     ViewBag.Title = "ProductList";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
 }
 <head>
     <script src="~/Scripts/jquery-3.3.1.min.js"></script>
     <script type="text/javascript" src="~/Scripts/jquery.blockUI.js"></script>
     <script src="~/Scripts/bootstrap.min.js"></script>
+    <link href="~/Content/PagedList.css" rel="stylesheet" />
 </head>
 <script>
     function Confirm_custom(str) {
@@ -33,25 +38,41 @@
             };
     </script>
 }
+@if (TempData["EditMessage"] != null)
+{
+    <script type="text/javascript">
+            window.onload = function () {
+                alert("@TempData["EditMessage"]");
+            };
+    </script>
+}
+@if (TempData["DeleteMessage"] != null)
+{
+    <script type="text/javascript">
+            window.onload = function () {
+                alert("@TempData["DeleteMessage"]");
+            };
+    </script>
+}
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.ProductImg_DB)
+            @Html.DisplayNameFor(model => model.FirstOrDefault().ProductImg_DB)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.ProductName)
+            @Html.DisplayNameFor(model => model.FirstOrDefault().ProductName)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.ProductExplain)
+            @Html.DisplayNameFor(model => model.FirstOrDefault().ProductExplain)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.ProductPrice)
+            @Html.DisplayNameFor(model => model.FirstOrDefault().ProductPrice)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.ProductImg)
+            @Html.DisplayNameFor(model => model.FirstOrDefault().ProductImg)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Create_Date)
+            @Html.DisplayNameFor(model => model.FirstOrDefault().Create_Date)
         </th>
         <th></th>
     </tr>
@@ -86,7 +107,7 @@
                         resize: none;
                     }
                 </style>
-                @Html.TextAreaFor(model=> item.ProductExplain, new { @class = "form-controll", cols = "35", rows = "5", disabled = "disabled" })
+                @Html.TextAreaFor(model => item.ProductExplain, new { @class = "form-controll", cols = "35", rows = "3", disabled = "disabled" })
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.ProductPrice)
@@ -105,3 +126,4 @@
     }
 
 </table>
+@Html.PagedListPager(Model, page => Url.Action("ProductList", new { page }))

@@ -1,7 +1,11 @@
-﻿@model IEnumerable<ShoppingCar.Models.Member>
-
+﻿@*@model IEnumerable<ShoppingCar.Models.Member>*@
+@model IPagedList<ShoppingCar.Models.Member>
+@using ImageResizer;
+@using PagedList
+@using PagedList.Mvc
 @{
     ViewBag.Title = "MemberList";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
 }
 
 <h2>MemberList</h2>
@@ -10,49 +14,51 @@
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.ID)
+            @Html.DisplayNameFor(model => model.FirstOrDefault().ID)
         </th>
         @*<th>
-            @Html.DisplayNameFor(model => model.Password)
-        </th>*@
+                @Html.DisplayNameFor(model => model.Password)
+            </th>*@
         <th>
-            @Html.DisplayNameFor(model => model.MemberName)
+            @Html.DisplayNameFor(model => model.FirstOrDefault().MemberName)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Email)
+            @Html.DisplayNameFor(model => model.FirstOrDefault().Email)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Phone)
+            @Html.DisplayNameFor(model => model.FirstOrDefault().Phone)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Create_Date)
+            @Html.DisplayNameFor(model => model.FirstOrDefault().Create_Date)
         </th>
         <th></th>
     </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.ID)
-        </td>
-        @*<td>
-            @Html.DisplayFor(modelItem => item.Password)
-        </td>*@
-        <td>
-            @Html.DisplayFor(modelItem => item.MemberName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Email)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Phone)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Create_Date)
-        </td>
-        <td>
-            @*@Html.ActionLink("Details", "Details", new { id=item.UserID })*@
-    </tr>
-}
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.ID)
+            </td>
+            @*<td>
+                    @Html.DisplayFor(modelItem => item.Password)
+                </td>*@
+            <td>
+                @Html.DisplayFor(modelItem => item.MemberName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Email)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Phone)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Create_Date)
+            </td>
+            <td>
+                @*@Html.ActionLink("Details", "Details", new { id=item.UserID })*@
+        </tr>
+    }
 
 </table>
+@Html.PagedListPager(Model, page => Url.Action("MemberList", new { page }))

@@ -5,6 +5,11 @@
 
     ViewBag.Title = "購物車";
 }
+<head>
+    <script src="~/Scripts/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" src="~/Scripts/jquery.blockUI.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+</head>
 <h2>購物車</h2>
 
 @if (ViewBag.CheckCarMessage != null)
@@ -15,56 +20,134 @@
             };
     </script>
 }
+@if (TempData["DeleteCar"] != null)
+{
+    <script type="text/javascript">
+            window.onload = function () {
+                alert("@TempData["DeleteCar"]");
+            };
+    </script>
+}
+<script>
+    let checkarray = [];
+    function checkboxclick(id, ProductPrice) {
+
+        var qtyId = id + "_textbox_qty";
+        var checkId = id + "_checkbox";
+        var qty = $("#" + qtyId).val();
+        console.log("checkId=" + checkId);
+        if ($("#" + checkId).prop("checked")) {
+            if (checkExist(checkarray, checkId) == false)
+                checkarray.push([checkId, qtyId, qty, ProductPrice]);
+            else {
+                var index = getIndex(checkarray, checkId);
+                console.log("checkarray befor:" + checkarray[index]);
+                checkarray[index] = [checkId, qtyId, qty, ProductPrice];
+                console.log("checkarray after:" + checkarray[index]);
+
+            }
+            countPrice();
+        }
+        else {
+            if (checkExist(checkarray, checkId)) {
+                var index = getIndex(checkarray, checkId);
+                checkarray.splice(index, 1);
+            }
+            countPrice();
+        }
+    }
+    function countPrice() {
+        var count = 0;
+        for (var i = 0; i < checkarray.length; i++) {
+            console.log(checkarray[i]);
+            count += checkarray[i][2] * checkarray[i][3];
+        }
+        console.log("count=" + count);
+        $("#TotalPrice").val(count);
+    }
+    function getIndex(array, id) {
+
+        for (var i = 0; i < array.length; i++) {
+            if (array[i][0] == id)
+                return i;
+        }
+    }
+    function checkExist(array, id) {
+        for (var i = 0; i < array.length; i++) {
+            if (array[i][0] == id)
+                return true;
+        }
+        return false;
+    }
+    function Confirm_custom(str) {
+        if (confirm(str)) {
+            onSubmitBlock();
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    function onSubmitBlock() {
+        $.blockUI({
+            message: "請稍等..."
+        });
+    }
+</script>
 @using (Html.BeginForm())
 {
     <table class="table form-group" id="list">
         <tr>
             <th>
-                會員ID@*@Html.DisplayNameFor(model => model.Product.UesrID)*@
+                @Html.DisplayNameFor(model => model.OrderDetails.FirstOrDefault().Product.ProductImg)
             </th>
             <th>
-                產品名稱@*@Html.DisplayNameFor(model => model.Product.ProductName)*@
+                @Html.DisplayNameFor(model => model.OrderDetails.FirstOrDefault().Product.ProductName)
             </th>
             <th>
-                數量@*@Html.DisplayNameFor(model => model.ProductQty)*@
+                @Html.DisplayNameFor(model => model.OrderDetails.FirstOrDefault().ProductQty)
             </th>
             <th>
-                價錢@*@Html.DisplayNameFor(model => model.TotalPrice)*@
+                @Html.DisplayNameFor(model => model.OrderDetails.FirstOrDefault().Product.ProductPrice)
             </th>
             <th>
-                下訂日期@*@Html.DisplayNameFor(model => model.Create_Date)*@
-            </th>
-            <th>
-                選擇商品@*@Html.DisplayNameFor(model => model.Approved_Flag)*@
+                @Html.DisplayNameFor(model => model.OrderDetails.FirstOrDefault().Approved_Flag)
             </th>
             <th></th>
         </tr>
 
-        @for (int i = 0; i < Model.OrderDetails.Count; i++)
+        @*@for (int i = 0; i < Model.OrderDetails.Count; i++)*@
+        @foreach (var item in Model.OrderDetails)
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => modelItem.OrderDetails[i].UserID)
+                    @{
+                        if (item.Product.ProductImg != null)
+                        {
+                            <img src="@Url.Content(item.Product.ProductImg)?w=70&h=70&mode=cropyunits " />
+                        }
+                        else
+                        {
+                            <img src="~/Image/notImg_.jpg?w=70&h=70&mode=cropyunits" />
+                        }
+                    }
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => modelItem.OrderDetails[i].ProductName)
+                    @Html.DisplayFor(modelItem => item.ProductName)
                 </td>
                 <td>
-                    <input id="ProductQty" type="number" class="form-control" value="@Html.DisplayFor(modelItem => modelItem.OrderDetails[i].ProductQty)" />
-                    
+                    @Html.TextBoxFor(modelItem => item.ProductQty, new { type = "number", min = "1", id = item.ProductID + "_textbox_qty", onchange = "return checkboxclick('" + item.ProductID + "','" + item.Product.ProductPrice + "')" })
+
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => modelItem.OrderDetails[i].TotalPrice)
+                    @Html.DisplayFor(modelItem => item.Product.ProductPrice)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => modelItem.OrderDetails[i].Create_Date)
+                    @Html.CheckBoxFor(modelItem => item.Approved_Flag, htmlAttributes: new { @id = item.ProductID + "_checkbox", onchange = "return checkboxclick('" + item.ProductID + "','" + item.Product.ProductPrice + "')" })
+                    @Html.HiddenFor(modelItem => item.OrderDetailID)
                 </td>
                 <td>
-                    @Html.CheckBoxFor(modelItem => modelItem.OrderDetails[i].Approved_Flag)
-                    @Html.HiddenFor(modelItem => modelItem.OrderDetails[i].OrderDetailID)
-                </td>
-                <td>
-                    <a href="@Url.Action("DeleteCar")?OrderDetailID=@Model.OrderDetails[i].OrderDetailID" class="btn btn-danger">刪除</a>
+                    <a href="@Url.Action("DeleteCar")?OrderDetailID=@item.OrderDetailID" class="btn btn-danger" onclick="return Confirm_custom('確定要刪除嗎?')">刪除</a>
                 </td>
             </tr>
         }

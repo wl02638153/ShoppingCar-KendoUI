@@ -63,6 +63,7 @@
           <Property Name="Modify_Date" Type="datetime" />
           <Property Name="Delete_Date" Type="datetime" />
           <Property Name="Delete_Flag" Type="bit" />
+          <Property Name="Price" Type="money" />
         </EntityType>
         <EntityType Name="Product">
           <Key>
@@ -208,6 +209,7 @@
           <Property Name="Delete_Flag" Type="Boolean" />
           <NavigationProperty Name="Member" Relationship="Self.FK__OrderHead__UserI__4CA06362" FromRole="OrderHeader" ToRole="Member" />
           <NavigationProperty Name="OrderDetail" Relationship="Self.FK__OrderDeta__Order__5165187F" FromRole="OrderHeader" ToRole="OrderDetail" />
+          <Property Name="Price" Type="Decimal" Precision="19" Scale="4" />
         </EntityType>
         <EntityType Name="Product">
           <Key>
@@ -342,6 +344,7 @@
           <EntitySetMapping Name="OrderHeader">
             <EntityTypeMapping TypeName="ShoppingCartModel.OrderHeader">
               <MappingFragment StoreEntitySet="OrderHeader">
+                <ScalarProperty Name="Price" ColumnName="Price" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="OrderID" ColumnName="OrderID" />
                 <ScalarProperty Name="UserID" ColumnName="UserID" />

@@ -394,6 +394,7 @@ namespace ShoppingCar.Controllers
             var orderDetail = db.OrderDetail.Where(m => m.OrderDetailID == OrderDetailID).FirstOrDefault();
             db.OrderDetail.Remove(orderDetail);
             db.SaveChanges();
+            TempData["DeleteCar"] = "刪除成功!";
             return RedirectToAction("CheckCar");
         }
 

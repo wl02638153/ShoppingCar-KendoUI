@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using PagedList;
+using PagedList.Mvc;
 
 namespace ShoppingCar.Controllers
 {
@@ -77,10 +79,14 @@ namespace ShoppingCar.Controllers
             return View();
         }
         [Filters.MemberFilter]
-        public ActionResult MemberList()
+        public ActionResult MemberList(int page=1)
         {
-            var member = db.Member.ToList();
-            return View("MemberList", Session["UserTag"].ToString(), member);
+            int pageSize = 10;
+            int currentPage = page < 1 ? 1 : page;
+            var member = db.Member.OrderByDescending(m => m.Create_Date).ToList();
+            var members = member.ToPagedList(currentPage, pageSize);
+            
+            return View("MemberList", members);
         }
     }
 }

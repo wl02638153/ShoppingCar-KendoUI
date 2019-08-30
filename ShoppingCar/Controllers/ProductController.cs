@@ -20,6 +20,8 @@ using System.Drawing.Imaging;
 using System.Drawing.Drawing2D;
 using ImageMagick;
 using System.Data.Entity.Validation;
+using PagedList;
+using PagedList.Mvc;
 
 
 namespace ShoppingCar.Controllers
@@ -78,12 +80,7 @@ namespace ShoppingCar.Controllers
             if (ImgV.UploadUserFile(ImgFile))
             {//檔案驗證成功
                 //local
-                string str = "";
-                string type = ImgFile.ContentType;
-                if (ImgFile.ContentType == "image/jpg") str = ".jpg";
-                else if (ImgFile.ContentType == "image/jpeg") str = ".jpeg";
-                else if (ImgFile.ContentType == "image/png") str = ".png";
-                string fileName = cProduct.ProductID + str;
+                string fileName = cProduct.ProductID +ImgV.contentType;
                 var path = Path.Combine(Server.MapPath("~/Image"), fileName);
                 ImgFile.SaveAs(path);
                 cProduct.ProductImg = "~/Image/" + fileName;
@@ -107,7 +104,6 @@ namespace ShoppingCar.Controllers
                     FileBytes = ms.GetBuffer();
                 }
                 cProduct.ProductImg_DB = FileBytes;
-
                 cProduct.Create_Date = DateTime.Now;
                 cProduct.Delete_Flag = false;
                 if (ModelState.IsValid)
@@ -248,19 +244,22 @@ namespace ShoppingCar.Controllers
             return View("CreateProduct", Session["UserTag"].ToString());
         }
         
-        public ActionResult ProductList()
+        public ActionResult ProductList(int page=1)
         {
-            var products = db.Product.Where(m=>m.Delete_Flag==false).OrderByDescending(m=>m.Create_Date).ToList<Product>();
-            return View("ProductList", Session["UserTag"].ToString(), products);
+            int pageSize = 10;
+            int currentPage = page < 1 ? 1 : page;
+            var products = db.Product.Where(m => m.Delete_Flag == false).OrderByDescending(m => m.Create_Date).ToList();
+            var product = products.ToPagedList(currentPage, pageSize);
+            return View("ProductList", Session["UserTag"].ToString(), product);
         }
 
         public ActionResult ProductEdit(string ProductID)
         {
-            var Product = db.Product.Where(m => m.ProductID == ProductID).FirstOrDefault();
-            return View("ProductEdit", Session["UserTag"].ToString(), Product);
+            Product Product = db.Product.Find(ProductID);
+            return View("ProductEdit", Product);
         }
         [HttpPost]
-        public ActionResult ProductEdit(Product product, string base64str, HttpPostedFileBase ImgFile)  
+        public ActionResult ProductEdit(Product product, HttpPostedFileBase ImgFile)  
         {
             var Product = db.Product.Where(m => m.ProductID == product.ProductID).FirstOrDefault();
             //驗證檔案
@@ -271,12 +270,8 @@ namespace ShoppingCar.Controllers
                 if(ImgV.UploadUserFile(ImgFile))
                 {
                     //local
-                    string str = "";
-                    string type = ImgFile.ContentType;
-                    if (ImgFile.ContentType == "image/jpg") str = ".jpg";
-                    else if (ImgFile.ContentType == "image/jpeg") str = ".jpeg";
-                    else if (ImgFile.ContentType == "image/png") str = ".png";
-                    string fileName = product.ProductID + str;
+                    
+                    string fileName = product.ProductID + ImgV.contentType;
                     var path = Path.Combine(Server.MapPath("~/Image"), fileName);
                     ImgFile.SaveAs(path);
                     product.ProductImg = "~/Image/" + fileName;
@@ -313,25 +308,27 @@ namespace ShoppingCar.Controllers
                     if (ModelState.IsValid)
                     {   //model驗證成功
                         db.SaveChanges();
+                        TempData["EditMessage"] = product.ProductID+"更新成功!";
                         return RedirectToAction("ProductList");
                     }
                     else
                     {   //model驗證失敗
-                        return RedirectToAction("ProductEdit", "Product", new { ProductID = product.ProductID });
+                        TempData["EditMessage"] = "更新失敗，請確認資料格式是否正確!!";
+                        return View(product);
                     }
                 }
                 catch (Exception ex)
                 {   //資料庫例外狀況
                     logger.Error(ex.Message);
-                    ViewBag.EditResultErrorMessage = ex.Message;
-                    return RedirectToAction("ProductEdit", "Product", new { ProductID = product.ProductID });
+                    TempData["EditMessage"] = ex.Message;
+                    return View(product);
                 }
                 //return RedirectToAction("ProductList");
             }
             else
             {   //檔案驗證失敗
-                ViewBag.EditImgValidate = ImgV.ErrorMessage;
-                return RedirectToAction("ProductEdit", "Product", new { ProductID = product.ProductID });
+                TempData["EditMessage"] = ImgV.ErrorMessage;
+                return View(product);
             }
         }
 
@@ -414,9 +411,12 @@ namespace ShoppingCar.Controllers
         {
             var Product = db.Product.Where(m => m.ProductID == ProductID).FirstOrDefault();
             Product.Delete_Flag = true;
-            db.SaveChanges();
-            var products = db.Product.Where(m => m.Delete_Flag == false).OrderByDescending(m => m.Create_Date).ToList<Product>();
-            return View("ProductList", Session["UserTag"].ToString(), products);
+            if (ModelState.IsValid)
+            {
+                db.SaveChanges();
+                TempData["DeleteMessage"] = Product.ProductID+"刪除成功";
+            }
+            return RedirectToAction("ProductList");
         }
     }
 }

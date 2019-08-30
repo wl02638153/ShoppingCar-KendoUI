@@ -30,10 +30,11 @@ namespace ShoppingCar.Controllers
         //dbShoppingCarEntities3 db = new dbShoppingCarEntities3();     //存取db
         ShoppingCartEntities db = new ShoppingCartEntities();
         private NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
-        int pageSize = 9;
+        
 
         public ActionResult Index(int page=1)
         {
+            int pageSize = 9;
             int currentPage = page < 1 ? 1 : page;
             var products = db.Product.Where(m => m.Delete_Flag == false).OrderByDescending(m => m.Create_Date).ToList();
             ViewBag.PageOfProduct = products.ToPagedList(currentPage, pageSize);
