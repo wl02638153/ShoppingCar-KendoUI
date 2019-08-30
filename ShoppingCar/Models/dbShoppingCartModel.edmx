@@ -81,11 +81,11 @@
         </EntityType>
         <EntityType Name="ShoppingCarList">
           <Key>
-            <PropertyRef Name="ShoppingCarID" />
+            <PropertyRef Name="Id" />
           </Key>
-          <Property Name="ShoppingCarID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="UserID" Type="nvarchar" MaxLength="50" />
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="ProductID" Type="nvarchar" MaxLength="50" />
+          <Property Name="UserID" Type="nvarchar" MaxLength="50" />
           <Property Name="ProductQty" Type="int" />
           <Property Name="Create_Date" Type="datetime" />
           <Property Name="Order_Flag" Type="bit" />
@@ -132,20 +132,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__ShoppingC__Produ__5812160E">
-          <End Role="Product" Type="Self.Product" Multiplicity="0..1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Role="ShoppingCarList" Type="Self.ShoppingCarList" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Product">
-              <PropertyRef Name="ProductID" />
-            </Principal>
-            <Dependent Role="ShoppingCarList">
-              <PropertyRef Name="ProductID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_OrderDetail_Member">
           <End Role="Member" Type="Self.Member" Multiplicity="0..1" />
           <End Role="OrderDetail" Type="Self.OrderDetail" Multiplicity="*" />
@@ -158,8 +144,10 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_ShoppingCar_Member">
-          <End Role="Member" Type="Self.Member" Multiplicity="0..1" />
+        <Association Name="FK_ShoppingCarList_Member">
+          <End Role="Member" Type="Self.Member" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
           <End Role="ShoppingCarList" Type="Self.ShoppingCarList" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Member">
@@ -167,6 +155,20 @@
             </Principal>
             <Dependent Role="ShoppingCarList">
               <PropertyRef Name="UserID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ShoppingCarList_Product">
+          <End Role="Product" Type="Self.Product" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="ShoppingCarList" Type="Self.ShoppingCarList" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Product">
+              <PropertyRef Name="ProductID" />
+            </Principal>
+            <Dependent Role="ShoppingCarList">
+              <PropertyRef Name="ProductID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -189,16 +191,16 @@
             <End Role="Member" EntitySet="Member" />
             <End Role="OrderHeader" EntitySet="OrderHeader" />
           </AssociationSet>
-          <AssociationSet Name="FK__ShoppingC__Produ__5812160E" Association="Self.FK__ShoppingC__Produ__5812160E">
-            <End Role="Product" EntitySet="Product" />
-            <End Role="ShoppingCarList" EntitySet="ShoppingCarList" />
-          </AssociationSet>
           <AssociationSet Name="FK_OrderDetail_Member" Association="Self.FK_OrderDetail_Member">
             <End Role="Member" EntitySet="Member" />
             <End Role="OrderDetail" EntitySet="OrderDetail" />
           </AssociationSet>
-          <AssociationSet Name="FK_ShoppingCar_Member" Association="Self.FK_ShoppingCar_Member">
+          <AssociationSet Name="FK_ShoppingCarList_Member" Association="Self.FK_ShoppingCarList_Member">
             <End Role="Member" EntitySet="Member" />
+            <End Role="ShoppingCarList" EntitySet="ShoppingCarList" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ShoppingCarList_Product" Association="Self.FK_ShoppingCarList_Product">
+            <End Role="Product" EntitySet="Product" />
             <End Role="ShoppingCarList" EntitySet="ShoppingCarList" />
           </AssociationSet>
         </EntityContainer>
@@ -233,7 +235,7 @@
           <NavigationProperty Name="OrderHeader" Relationship="Self.FK__OrderHead__UserI__4CA06362" FromRole="Member" ToRole="OrderHeader" />
           <Property Name="Password2" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="OrderDetail" Relationship="ShoppingCartModel.FK_OrderDetail_Member" FromRole="Member" ToRole="OrderDetail" />
-          <NavigationProperty Name="ShoppingCarList" Relationship="ShoppingCartModel.FK_ShoppingCar_Member" FromRole="Member" ToRole="ShoppingCarList" />
+          <NavigationProperty Name="ShoppingCarList" Relationship="ShoppingCartModel.FK_ShoppingCarList_Member" FromRole="Member" ToRole="ShoppingCarList" />
         </EntityType>
         <EntityType Name="OrderDetail">
           <Key>
@@ -288,7 +290,7 @@
           <Property Name="Modify_Date" Type="DateTime" Precision="3" />
           <Property Name="ProductImg_DB" Type="Binary" MaxLength="Max" FixedLength="false" />
           <NavigationProperty Name="OrderDetail" Relationship="Self.FK__OrderDeta__Produ__5070F446" FromRole="Product" ToRole="OrderDetail" />
-          <NavigationProperty Name="ShoppingCarList" Relationship="ShoppingCartModel.FK__ShoppingC__Produ__5812160E" FromRole="Product" ToRole="ShoppingCarList" />
+          <NavigationProperty Name="ShoppingCarList" Relationship="ShoppingCartModel.FK_ShoppingCarList_Product" FromRole="Product" ToRole="ShoppingCarList" />
         </EntityType>
         <Association Name="FK__OrderHead__UserI__4CA06362">
           <End Role="Member" Type="Self.Member" Multiplicity="0..1">
@@ -350,33 +352,20 @@
             <End Role="Product" EntitySet="Product" />
             <End Role="OrderDetail" EntitySet="OrderDetail" />
           </AssociationSet>
-          <EntitySet Name="ShoppingCarList" EntityType="ShoppingCartModel.ShoppingCarList" />
           <AssociationSet Name="FK_OrderDetail_Member" Association="ShoppingCartModel.FK_OrderDetail_Member">
             <End Role="Member" EntitySet="Member" />
             <End Role="OrderDetail" EntitySet="OrderDetail" />
           </AssociationSet>
-          <AssociationSet Name="FK_ShoppingCar_Member" Association="ShoppingCartModel.FK_ShoppingCar_Member">
+          <EntitySet Name="ShoppingCarList" EntityType="ShoppingCartModel.ShoppingCarList" />
+          <AssociationSet Name="FK_ShoppingCarList_Member" Association="ShoppingCartModel.FK_ShoppingCarList_Member">
             <End Role="Member" EntitySet="Member" />
             <End Role="ShoppingCarList" EntitySet="ShoppingCarList" />
           </AssociationSet>
-          <AssociationSet Name="FK__ShoppingC__Produ__5812160E" Association="ShoppingCartModel.FK__ShoppingC__Produ__5812160E">
+          <AssociationSet Name="FK_ShoppingCarList_Product" Association="ShoppingCartModel.FK_ShoppingCarList_Product">
             <End Role="Product" EntitySet="Product" />
             <End Role="ShoppingCarList" EntitySet="ShoppingCarList" />
           </AssociationSet>
-        </EntityContainer>
-        <EntityType Name="ShoppingCarList">
-          <Key>
-            <PropertyRef Name="ShoppingCarID" />
-          </Key>
-          <Property Name="ShoppingCarID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="UserID" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="ProductID" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="ProductQty" Type="Int32" />
-          <Property Name="Create_Date" Type="DateTime" Precision="3" />
-          <Property Name="Order_Flag" Type="Boolean" />
-          <NavigationProperty Name="Member" Relationship="ShoppingCartModel.FK_ShoppingCar_Member" FromRole="ShoppingCarList" ToRole="Member" />
-          <NavigationProperty Name="Product" Relationship="ShoppingCartModel.FK__ShoppingC__Produ__5812160E" FromRole="ShoppingCarList" ToRole="Product" />
-        </EntityType>
+          </EntityContainer>
         <Association Name="FK_OrderDetail_Member">
           <End Type="ShoppingCartModel.Member" Role="Member" Multiplicity="0..1" />
           <End Type="ShoppingCartModel.OrderDetail" Role="OrderDetail" Multiplicity="*" />
@@ -389,8 +378,23 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_ShoppingCar_Member">
-          <End Type="ShoppingCartModel.Member" Role="Member" Multiplicity="0..1" />
+        <EntityType Name="ShoppingCarList">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ProductID" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="UserID" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ProductQty" Type="Int32" />
+          <Property Name="Create_Date" Type="DateTime" Precision="3" />
+          <Property Name="Order_Flag" Type="Boolean" />
+          <NavigationProperty Name="Member" Relationship="ShoppingCartModel.FK_ShoppingCarList_Member" FromRole="ShoppingCarList" ToRole="Member" />
+          <NavigationProperty Name="Product" Relationship="ShoppingCartModel.FK_ShoppingCarList_Product" FromRole="ShoppingCarList" ToRole="Product" />
+        </EntityType>
+        <Association Name="FK_ShoppingCarList_Member">
+          <End Type="ShoppingCartModel.Member" Role="Member" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
           <End Type="ShoppingCartModel.ShoppingCarList" Role="ShoppingCarList" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Member">
@@ -401,7 +405,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__ShoppingC__Produ__5812160E">
+        <Association Name="FK_ShoppingCarList_Product">
           <End Type="ShoppingCartModel.Product" Role="Product" Multiplicity="0..1">
             <OnDelete Action="Cascade" />
           </End>
@@ -415,7 +419,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-      </Schema>
+        </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
@@ -506,9 +510,9 @@
                 <ScalarProperty Name="Order_Flag" ColumnName="Order_Flag" />
                 <ScalarProperty Name="Create_Date" ColumnName="Create_Date" />
                 <ScalarProperty Name="ProductQty" ColumnName="ProductQty" />
-                <ScalarProperty Name="ProductID" ColumnName="ProductID" />
                 <ScalarProperty Name="UserID" ColumnName="UserID" />
-                <ScalarProperty Name="ShoppingCarID" ColumnName="ShoppingCarID" />
+                <ScalarProperty Name="ProductID" ColumnName="ProductID" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

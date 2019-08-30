@@ -115,6 +115,14 @@ namespace ShoppingCar.Controllers
             return RedirectToAction("OrderList");
         }
 
+        public ActionResult Check_Car()
+        {
+            string UserID = Session["Member"].ToString();
+            //ShoppingCarList shoppingCarList = new ShoppingCarList();
+            var shoppingCarList = db.ShoppingCarList.Where(m => m.UserID == UserID).ToList<ShoppingCarList>();
+            return View("Check_Car", Session["UserTag"].ToString(), shoppingCarList);
+        }
+
         public ActionResult CheckCar()
         {
             string UserID = Session["Member"].ToString();
@@ -299,7 +307,40 @@ namespace ShoppingCar.Controllers
             string filename = UserID + ".xlsx";
             return File(ms, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", filename);
         }
-        
+
+        public ActionResult AddCar_test(string ProductID)
+        {
+            string UserID = Session["Member"].ToString();
+
+            var currentCar = db.ShoppingCarList.Where(m => m.ProductID == ProductID && m.UserID == UserID).FirstOrDefault();
+            if (currentCar == null)
+            {
+                var product = db.Product.Where(m => m.ProductID == ProductID).FirstOrDefault();
+                ShoppingCarList shoppingCarList = new ShoppingCarList();
+                shoppingCarList.UserID = UserID;
+                shoppingCarList.ProductID = product.ProductID;
+                shoppingCarList.ProductQty = 1;
+                shoppingCarList.Order_Flag = false;
+                shoppingCarList.Create_Date = DateTime.Now;
+
+                db.ShoppingCarList.Add(shoppingCarList);
+            }
+            else
+            {
+                currentCar.ProductQty += 1;
+            }
+            try
+            {
+                db.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+
+            return RedirectToAction("Check_Car");
+        }
+
         public ActionResult AddCar(string ProductID)
         {
             string UserID = Session["Member"].ToString();

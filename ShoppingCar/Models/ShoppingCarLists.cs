@@ -2,26 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 
 namespace ShoppingCar.Models
 {
-    [MetadataType(typeof(ProductMetaData))]
-    public partial class ShoppingCarList
+    public partial class ShoppingCarLists
     {
     }
-    public partial class ShoppingCarListMetaData
+    public partial class ShoppingCarListsMetaData
     {
-        public int ShoppingCarID { get; set; }
-
-        [DisplayName("會員")]
-        public string UserID { get; set; }
-        [DisplayName("產品名稱")]
+        public int Id { get; set; }
         public string ProductID { get; set; }
-        [DisplayName("數量")]
+        public string UserID { get; set; }
         public Nullable<int> ProductQty { get; set; }
-        [DisplayName("建立日期")]
         public Nullable<System.DateTime> Create_Date { get; set; }
         public Nullable<bool> Order_Flag { get; set; }
 

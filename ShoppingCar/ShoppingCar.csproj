@@ -186,7 +186,6 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\ShoppingCarLists.cs" />
     <Compile Include="Models\dbShoppingCartModel.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -227,6 +226,7 @@
     <Compile Include="Models\ShoppingCarList.cs">
       <DependentUpon>dbShoppingCartModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\ShoppingCarLists.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -309,6 +309,7 @@
     <Content Include="Views\Shopping_Car\OrderList.cshtml" />
     <Content Include="Views\Shopping_Car\OrderListDetail.cshtml" />
     <Content Include="Views\Shopping_Car\ShoppingCar.cshtml" />
+    <Content Include="Views\Shopping_Car\Check_Car.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Image\" />

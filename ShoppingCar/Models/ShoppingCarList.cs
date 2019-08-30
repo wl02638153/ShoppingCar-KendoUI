@@ -14,9 +14,9 @@ namespace ShoppingCar.Models
     
     public partial class ShoppingCarList
     {
-        public int ShoppingCarID { get; set; }
-        public string UserID { get; set; }
+        public int Id { get; set; }
         public string ProductID { get; set; }
+        public string UserID { get; set; }
         public Nullable<int> ProductQty { get; set; }
         public Nullable<System.DateTime> Create_Date { get; set; }
         public Nullable<bool> Order_Flag { get; set; }
