@@ -18,6 +18,8 @@ namespace ShoppingCar.Models
         public Member()
         {
             this.OrderHeader = new HashSet<OrderHeader>();
+            this.OrderDetail = new HashSet<OrderDetail>();
+            this.ShoppingCarList = new HashSet<ShoppingCarList>();
         }
     
         public int ID { get; set; }
@@ -34,5 +36,9 @@ namespace ShoppingCar.Models
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<OrderHeader> OrderHeader { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<OrderDetail> OrderDetail { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ShoppingCarList> ShoppingCarList { get; set; }
     }
 }

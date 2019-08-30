@@ -7,12 +7,16 @@
       <Diagram DiagramId="c278c4012fcc48b9b5aa0307b10c93fb" Name="Diagram1">
         <EntityTypeShape EntityType="ShoppingCartModel.LogMessage" Width="1.5" PointX="10.125" PointY="1.25" IsExpanded="true" />
         <EntityTypeShape EntityType="ShoppingCartModel.Member" Width="1.5" PointX="0.75" PointY="1.25" IsExpanded="true" />
-        <EntityTypeShape EntityType="ShoppingCartModel.OrderDetail" Width="1.5" PointX="5.25" PointY="1" IsExpanded="true" />
-        <EntityTypeShape EntityType="ShoppingCartModel.OrderHeader" Width="1.5" PointX="3" PointY="1.125" IsExpanded="true" />
-        <EntityTypeShape EntityType="ShoppingCartModel.Product" Width="1.5" PointX="8.25" PointY="1.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="ShoppingCartModel.OrderDetail" Width="1.5" PointX="6" PointY="1.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="ShoppingCartModel.OrderHeader" Width="1.5" PointX="3.375" PointY="1.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="ShoppingCartModel.Product" Width="1.5" PointX="7.75" PointY="1.25" IsExpanded="true" />
         <AssociationConnector Association="ShoppingCartModel.FK__OrderHead__UserI__4CA06362" ManuallyRouted="false" />
         <AssociationConnector Association="ShoppingCartModel.FK__OrderDeta__Order__5165187F" ManuallyRouted="false" />
         <AssociationConnector Association="ShoppingCartModel.FK__OrderDeta__Produ__5070F446" ManuallyRouted="false" />
+        <AssociationConnector Association="ShoppingCartModel.FK_OrderDetail_Member" />
+        <EntityTypeShape EntityType="ShoppingCartModel.ShoppingCarList" Width="1.5" PointX="11.75" PointY="4.75" />
+        <AssociationConnector Association="ShoppingCartModel.FK_ShoppingCar_Member1" />
+        <AssociationConnector Association="ShoppingCartModel.FK__ShoppingC__Produ__5812160E" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

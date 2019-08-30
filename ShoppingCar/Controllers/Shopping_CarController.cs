@@ -115,15 +115,14 @@ namespace ShoppingCar.Controllers
             return RedirectToAction("OrderList");
         }
 
-        public ActionResult CheckCar()
+        public ActionResult CheckCar(int page = 1)
         {
-            /*string UserID = (Session["Member"] as Member).UserID;
-            var orderDetails = db.OrderDetail.Where(m => m.UserID == UserID && m.Approved_Flag == false).ToList();
-            return View("CheckCar", "_LayoutMember", orderDetails);*/
+            int pageSize = 10;
+            int currentPage = page < 1 ? 1 : page;
             string UserID = Session["Member"].ToString();
-            OrderDetailList detailList = new OrderDetailList();
-            detailList.OrderDetails = db.OrderDetail.Where(m => m.UserID == UserID && m.OrderID == null).ToList<OrderDetail>();
-            return View("CheckCar", Session["UserTag"].ToString(), detailList);
+            var shoppingCarList = db.ShoppingCarList.Where(m => m.UserID==UserID).ToList<ShoppingCarList>();
+            var shoppingCarLists= shoppingCarList.ToPagedList(currentPage, pageSize);
+            return View("CheckCar", Session["UserTag"].ToString(), shoppingCarLists);
         }
         [HttpPost]
         public ActionResult CheckCar(OrderDetailList list)
@@ -218,10 +217,10 @@ namespace ShoppingCar.Controllers
                 sheet.Cells[row, col++].Value = orders.Email;
                 sheet.Cells[row, col++].Value = orders.Address;
                 sheet.Cells[row, col++].Value = item.ProductID;
-                sheet.Cells[row, col++].Value = item.ProductName;
+                sheet.Cells[row, col++].Value = item.Product.ProductName;
                 sheet.Cells[row, col++].Value = item.UserID;
                 sheet.Cells[row, col++].Value = item.ProductQty;
-                sheet.Cells[row, col++].Value = item.TotalPrice;
+                sheet.Cells[row, col++].Value = item.Product.ProductPrice;
                 sheet.Cells[row, col++].Value = item.Create_Date.ToString();
                 row++;
             }
@@ -265,10 +264,10 @@ namespace ShoppingCar.Controllers
                          Email = os.Email,
                          Address = os.Address,
                          ProductID = od.ProductID,
-                         ProductName = od.ProductName,
+                         ProductName = od.Product.ProductName,
                          UserID = od.UserID,
                          ProductQty = od.ProductQty,
-                         TotalPrice = od.TotalPrice,
+                         TotalPrice = od.Product.ProductPrice,
                          Create_Date = od.Create_Date
                      }).ToList();
 
@@ -325,20 +324,17 @@ namespace ShoppingCar.Controllers
         {
             string UserID = Session["Member"].ToString();
 
-            var currentCar = db.OrderDetail.Where(m => m.ProductID == ProductID && m.Approved_Flag == false && m.UserID == UserID).FirstOrDefault();
+            var currentCar = db.ShoppingCarList.Where(m => m.ProductID == ProductID && m.UserID == UserID).FirstOrDefault();
             if (currentCar == null)
             {
                 var product = db.Product.Where(m => m.ProductID == ProductID).FirstOrDefault();
-                OrderDetail orderDetail = new OrderDetail();
-                orderDetail.UserID = UserID;
-                orderDetail.ProductID = product.ProductID;
-                orderDetail.ProductName = product.ProductName;
-                orderDetail.TotalPrice = product.ProductPrice;
-                orderDetail.ProductQty = 1;
-                orderDetail.Approved_Flag = false;
-                orderDetail.Create_Date = DateTime.Now;
+                ShoppingCarList shoppingCarList = new ShoppingCarList();
+                shoppingCarList.UserID = UserID;
+                shoppingCarList.ProductID = product.ProductID;
+                shoppingCarList.ProductQty = 1;
+                shoppingCarList.Create_Date = DateTime.Now;
 
-                db.OrderDetail.Add(orderDetail);
+                db.ShoppingCarList.Add(shoppingCarList);
             }
             else
             {
@@ -367,8 +363,8 @@ namespace ShoppingCar.Controllers
                 OrderDetail orderDetail = new OrderDetail();
                 orderDetail.UserID = UserID;
                 orderDetail.ProductID = product.ProductID;
-                orderDetail.ProductName = product.ProductName;
-                orderDetail.TotalPrice = product.ProductPrice;
+                orderDetail.Product.ProductName = product.ProductName;
+                orderDetail.Product.ProductPrice = product.ProductPrice;
                 orderDetail.ProductQty = 1;
                 orderDetail.Approved_Flag = false;
                 orderDetail.Create_Date = DateTime.Now;

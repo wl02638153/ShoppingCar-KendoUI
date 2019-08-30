@@ -1,5 +1,8 @@
-﻿@model ShoppingCar.Models.OrderDetailList
-
+﻿@*@model ShoppingCar.Models.ShoppingCarList*@
+@*@model IEnumerable<ShoppingCar.Models.ShoppingCarList>*@
+@model IPagedList<ShoppingCar.Models.ShoppingCarList>
+@using PagedList
+@using PagedList.Mvc
 @{
     /**/
 
@@ -30,6 +33,9 @@
 }
 <script>
     let checkarray = [];
+    $(document).ready(function () {
+
+    });
     function checkboxclick(id, ProductPrice) {
 
         var qtyId = id + "_textbox_qty";
@@ -96,28 +102,29 @@
 </script>
 @using (Html.BeginForm())
 {
+    @Html.PagedListPager(Model, page => Url.Action("CheckCar", new { page }))
     <table class="table form-group" id="list">
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.OrderDetails.FirstOrDefault().Product.ProductImg)
+                @Html.DisplayNameFor(model => model.FirstOrDefault().Product.ProductImg)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.OrderDetails.FirstOrDefault().Product.ProductName)
+                @Html.DisplayNameFor(model => model.FirstOrDefault().Product.ProductName)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.OrderDetails.FirstOrDefault().ProductQty)
+                @Html.DisplayNameFor(model => model.FirstOrDefault().ProductQty)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.OrderDetails.FirstOrDefault().Product.ProductPrice)
+                @Html.DisplayNameFor(model => model.FirstOrDefault().Product.ProductPrice)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.OrderDetails.FirstOrDefault().Approved_Flag)
+                @Html.DisplayNameFor(model => model.FirstOrDefault().Order_Flag)
             </th>
             <th></th>
         </tr>
 
-        @*@for (int i = 0; i < Model.OrderDetails.Count; i++)*@
-        @foreach (var item in Model.OrderDetails)
+        @*@for (int i = 0; i < Model.ShoppingCarList.Count; i++)*@
+        @foreach (var item in Model)
         {
             <tr>
                 <td>
@@ -133,24 +140,25 @@
                     }
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.ProductName)
+                    @Html.Display(item.Product.ProductName)
                 </td>
                 <td>
-                    @Html.TextBoxFor(modelItem => item.ProductQty, new { type = "number", min = "1", id = item.ProductID + "_textbox_qty", onchange = "return checkboxclick('" + item.ProductID + "','" + item.Product.ProductPrice + "')" })
+                    @Html.TextBox(item.ProductQty.ToString(), new { type = "number", min = "1", id = item.ProductID + "_textbox_qty", onchange = "return checkboxclick('" + item.ProductID + "','" + item.Product.ProductPrice + "')" })
 
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Product.ProductPrice)
+                    @Html.Display(item.Product.ProductPrice.ToString())
                 </td>
                 <td>
-                    @Html.CheckBoxFor(modelItem => item.Approved_Flag, htmlAttributes: new { @id = item.ProductID + "_checkbox", onchange = "return checkboxclick('" + item.ProductID + "','" + item.Product.ProductPrice + "')" })
-                    @Html.HiddenFor(modelItem => item.OrderDetailID)
+                    @Html.CheckBox(item.Order_Flag.ToString(), htmlAttributes: new { @id = item.ProductID + "_checkbox", onchange = "return checkboxclick('" + item.ProductID + "','" + item.Product.ProductPrice + "')" })
+
                 </td>
                 <td>
-                    <a href="@Url.Action("DeleteCar")?OrderDetailID=@item.OrderDetailID" class="btn btn-danger" onclick="return Confirm_custom('確定要刪除嗎?')">刪除</a>
+                    <a href="@Url.Action("DeleteCar")?OrderDetailID=@item.ShoppingCarID" class="btn btn-danger" onclick="return Confirm_custom('確定要刪除嗎?')">刪除</a>
                 </td>
             </tr>
         }
+
 
     </table>
 
