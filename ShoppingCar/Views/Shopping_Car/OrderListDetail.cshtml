@@ -3,47 +3,71 @@
 @{
     ViewBag.Title = "訂單明細";
 }
-
+<script>
+    function Confirm_custom(str) {
+        if (confirm(str)) {
+            onSubmitBlock();
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    function onSubmitBlock() {
+        $.blockUI({
+            message: "請稍等..."
+        });
+    }
+</script>
 <h2>訂單明細</h2>
-
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.UserID)
+            @Html.DisplayNameFor(model => model.Product.ProductImg)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.ProductName)
+            @Html.DisplayNameFor(model => model.ProductID)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Product.ProductName)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.ProductQty)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.TotalPrice)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Create_Date)
+            @Html.DisplayNameFor(model => model.Product.ProductPrice)
         </th>
         <th></th>
     </tr>
 
-@foreach (var item in Model) {
+    @foreach (var item in Model)
+    {
     <tr>
         <td>
-            @Html.DisplayFor(modelItem => item.UserID)
+            @{
+                if (item.Product.ProductImg != null)
+                {
+                    <img src="@Url.Content(item.Product.ProductImg)?w=70&h=70&mode=cropyunits " />
+                }
+                else
+                {
+                    <img src="~/Image/notImg_.jpg?w=70&h=70&mode=cropyunits" />
+                }
+            }
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.ProductName)
+            @Html.DisplayFor(modelItem => item.ProductID)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Product.ProductName)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.ProductQty)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.TotalPrice)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Create_Date)
+            @Html.DisplayFor(modelItem => item.Product.ProductPrice)
         </td>
     </tr>
-}
+    }
 
 </table>

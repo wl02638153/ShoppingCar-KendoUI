@@ -5,7 +5,9 @@
     ViewBag.Title = "訂單列表";
 }
 <head>
-    <script src="@Url.Content("~/Scripts/jquery-3.3.1.min.js")" type="text/javascript"></script>
+    <script src="~/Scripts/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" src="~/Scripts/jquery.blockUI.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
     @if (TempData["DeleteOrderMessage"] != null)
     {
         <script type="text/javascript">
@@ -14,6 +16,22 @@
         </script>
     }
 </head>
+<script>
+    function Confirm_custom(str) {
+        if (confirm(str)) {
+            onSubmitBlock();
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    function onSubmitBlock() {
+        $.blockUI({
+            message: "請稍等..."
+        });
+    }
+</script>
 <h2>訂單列表</h2>
 <p>
     @Html.ActionLink("下載所有訂單", "Download_ALL_Order")
@@ -21,7 +39,7 @@
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.FirstOrDefault().ID)
+            @Html.DisplayNameFor(model => model.FirstOrDefault().OrderID)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.FirstOrDefault().Receiver)
@@ -33,6 +51,9 @@
             @Html.DisplayNameFor(model => model.FirstOrDefault().Address)
         </th>
         <th>
+            @Html.DisplayNameFor(model => model.FirstOrDefault().Price)
+        </th>
+        <th>
             @Html.DisplayNameFor(model => model.FirstOrDefault().Create_Date)
         </th>
         <th></th>
@@ -42,8 +63,7 @@
     {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.ID)
-
+                @Html.DisplayFor(modelItem => item.OrderID)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Receiver)
@@ -55,11 +75,14 @@
                 @Html.DisplayFor(modelItem => item.Address)
             </td>
             <td>
+                @Html.DisplayFor(modelItem => item.Price)
+            </td>
+            <td>
                 @Html.DisplayFor(modelItem => item.Create_Date)
             </td>
             <td>
                 @Html.ActionLink("Details", "OrderListDetail", new { OrderID = item.OrderID }) |
-                @Html.ActionLink("Delete", "DeleteOrder", new { OrderID = item.OrderID })  |
+                @*@Html.ActionLink("Delete", "DeleteOrder", new { OrderID = item.OrderID }, new { onclick = "return Confirm_custom('確定要刪除嗎?')" })  |*@
                 @Html.ActionLink("DownLoad Excel", "DownloadOrderExcel", new { OrderID = item.OrderID })
             </td>
         </tr>

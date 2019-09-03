@@ -125,8 +125,7 @@ namespace ShoppingCar.Controllers
                         return View("CreateProduct", Session["UserTag"].ToString());
                     }
                     TempData["DBResultErrorMessage"] = cProduct.ProductID + "新增成功!";
-                    var products = db.Product.Where(m => m.Delete_Flag == false).OrderByDescending(m => m.Create_Date).ToList<Product>();
-                    return View("ProductList", Session["UserTag"].ToString(), products);    //新增成功
+                    return RedirectToAction("ProductList");    //新增成功
                 }
                 else
                 {   //model 驗證失敗

@@ -44,14 +44,7 @@
             };
     </script>
 }
-@if (TempData["DBResultErrorMessage"] != null)
-{
-    <script type="text/javascript">
-            window.onload = function () {
-                alert("@TempData["DBResultErrorMessage"]");
-            };
-    </script>
-}
+
 @if (TempData["ExcelResultErrorMessage"] != null)
 {
     <script type="text/javascript">
@@ -75,7 +68,7 @@
 <p>2.產品編號必須大於2個字元小於15個字元</p>
 <p>3.產品說明最多為4000字</p>
 <p>4.產品售價介於1~1000000</p>
-<p>4.圖片格式限制 jpg,png,jpeg,jfif</p>
+<p>5.圖片格式限制 jpg,png,jpeg,jfif</p>
 <p>
     <a href="~/Excel/ExcelCreateFormat.xlsx">下載Excel格式</a>
 </p>

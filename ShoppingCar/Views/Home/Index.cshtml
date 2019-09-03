@@ -49,24 +49,6 @@
     }
 </script>
 <h2>產品列表</h2>
-<p>
-    @Html.ActionLink("下載產品Excel", "DownloadProductExcel2", "Product")
-</p>
-<p>
-    <a href="~/Excel/ExcelCreateOrderFormate.xlsx">下載訂單Excel格式</a>
-</p>
-<hr />
-<form method="post" action="~/Shopping_Car/ImportOrder" enctype="multipart/form-data">
-    <label class="btn btn-default">透過Excel新增購物車</label>
-    <input id="ImportOrder" name="ImportOrder" type="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" onchange="buttonShow()">
-    <p></p>
-    <div class="form-group">
-        <div class="">
-            <input type="submit" id="ImportOrderSubmit" value="匯入" class="btn btn-default" style="display:none" />
-        </div>
-    </div>
-    <p>@ViewBag.ExcelResultErrorMessage</p>
-</form>
 <hr />
 <div class="row">
     @foreach (var item in ViewBag.PageOfProduct)
@@ -102,7 +84,6 @@
                     {
                         <p class="text-center">
                             <a href="@Url.Action("AddCar", "Shopping_Car")?ProductID=@item.ProductID" class="btn btn-primary" onclick="return confirm('確定要加入購物車嗎?')">加入購物車</a>
-                            <a href="@Url.Action("AddCar_test", "Shopping_Car")?ProductID=@item.ProductID" class="btn btn-primary" onclick="return confirm('確定要加入購物車嗎?')">加入購物車test</a>
                         </p>
                     }
                 </div>

@@ -1,4 +1,4 @@
-﻿@model IEnumerable<ShoppingCar.Models.OrderDetail>
+﻿@model IEnumerable<ShoppingCar.Models.ShoppingCarList>
 
 @{
     ViewBag.Title = "購物車";
@@ -7,31 +7,20 @@
     <script src="@Url.Content("~/Scripts/jquery-3.3.1.min.js")" type="text/javascript"></script>
 </head>
 <script type="text/javascript">
-    function CheckFlag(OrderDetailID) {
-        var checkbox = document.getElementById(OrderDetailID);
-        if (checkbox.checked  == true) {
-            console.log("true");
-
-        }
-        else if (checkbox.checked  == false) {
-            console.log("false");
-        }
-        else {
-            console.log(checkbox.value);
-        }
-    }
     $(document).ready(function () {
-
+        
     });
+    
+    
 
 </script>
-<h2>購物車</h2>
+<h2>確認訂單</h2>
 
 
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.UserID)
+            @Html.DisplayNameFor(model => model.Product.ProductImg)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.Product.ProductName)
@@ -40,21 +29,24 @@
             @Html.DisplayNameFor(model => model.ProductQty)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.TotalPrice)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Create_Date)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Approved_Flag)
+            @Html.DisplayNameFor(model => model.Product.ProductPrice)
         </th>
         <th></th>
     </tr>
 
 @foreach (var item in Model) {
-    <tr id="@item.OrderDetailID@item.ProductID">
+    <tr id="@item.Id@item.ProductID">
         <td>
-            @Html.DisplayFor(modelItem => item.UserID)
+            @{
+                if (item.Product.ProductImg != null)
+                {
+                    <img src="@Url.Content(item.Product.ProductImg)?w=70&h=70&mode=cropyunits " />
+                }
+                else
+                {
+                    <img src="~/Image/notImg_.jpg?w=70&h=70&mode=cropyunits" />
+                }
+            }
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.Product.ProductName)
@@ -63,18 +55,7 @@
             @Html.DisplayFor(modelItem => item.ProductQty)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.TotalPrice)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Create_Date)
-        </td>
-        <td>
-            @Html.CheckBoxFor(modelItem => item.Approved_Flag)
-            @*Html.CheckBoxFor(modelItem => item.Approved_Flag, new { id = "Approved_Flag_" + item.OrderDetailID, name = "Approved_Flag" })*@
-            <!--<input type="checkbox" id="Approved_Flag_@item.OrderDetailID" name="Approved_Flag" onclick="CheckFlag(this.id)"/>-->
-        </td>
-        <td>
-            <a href="@Url.Action("DeleteCar")?OrderDetailID=@item.OrderDetailID" class="btn btn-danger">刪除</a>
+            @Html.DisplayFor(modelItem => item.Product.ProductPrice)
         </td>
     </tr>
 }
@@ -82,32 +63,45 @@
 </table>
 <form action="@Url.Action("ShoppingCar")" method="post">
     <div class="form-horizontal">
-        <h4>訂單收件人資料</h4>
         <hr />
         <div class="form-group">
-            <span class="control-label col-md-2">收件人姓名</span>
+            <span class="control-label col-md-2">商品小計</span>
             <div class="col-md-10">
-                <input type="text" id="Receiver" name="Receiver" required="required" class="form-control" />
+                <div class="col-md-10">
+                    @{
+                        if (Session["TotalPrice"] != null)
+                        {
+                            <input type="number" step="0.01" id="TotalPrice" name="TotalPrice" class="form-control" value='@Session["TotalPrice"]' readonly />
+                        }
+                    }
+                </div>
+            </div>
+            <h4>訂單收件人資料</h4>
+            <hr />
+            <div class="form-group">
+                <span class="control-label col-md-2">收件人姓名</span>
+                <div class="col-md-10">
+                    <input type="text" id="Receiver" name="Receiver" required="required" class="form-control"  maxlength="10"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <span class="control-label col-md-2">收件人信箱</span>
+                <div class="col-md-10">
+                    <input type="email" id="Email" name="Email" required="required" class="form-control"  maxlength="30"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <span class="control-label col-md-2">收件人地址</span>
+                <div class="col-md-10">
+                    <input type="text" id="Address" name="Address" required="required" class="form-control"  maxlength="30"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-10">
+                    <input type="submit" value="確認訂購" id="Receiver" name="Receiver" required="required" class="btn btn-default" />
+                </div>
             </div>
         </div>
-        <div class="form-group">
-            <span class="control-label col-md-2">收件人信箱</span>
-            <div class="col-md-10">
-                <input type="email" id="Email" name="Email" required="required" class="form-control" />
-            </div>
-        </div>
-        <div class="form-group">
-            <span class="control-label col-md-2">收件人地址</span>
-            <div class="col-md-10">
-                <input type="text" id="Address" name="Address" required="required" class="form-control" />
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="col-md-10">
-                <input type="submit" value="確認訂購" id="Receiver" name="Receiver" required="required" class="btn btn-default" />
-            </div>
-        </div>
-    </div>
 
 </form>
 

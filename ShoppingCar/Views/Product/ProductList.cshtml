@@ -30,11 +30,12 @@
     }
 </script>
 <h2>ProductList</h2>
-@if (ViewBag.DBResultErrorMessage != null)
+
+@if (TempData["DBResultErrorMessage"] != null)
 {
     <script type="text/javascript">
             window.onload = function () {
-                alert("@ViewBag.DBResultErrorMessage");
+                alert("@TempData["DBResultErrorMessage"]");
             };
     </script>
 }

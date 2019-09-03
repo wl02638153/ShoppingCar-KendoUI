@@ -1,60 +1,206 @@
-﻿@model IEnumerable<ShoppingCar.Models.ShoppingCarList>
+﻿@model ShoppingCar.Models.ShoppingCarCheckList
 
 @{
     ViewBag.Title = "Check_Car";
 }
 
-<h2>Check_Car</h2>
+<head>
+    <script src="~/Scripts/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" src="~/Scripts/jquery.blockUI.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+</head>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Product.ProductImg)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.ProductQty)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Create_Date)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Order_Flag)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Member.MemberName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Product.ProductName)
-        </th>
-        <th></th>
-    </tr>
-
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.ProductQty)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Create_Date)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Order_Flag)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Member.Password)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Product.ProductName)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
-        </td>
-    </tr>
+@if (ViewBag.CheckCarMessage != null)
+{
+    <script type="text/javascript">
+            window.onload = function () {
+                alert("@ViewBag.CheckCarMessage");
+            };
+    </script>
+}
+@if (TempData["DeleteCar"] != null)
+{
+    <script type="text/javascript">
+            window.onload = function () {
+                alert("@TempData["DeleteCar"]");
+            };
+    </script>
+}
+@if (TempData["CheckMessage"] != null)
+{
+    <script type="text/javascript">
+            window.onload = function () {
+                alert("@TempData["CheckMessage"]");
+            };
+    </script>
 }
 
-</table>
+<script>
+    let checkarray = [];
+    $(document).ready(function () {
+        $('input:checkbox').click();
+        $('input:checkbox').click();
+    });
+    function checkboxclick(id, ProductPrice) {
+
+        var qtyId = id + "_textbox_qty";
+        var checkId = id + "_checkbox";
+        var qty = $("#" + qtyId).val();
+        console.log("checkId=" + checkId);
+        if ($("#" + checkId).prop("checked")) {
+            if (checkExist(checkarray, checkId) == false)
+                checkarray.push([checkId, qtyId, qty, ProductPrice]);
+            else {
+                var index = getIndex(checkarray, checkId);
+                console.log("checkarray befor:" + checkarray[index]);
+                checkarray[index] = [checkId, qtyId, qty, ProductPrice];
+                console.log("checkarray after:" + checkarray[index]);
+
+            }
+            countPrice();
+        }
+        else {
+            if (checkExist(checkarray, checkId)) {
+                var index = getIndex(checkarray, checkId);
+                checkarray.splice(index, 1);
+            }
+            countPrice();
+        }
+    }
+    function countPrice() {
+        var count = 0;
+        for (var i = 0; i < checkarray.length; i++) {
+            console.log(checkarray[i]);
+            count += checkarray[i][2] * checkarray[i][3];
+        }
+        console.log("count=" + count);
+        $("#TotalPrice").val(count);
+    }
+    function getIndex(array, id) {
+
+        for (var i = 0; i < array.length; i++) {
+            if (array[i][0] == id)
+                return i;
+        }
+    }
+    function checkExist(array, id) {
+        for (var i = 0; i < array.length; i++) {
+            if (array[i][0] == id)
+                return true;
+        }
+        return false;
+    }
+    function Confirm_custom(str) {
+        if (confirm(str)) {
+            onSubmitBlock();
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    function onSubmitBlock() {
+        $.blockUI({
+            message: "請稍等..."
+        });
+    }
+    function buttonShow() {
+        $("#ImportOrderSubmit").removeAttr("disabled");
+    }
+</script>
+<h2>購物車</h2>
+<p>
+    @Html.ActionLink("下載產品Excel", "DownloadProductExcel2", "Product")
+</p>
+<p>
+    <a href="~/Excel/ExcelCreateOrderFormate.xlsx">下載訂單Excel格式</a>
+</p>
+<hr />
+<h3>資料格式限制</h3>
+<p>1.產品編號輸入正確即可</p>
+<hr />
+<form method="post" action="~/Shopping_Car/ImportOrder" enctype="multipart/form-data">
+    <h4>透過Excel新增購物車</h4>
+    <input id="ImportOrder" name="ImportOrder" type="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" onchange="buttonShow()">
+    <p></p>
+    <div class="form-group">
+        <div class="">
+            <input type="submit" id="ImportOrderSubmit" value="匯入" class="btn btn-default" disabled="disabled" />
+        </div>
+        <div style="overflow:auto;width:50%;height:100px;">@Html.Raw(TempData["ExcelResultErrorMessage"])</div>
+    </div>
+</form>
+<hr />
+@using (Html.BeginForm("Check_Car", "Shopping_Car"))
+{
+    <table class="table" id="list">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.ShoppingCarLists.FirstOrDefault().Product.ProductImg)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ShoppingCarLists.FirstOrDefault().Product.ProductName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ShoppingCarLists.FirstOrDefault().ProductQty)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ShoppingCarLists.FirstOrDefault().Product.ProductPrice)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ShoppingCarLists.FirstOrDefault().Order_Flag)
+            </th>
+            <th></th>
+        </tr>
+
+        @*@foreach (var item in Model)*@
+        @for (var i = 0; i < Model.ShoppingCarLists.Count; i++)
+        {
+            <tr>
+                <td>
+                    @{
+                        if (Model.ShoppingCarLists[i].Product.ProductImg != null)
+                        {
+                            <img src="@Url.Content(Model.ShoppingCarLists[i].Product.ProductImg)?w=70&h=70&mode=cropyunits " />
+                        }
+                        else
+                        {
+                            <img src="~/Image/notImg_.jpg?w=70&h=70&mode=cropyunits" />
+                        }
+                    }
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => modelItem.ShoppingCarLists[i].Product.ProductName)
+                </td>
+                <td>
+                    @Html.TextBoxFor(modelItem => modelItem.ShoppingCarLists[i].ProductQty, new { type = "number", min = "1", id = Model.ShoppingCarLists[i].ProductID + "_textbox_qty", onchange = "return checkboxclick('" + Model.ShoppingCarLists[i].ProductID + "','" + Model.ShoppingCarLists[i].Product.ProductPrice + "')" })
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => modelItem.ShoppingCarLists[i].Product.ProductPrice)
+                </td>
+                <td>
+                    @Html.CheckBoxFor(modelItem => modelItem.ShoppingCarLists[i].Order_Flag, htmlAttributes: new { @id = Model.ShoppingCarLists[i].ProductID + "_checkbox", onchange = "return checkboxclick('" + Model.ShoppingCarLists[i].ProductID + "','" + Model.ShoppingCarLists[i].Product.ProductPrice + "')" })
+                    @Html.HiddenFor(modelItem => modelItem.ShoppingCarLists[i].Id)
+                </td>
+                <td>
+                    <a href="@Url.Action("Delete_Car")?Id=@Model.ShoppingCarLists[i].Id" class="btn btn-danger" onclick="return Confirm_custom('確定要刪除嗎?')">刪除</a>
+                </td>
+            </tr>
+        }
+
+    </table>
+
+    <div class="form-horizontal">
+        <div class="form-group">
+            <span class="control-label col-md-2">商品小計</span>
+            <div class="col-md-10">
+                <input type="number" step="0.01" id="TotalPrice" name="TotalPrice" class="form-control" readonly value="0" />
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-10">
+                <input type="submit" value="結帳去" id="Checkout" name="Checkout" required="required" class="btn btn-default" onclick="return Confirm_custom('確認結帳去')" />
+            </div>
+        </div>
+    </div>
+}

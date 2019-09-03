@@ -19,6 +19,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Drawing.Drawing2D;
 using ImageMagick;
+using System.Data.Entity.Validation;
 using PagedList;
 using PagedList.Mvc;
 
@@ -40,40 +41,92 @@ namespace ShoppingCar.Controllers
         //[Filters.MemberFilter]
         public ActionResult ImportOrder(HttpPostedFileBase ImportOrder)
         {
+            string UserID = Session["Member"].ToString();
             FileUploadValidate fs = new FileUploadValidate();
-            fs.filesize = 550;
+            fs.filesize = 2000;
             string message = "";
+            ExcelValidate ev = new ExcelValidate();
             if (fs.UploadUserFile(ImportOrder))
             {
-                ExcelPackage ep = new ExcelPackage(ImportOrder.InputStream);
-                var workbook = ep.Workbook;
-                if (workbook != null)
+                if (ev.CheckExcelData(ImportOrder))
                 {
-                    if (workbook.Worksheets.Count > 0)
-                    {
-                        var currentWorkSheet = workbook.Worksheets.First();
+                    var currentWorkSheet = ev.workbook.Worksheets.First();
 
-                        int col = 1;
-                        int row = 2;
-                        foreach (var item in currentWorkSheet.Cells)
+                    int col = 1;
+                    int row = 2;
+                    foreach (var item in currentWorkSheet.Cells)
+                    {
+                        if (currentWorkSheet.Cells[row, col].Value != null)
                         {
-                            if (currentWorkSheet.Cells[row, col].Value != null)
+                            try
                             {
                                 string ProductID = currentWorkSheet.Cells[row, col].Value.ToString();
-
-                                Add_car(ProductID);
-                                row++;
-
+                                var currentCar = db.ShoppingCarList.Where(m => m.ProductID == ProductID && m.UserID == UserID).FirstOrDefault();
+                                if (currentCar == null)
+                                {
+                                    var product = db.Product.Where(m => m.ProductID == ProductID).FirstOrDefault();
+                                    if (product != null)
+                                    {
+                                        ShoppingCarList shoppingCarList = new ShoppingCarList();
+                                        shoppingCarList.UserID = UserID;
+                                        shoppingCarList.ProductID = product.ProductID;
+                                        shoppingCarList.ProductQty = 1;
+                                        shoppingCarList.Order_Flag = true;
+                                        shoppingCarList.Create_Date = DateTime.Now;
+                                        db.ShoppingCarList.Add(shoppingCarList);
+                                        db.SaveChanges();
+                                        message += "<p>[" + row +","+ ProductID + "]新增成功</p>";
+                                    }
+                                    else
+                                    {
+                                        message += "<p>[" + row + "]該產品不存在</p>";
+                                    }
+                                }
+                                else
+                                {
+                                    currentCar.ProductQty += 1;
+                                    message += "<p>[" + row + "," + ProductID + "]新增成功</p>";
+                                }
                             }
-                            else
+                            catch (DbEntityValidationException ex)
                             {
-                                break;
+                                TempData["ImportCarMessage"] = "請確認資料格式是否正確";
+                                foreach (var err in ex.EntityValidationErrors)
+                                {
+                                    foreach (var erro in err.ValidationErrors)
+                                    {
+                                        var ErrID = erro.PropertyName;
+                                        if (ErrID == "ProductID") ErrID = "產品編號";
+                                        else if (ErrID == "ProductName") ErrID = "產品名稱";
+                                        else if (ErrID == "ProductExplain") ErrID = "產品說明";
+                                        else if (ErrID == "ProductPrice") ErrID = "產品價錢";
+                                        message += "<p>[第" + row + "列," + ErrID + "]" + erro.ErrorMessage + "<p/>";
+                                    }
+                                }
                             }
-                            //db.SaveChanges();
+                            catch (InvalidCastException ex)
+                            {
+                                var ErrID = "";
+                                if ((col - 1) == 1) ErrID = "產品編號";
+                                else if ((col - 1) == 2) ErrID = "產品名稱";
+                                else if ((col - 1) == 3) ErrID = "產品說明";
+                                else if ((col - 1) == 4) ErrID = "產品價錢";
+                                message += "<p>[" + row + "," + ErrID + "]資料型態輸入錯誤</p>";
+                            }
+                            catch (Exception ex)
+                            {
+                                message+=ex.Message;
+                            }
+                            row++;
+                            TempData["ExcelResultErrorMessage"] = message;
+                        }
+                        else
+                        {
+                            break;
                         }
                     }
-                }
-                return RedirectToAction("CheckCar");
+                }  
+                return RedirectToAction("Check_Car");
             }
             else
             {
@@ -87,11 +140,11 @@ namespace ShoppingCar.Controllers
         public ActionResult ShoppingCar()
         {
             string UserID = Session["Member"].ToString();
-            var orderDetails = db.OrderDetail.Where(m => m.UserID == UserID && m.Approved_Flag == true&&m.OrderID==null).ToList();//
-            return View("ShoppingCar", Session["UserTag"].ToString(), orderDetails);
+            var shoppingCarList = db.ShoppingCarList.Where(m => m.UserID == UserID && m.Order_Flag == true).ToList();
+            return View("ShoppingCar", Session["UserTag"].ToString(), shoppingCarList);
         }
         [HttpPost]
-        public ActionResult ShoppingCar(string Receiver, string Email, string Address)    //產生orderHeader
+        public ActionResult ShoppingCar(string Receiver, string Email, string Address,decimal TotalPrice)    //產生orderHeader
         {
             string UserID = Session["Member"].ToString();
             string guid = Guid.NewGuid().ToString();        //產生唯一的guid變數 for OrderID
@@ -102,70 +155,59 @@ namespace ShoppingCar.Controllers
             orderHeader.Receiver = Receiver;
             orderHeader.Email = Email;
             orderHeader.Address = Address;
+            orderHeader.Price = TotalPrice;
             orderHeader.Create_Date = DateTime.Now;
             db.OrderHeader.Add(orderHeader);
-            var carList = db.OrderDetail.Where(m => m.Approved_Flag == true && m.UserID == UserID&&m.OrderID==null).ToList();
+            var carList = db.ShoppingCarList.Where(m => m.Order_Flag == true && m.UserID == UserID).ToList();
 
             foreach (var item in carList)
             {
-                item.OrderID = guid;
-                item.Approved_Flag = true;
+                OrderDetail orderDetail = new OrderDetail();
+                orderDetail.UserID = UserID;
+                orderDetail.ProductQty = item.ProductQty;
+                orderDetail.ProductID = item.ProductID;
+                orderDetail.OrderID = guid;
+                orderDetail.Create_Date= DateTime.Now;
+                db.OrderDetail.Add(orderDetail);
+                db.ShoppingCarList.Remove(item);
+                db.SaveChanges();
             }
-            db.SaveChanges();
             return RedirectToAction("OrderList");
         }
 
         public ActionResult Check_Car()
         {
             string UserID = Session["Member"].ToString();
-            //ShoppingCarList shoppingCarList = new ShoppingCarList();
-            var shoppingCarList = db.ShoppingCarList.Where(m => m.UserID == UserID).ToList<ShoppingCarList>();
-            return View("Check_Car", Session["UserTag"].ToString(), shoppingCarList);
+            ShoppingCarCheckList shoppingCarCheckList = new ShoppingCarCheckList();
+            shoppingCarCheckList.ShoppingCarLists = db.ShoppingCarList.Where(m => m.UserID == UserID).ToList<ShoppingCarList>();
+            return View("Check_Car", Session["UserTag"].ToString(), shoppingCarCheckList);
         }
 
-        public ActionResult CheckCar()
-        {
-            string UserID = Session["Member"].ToString();
-            OrderDetailList detailList = new OrderDetailList();
-            detailList.OrderDetails = db.OrderDetail.Where(m => m.UserID == UserID && m.OrderID == null).ToList<OrderDetail>();
-            return View("CheckCar", Session["UserTag"].ToString(), detailList);
-        }
         [HttpPost]
-        public ActionResult CheckCar(OrderDetailList list)
+        public ActionResult Check_Car(ShoppingCarCheckList list,decimal TotalPrice)
         {
             string UserID = Session["Member"].ToString();
-            var orderDetails = db.OrderDetail.Where(m => m.UserID == UserID && m.Approved_Flag == false).ToList<OrderDetail>();
-            var selected = list.OrderDetails.Where(m=>m.Approved_Flag==true).ToList<OrderDetail>();
-            var str = selected.Count;
-            if (selected.Count > 0)
+
+            int count = 0;
+            foreach(var item in list.ShoppingCarLists)
             {
-                foreach (var item in selected)
-                {
-                    var check = db.OrderDetail.Where(m => m.OrderDetailID == item.OrderDetailID).FirstOrDefault();
-                    if (item.Approved_Flag == true)
-                    {
-                        check.Approved_Flag = true;
-                    }
-                    else if (item.Approved_Flag == false)
-                    {
-                        check.Approved_Flag = false;
-                    }
-
-                }
-                db.SaveChanges();
-
-                var orderDetailsNew = db.OrderDetail.Where(m => m.UserID == UserID && m.Approved_Flag == true && m.Delete_Flag != true && m.OrderID == null).ToList();
-                //return View("ShoppingCar", "_LayoutMember", orderDetailsNew);
-                return RedirectToAction("ShoppingCar", "Shopping_Car", orderDetailsNew);
+                if (item.Order_Flag == false) count++;
             }
-            else
+            if (count == list.ShoppingCarLists.Count)
             {
-                ViewBag.CheckCarMessage = "請選擇商品";
-                OrderDetailList detailList = new OrderDetailList();
-                detailList.OrderDetails = db.OrderDetail.Where(m => m.UserID == UserID && m.OrderID == null).ToList<OrderDetail>();
-                return View("CheckCar", Session["UserTag"].ToString(), detailList);
+                TempData["CheckMessage"] = "請選擇商品!";
+                return RedirectToAction("Check_Car");
             }
             
+            foreach (var item in list.ShoppingCarLists)
+            {
+                var shoppingCarList = db.ShoppingCarList.Where(m => m.UserID == UserID && m.Id == item.Id).FirstOrDefault();
+                shoppingCarList.Order_Flag = item.Order_Flag;
+                shoppingCarList.ProductQty = item.ProductQty;
+            }
+            db.SaveChanges();
+            Session["TotalPrice"] = TotalPrice;
+            return RedirectToAction("ShoppingCar");
         }
 
         public ActionResult OrderList(int page = 1)
@@ -198,6 +240,7 @@ namespace ShoppingCar.Controllers
 
             var tOH = typeof(OrderHeaderMetaData);
             var tOD = typeof(OrderDetailMetaData);
+            var tPD = typeof(ProductMetaData);
 
             int col = 1;    //欄:直的，因為要從第1欄開始，所以初始為1
             table.Columns[0].Name = tOH.GetProperty("OrderID").GetCustomAttribute<DisplayNameAttribute>().DisplayName;
@@ -206,11 +249,10 @@ namespace ShoppingCar.Controllers
             table.Columns[3].Name = tOH.GetProperty("Address").GetCustomAttribute<DisplayNameAttribute>().DisplayName;
 
             table.Columns[4].Name = tOD.GetProperty("ProductID").GetCustomAttribute<DisplayNameAttribute>().DisplayName;
-            table.Columns[5].Name = tOD.GetProperty("ProductName").GetCustomAttribute<DisplayNameAttribute>().DisplayName;
+            table.Columns[5].Name = tPD.GetProperty("ProductName").GetCustomAttribute<DisplayNameAttribute>().DisplayName;
             table.Columns[6].Name = tOD.GetProperty("UserID").GetCustomAttribute<DisplayNameAttribute>().DisplayName;
             table.Columns[7].Name = tOD.GetProperty("ProductQty").GetCustomAttribute<DisplayNameAttribute>().DisplayName;
-            table.Columns[8].Name = tOD.GetProperty("TotalPrice").GetCustomAttribute<DisplayNameAttribute>().DisplayName;
-            table.Columns[9].Name = tOD.GetProperty("Create_Date").GetCustomAttribute<DisplayNameAttribute>().DisplayName;
+            table.Columns[8].Name = tPD.GetProperty("ProductPrice").GetCustomAttribute<DisplayNameAttribute>().DisplayName;
             int row = 2;
 
 
@@ -227,7 +269,6 @@ namespace ShoppingCar.Controllers
                 sheet.Cells[row, col++].Value = item.UserID;
                 sheet.Cells[row, col++].Value = item.ProductQty;
                 sheet.Cells[row, col++].Value = item.Product.ProductPrice;
-                sheet.Cells[row, col++].Value = item.Create_Date.ToString();
                 row++;
             }
             MemoryStream ms = new MemoryStream();
@@ -244,7 +285,7 @@ namespace ShoppingCar.Controllers
 
             var q = (from od in db.OrderDetail
                      join os in db.OrderHeader on od.OrderID equals os.OrderID
-                     where od.OrderID==os.OrderID && od.UserID.Equals(UserID)  
+                     where od.OrderID==os.OrderID && od.UserID.Equals(UserID) &&od.Delete_Flag!=true
                      select new
                      {
                          OrderId = os.OrderID,
@@ -255,7 +296,7 @@ namespace ShoppingCar.Controllers
                          ProductName = od.Product.ProductName,
                          UserID = od.UserID,
                          ProductQty = od.ProductQty,
-                         TotalPrice = od.Product.ProductPrice,
+                         Price = os.Price,
                          Create_Date = od.Create_Date
                      }).ToList();
 
@@ -268,6 +309,7 @@ namespace ShoppingCar.Controllers
 
             var tOH = typeof(OrderHeaderMetaData);
             var tOD = typeof(OrderDetailMetaData);
+            var tPD = typeof(ProductMetaData);
 
             int col = 1;    //欄:直的，因為要從第1欄開始，所以初始為1
             table.Columns[0].Name = tOH.GetProperty("OrderID").GetCustomAttribute<DisplayNameAttribute>().DisplayName;
@@ -276,10 +318,10 @@ namespace ShoppingCar.Controllers
             table.Columns[3].Name = tOH.GetProperty("Address").GetCustomAttribute<DisplayNameAttribute>().DisplayName;
 
             table.Columns[4].Name = tOD.GetProperty("ProductID").GetCustomAttribute<DisplayNameAttribute>().DisplayName;
-            table.Columns[5].Name = tOD.GetProperty("ProductName").GetCustomAttribute<DisplayNameAttribute>().DisplayName;
+            table.Columns[5].Name = tPD.GetProperty("ProductName").GetCustomAttribute<DisplayNameAttribute>().DisplayName;
             table.Columns[6].Name = tOD.GetProperty("UserID").GetCustomAttribute<DisplayNameAttribute>().DisplayName;
             table.Columns[7].Name = tOD.GetProperty("ProductQty").GetCustomAttribute<DisplayNameAttribute>().DisplayName;
-            table.Columns[8].Name = tOD.GetProperty("TotalPrice").GetCustomAttribute<DisplayNameAttribute>().DisplayName;
+            table.Columns[8].Name = tOH.GetProperty("Price").GetCustomAttribute<DisplayNameAttribute>().DisplayName;
             table.Columns[9].Name = tOD.GetProperty("Create_Date").GetCustomAttribute<DisplayNameAttribute>().DisplayName;
             int row = 2;
 
@@ -296,7 +338,7 @@ namespace ShoppingCar.Controllers
                 sheet.Cells[row, col++].Value = item.ProductName;
                 sheet.Cells[row, col++].Value = item.UserID;
                 sheet.Cells[row, col++].Value = item.ProductQty;
-                sheet.Cells[row, col++].Value = item.TotalPrice;
+                sheet.Cells[row, col++].Value = item.Price;
                 sheet.Cells[row, col++].Value = item.Create_Date.ToString();
                 row++;
             }
@@ -308,10 +350,10 @@ namespace ShoppingCar.Controllers
             return File(ms, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", filename);
         }
 
-        public ActionResult AddCar_test(string ProductID)
+        public ActionResult AddCar(string ProductID)
         {
             string UserID = Session["Member"].ToString();
-
+            string message = "";
             var currentCar = db.ShoppingCarList.Where(m => m.ProductID == ProductID && m.UserID == UserID).FirstOrDefault();
             if (currentCar == null)
             {
@@ -320,7 +362,7 @@ namespace ShoppingCar.Controllers
                 shoppingCarList.UserID = UserID;
                 shoppingCarList.ProductID = product.ProductID;
                 shoppingCarList.ProductQty = 1;
-                shoppingCarList.Order_Flag = false;
+                shoppingCarList.Order_Flag = true;
                 shoppingCarList.Create_Date = DateTime.Now;
 
                 db.ShoppingCarList.Add(shoppingCarList);
@@ -340,73 +382,44 @@ namespace ShoppingCar.Controllers
 
             return RedirectToAction("Check_Car");
         }
-
-        public ActionResult AddCar(string ProductID)
-        {
-            string UserID = Session["Member"].ToString();
-
-            var currentCar = db.OrderDetail.Where(m => m.ProductID == ProductID && m.Approved_Flag == false && m.UserID == UserID).FirstOrDefault();
-            if (currentCar == null)
-            {
-                var product = db.Product.Where(m => m.ProductID == ProductID).FirstOrDefault();
-                OrderDetail orderDetail = new OrderDetail();
-                orderDetail.UserID = UserID;
-                orderDetail.ProductID = product.ProductID;
-                orderDetail.Product.ProductName = product.ProductName;
-                orderDetail.Product.ProductPrice = product.ProductPrice;
-                orderDetail.ProductQty = 1;
-                orderDetail.Approved_Flag = false;
-                orderDetail.Create_Date = DateTime.Now;
-
-                db.OrderDetail.Add(orderDetail);
-            }
-            else
-            {
-                currentCar.ProductQty += 1;
-            }
-            try
-            {
-                db.SaveChanges();
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
-
-            return RedirectToAction("CheckCar");
-        }
-
+        
         public void Add_car(string ProductID)
         {
             string UserID = Session["Member"].ToString();
 
-            var currentCar = db.OrderDetail.Where(m => m.ProductID == ProductID && m.Approved_Flag == false && m.UserID == UserID).FirstOrDefault();
+            var currentCar = db.ShoppingCarList.Where(m => m.ProductID == ProductID && m.UserID == UserID).FirstOrDefault();
             if (currentCar == null)
             {
                 var product = db.Product.Where(m => m.ProductID == ProductID).FirstOrDefault();
-                OrderDetail orderDetail = new OrderDetail();
-                orderDetail.UserID = UserID;
-                orderDetail.ProductID = product.ProductID;
-                orderDetail.Product.ProductName = product.ProductName;
-                orderDetail.Product.ProductPrice = product.ProductPrice;
-                orderDetail.ProductQty = 1;
-                orderDetail.Approved_Flag = false;
-                orderDetail.Create_Date = DateTime.Now;
-
-                db.OrderDetail.Add(orderDetail);
+                if (product != null)
+                {
+                    ShoppingCarList shoppingCarList = new ShoppingCarList();
+                    shoppingCarList.UserID = UserID;
+                    shoppingCarList.ProductID = product.ProductID;
+                    shoppingCarList.ProductQty = 1;
+                    shoppingCarList.Order_Flag = true;
+                    shoppingCarList.Create_Date = DateTime.Now;
+                    db.ShoppingCarList.Add(shoppingCarList);
+                }
+                else
+                {
+                    
+                }
+                
             }
             else
             {
                 currentCar.ProductQty += 1;
             }
-            try
-            {
-                db.SaveChanges();
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
+        }
+
+        public ActionResult Delete_Car(int Id)
+        {
+            var shoppingCarId = db.ShoppingCarList.Where(m => m.Id == Id).FirstOrDefault();
+            db.ShoppingCarList.Remove(shoppingCarId);
+            db.SaveChanges();
+            TempData["DeleteCar"] = "刪除成功!";
+            return RedirectToAction("Check_Car");
         }
 
         public ActionResult DeleteCar(int OrderDetailID)
