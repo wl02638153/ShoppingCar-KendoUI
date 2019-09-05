@@ -11,7 +11,20 @@
         
     });
     
-    
+    function Confirm_custom(str) {
+        if (confirm(str)) {
+            onSubmitBlock();
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    function onSubmitBlock() {
+        $.blockUI({
+            message: "請稍等..."
+        });
+    }
 
 </script>
 <h2>確認訂單</h2>
@@ -61,7 +74,7 @@
 }
 
 </table>
-<form action="@Url.Action("ShoppingCar")" method="post">
+<form action="@Url.Action("ShoppingCar")" method="post"onsubmit="return Confirm_custom('確認訂購')">
     <div class="form-horizontal">
         <hr />
         <div class="form-group">

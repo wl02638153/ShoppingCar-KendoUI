@@ -131,7 +131,7 @@
     </div>
 </form>
 <hr />
-@using (Html.BeginForm("Check_Car", "Shopping_Car"))
+@using (Html.BeginForm("Check_Car", "Shopping_Car",FormMethod.Post,new { onsubmit= "return Confirm_custom('確認結帳去')" }))
 {
     <table class="table" id="list">
         <tr>
@@ -199,7 +199,7 @@
         </div>
         <div class="form-group">
             <div class="col-md-10">
-                <input type="submit" value="結帳去" id="Checkout" name="Checkout" required="required" class="btn btn-default" onclick="return Confirm_custom('確認結帳去')" />
+                <input type="submit" value="結帳去" id="Checkout" name="Checkout" required="required" class="btn btn-default" />
             </div>
         </div>
     </div>

@@ -172,6 +172,7 @@ namespace ShoppingCar.Controllers
                 db.ShoppingCarList.Remove(item);
                 db.SaveChanges();
             }
+            TempData["CreateOrderMessage"] = guid + "訂單訂購成功!";
             return RedirectToAction("OrderList");
         }
 

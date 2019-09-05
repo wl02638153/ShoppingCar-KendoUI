@@ -49,80 +49,86 @@
 {
     @Html.AntiForgeryToken()
 
-    <div class="form-horizontal">
-        <h4>Product</h4>
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+<div class="form-horizontal">
+    <h4>Product</h4>
+    <hr />
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
-        @Html.HiddenFor(model => model.ProductID)
-        <div class="form-group">
-            @Html.LabelFor(model => model.ProductID, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.ProductID, new { htmlAttributes = new { @class = "form-control", disabled = "disabled" } })
-                @Html.ValidationMessageFor(model => model.ProductID, "", new { @class = "text-danger" })
-            </div>
+    @Html.HiddenFor(model => model.ProductID)
+    <div class="form-group">
+        @Html.LabelFor(model => model.ProductID, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.ProductID, new { htmlAttributes = new { @class = "form-control", disabled = "disabled" } })
+            @Html.ValidationMessageFor(model => model.ProductID, "", new { @class = "text-danger" })
         </div>
-        <div class="form-group">
-            @Html.LabelFor(model => model.ProductName, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.ProductName, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.ProductName, "", new { @class = "text-danger" })
-            </div>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(model => model.ProductName, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.ProductName, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.ProductName, "", new { @class = "text-danger" })
         </div>
+    </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.ProductExplain, htmlAttributes: new { @class = "control-label col-md-2" })
+    <div class="form-group">
+        @Html.LabelFor(model => model.ProductExplain, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @*@Html.EditorFor(model => model.ProductExplain, new { htmlAttributes = new { @class = "form-control" } })*@
+            <style>
+                textarea {
+                    resize: none;
+                }
+            </style>
+            @Html.TextAreaFor(model => model.ProductExplain, new { @class = "form-controll", cols = "37", rows = "10" })
+            @Html.ValidationMessageFor(model => model.ProductExplain, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.ProductPrice, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.ProductPrice, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.ProductPrice, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(model => model.Shelf_Flag, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.CheckBoxFor(model => model.Shelf_Flag, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.Shelf_Flag, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="editor-field">
+            @Html.LabelFor(model => model.ProductImg_DB, htmlAttributes: new { @class = "control-label col-md-2" })
+            <input type="file" src="@Model.ProductImg" name="ImgFile" id="ImgFile" accept="image/*" onchange="readURL(this)" />
             <div class="col-md-10">
-                @*@Html.EditorFor(model => model.ProductExplain, new { htmlAttributes = new { @class = "form-control" } })*@
-                <style>
-                    textarea {
-                        resize: none;
+                @{
+                    //byte[] img = Model.ProductImg_DB;
+
+                    //var base64 = Convert.ToBase64String(img);
+                    //string imageDate = String.Format("data: image / gif;base64,{0}", base64);
+
+                    if (Model.ProductImg != null)
+                    {
+                        <img id="Img" src="@Url.Content(Model.ProductImg)?w=200&h=200&mode=cropyunits " />
                     }
-                </style>
-                @Html.TextAreaFor(model => model.ProductExplain, new { @class = "form-controll", cols = "37", rows = "10" })
-                @Html.ValidationMessageFor(model => model.ProductExplain, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.ProductPrice, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.ProductPrice, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.ProductPrice, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            <div class="editor-field">
-                @Html.LabelFor(model => model.ProductImg_DB, htmlAttributes: new { @class = "control-label col-md-2" })
-                <input type="file" src="@Model.ProductImg" name="ImgFile" id="ImgFile" accept="image/*" onchange="readURL(this)" />
-                <div class="col-md-10">
-                    @{
-                        //byte[] img = Model.ProductImg_DB;
-
-                        //var base64 = Convert.ToBase64String(img);
-                        //string imageDate = String.Format("data: image / gif;base64,{0}", base64);
-
-                        if (Model.ProductImg != null)
-                        {
-                            <img id="Img" src="@Url.Content(Model.ProductImg)?w=200&h=200&mode=cropyunits " />
-                        }
-                        else
-                        {
-                            <img id="Img" src="~/Image/notImg_.jpg?w=200&h=200&mode=cropyunits" />
-                        }
+                    else
+                    {
+                        <img id="Img" src="~/Image/notImg_.jpg?w=200&h=200&mode=cropyunits" />
                     }
-                    @Html.ValidationMessageFor(model => model.ProductImg_DB, "", new { @class = "text-danger" })
-                </div>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="儲存" class="btn btn-default"/>
+                }
+                @Html.ValidationMessageFor(model => model.ProductImg_DB, "", new { @class = "text-danger" })
             </div>
         </div>
     </div>
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" value="儲存" class="btn btn-default" />
+        </div>
+    </div>
+</div>
 }
 
 <script>

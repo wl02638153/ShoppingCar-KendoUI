@@ -78,6 +78,7 @@
           <Property Name="Delete_Flag" Type="bit" />
           <Property Name="Modify_Date" Type="datetime" />
           <Property Name="ProductImg_DB" Type="varbinary(max)" />
+          <Property Name="Shelf_Flag" Type="bit" />
         </EntityType>
         <EntityType Name="ShoppingCarList">
           <Key>
@@ -88,7 +89,7 @@
           <Property Name="UserID" Type="nvarchar" MaxLength="50" />
           <Property Name="ProductQty" Type="int" />
           <Property Name="Create_Date" Type="datetime" />
-          <Property Name="Order_Flag" Type="bit" />
+          <Property Name="Order_Flag" Type="bit" Nullable="false" />
         </EntityType>
         <Association Name="FK__OrderDeta__Order__5165187F">
           <End Role="OrderHeader" Type="Self.OrderHeader" Multiplicity="0..1">
@@ -291,6 +292,7 @@
           <Property Name="ProductImg_DB" Type="Binary" MaxLength="Max" FixedLength="false" />
           <NavigationProperty Name="OrderDetail" Relationship="Self.FK__OrderDeta__Produ__5070F446" FromRole="Product" ToRole="OrderDetail" />
           <NavigationProperty Name="ShoppingCarList" Relationship="ShoppingCartModel.FK_ShoppingCarList_Product" FromRole="Product" ToRole="ShoppingCarList" />
+          <Property Name="Shelf_Flag" Type="Boolean" />
         </EntityType>
         <Association Name="FK__OrderHead__UserI__4CA06362">
           <End Role="Member" Type="Self.Member" Multiplicity="0..1">
@@ -387,7 +389,7 @@
           <Property Name="UserID" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="ProductQty" Type="Int32" />
           <Property Name="Create_Date" Type="DateTime" Precision="3" />
-          <Property Name="Order_Flag" Type="Boolean" />
+          <Property Name="Order_Flag" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="Member" Relationship="ShoppingCartModel.FK_ShoppingCarList_Member" FromRole="ShoppingCarList" ToRole="Member" />
           <NavigationProperty Name="Product" Relationship="ShoppingCartModel.FK_ShoppingCarList_Product" FromRole="ShoppingCarList" ToRole="Product" />
         </EntityType>
@@ -490,6 +492,7 @@
           <EntitySetMapping Name="Product">
             <EntityTypeMapping TypeName="ShoppingCartModel.Product">
               <MappingFragment StoreEntitySet="Product">
+                <ScalarProperty Name="Shelf_Flag" ColumnName="Shelf_Flag" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="ProductID" ColumnName="ProductID" />
                 <ScalarProperty Name="ProductName" ColumnName="ProductName" />

@@ -45,6 +45,8 @@ namespace ShoppingCar.Models
         public Nullable<System.DateTime> Modify_Date { get; set; }
         [DisplayName("產品圖片")]
         public byte[] ProductImg_DB { get; set; }
+        [DisplayName("上架")]
+        public bool Shelf_Flag { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<OrderDetail> OrderDetail { get; set; }

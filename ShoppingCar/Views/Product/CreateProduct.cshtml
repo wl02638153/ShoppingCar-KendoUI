@@ -61,6 +61,14 @@
             };
     </script>
 }
+@if (TempData["DBResultErrorMessage"] != null)
+{
+    <script type="text/javascript">
+            window.onload = function () {
+                alert("@TempData["DBResultErrorMessage"]");
+            };
+    </script>
+}
 <h2>CreateProduct</h2>
 <hr />
 <h3>資料格式限制</h3>
@@ -72,6 +80,16 @@
 <p>
     <a href="~/Excel/ExcelCreateFormat.xlsx">下載Excel格式</a>
 </p>
+<form method="post" action="InsertProductTest" enctype="multipart/form-data" onsubmit="onSubmitBlock()">
+    <div class="form-group">
+        <div class="">
+            <input type="submit" value="Test" />
+            <p>@TempData["InsertProductTest"]</p>
+            <div style="overflow:auto;width:50%;height:100px;">@Html.Raw(TempData["InsertProductTestMessage"])</div>
+        </div>
+    </div>
+</form>
+
 
 <hr />
 <form method="post" action="ImportProduct" enctype="multipart/form-data" onsubmit="onSubmitBlock()">
@@ -82,6 +100,7 @@
         <div class="">
             <input type="submit" id="ImportFileSubmit" value="匯入" class="btn btn-default" disabled="disabled" onsubmit="Confirm_custom('確定要匯入嗎?')" />
         </div>
+        <p>@TempData["ExcelInsertTime"]</p>
         <div style="overflow:auto;width:50%;height:100px;">@Html.Raw(TempData["ExcelResultMessage"])</div>
     </div>
 </form>

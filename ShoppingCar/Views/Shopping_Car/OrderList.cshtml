@@ -15,6 +15,14 @@
                 alert(message);
         </script>
     }
+    @if (TempData["CreateOrderMessage"] != null)
+    {
+        <script type="text/javascript">
+            window.onload = function () {
+                alert("@TempData["CreateOrderMessage"]");
+            };
+        </script>
+    }
 </head>
 <script>
     function Confirm_custom(str) {

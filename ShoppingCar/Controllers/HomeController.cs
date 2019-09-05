@@ -36,7 +36,7 @@ namespace ShoppingCar.Controllers
         {
             int pageSize = 9;
             int currentPage = page < 1 ? 1 : page;
-            var products = db.Product.Where(m => m.Delete_Flag == false).OrderByDescending(m => m.Create_Date).ToList();
+            var products = db.Product.Where(m => m.Delete_Flag == false&&m.Shelf_Flag==true).OrderByDescending(m => m.Create_Date).ToList();
             ViewBag.PageOfProduct = products.ToPagedList(currentPage, pageSize);
             if (Session["Member"] == null)
             {
