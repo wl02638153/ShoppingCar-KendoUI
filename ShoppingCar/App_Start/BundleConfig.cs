@@ -9,7 +9,13 @@ namespace ShoppingCar
         public static void RegisterBundles(BundleCollection bundles)
         {
             bundles.Add(new ScriptBundle("~/bundles/jquery").Include(
-                        "~/Scripts/jquery-{version}.js", "~/Scripts/jquery.blockUI.js"));
+                        "~/Scripts/jquery-{version}.js",
+                        "~/Scripts/jquery.blockUI.js",
+                        "~/Script/jquery.unobtrusive-ajax.js",
+                        "~/Script/ASPSnippets_Pager.min.js",
+                        "~/Script/jquery.twbsPagination-1.3.1.min.js",
+                        "~/Script/jquery.twbsPagination-1.3.1.js"
+                        ));
 
             bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(
                         "~/Scripts/jquery.validate*"));

@@ -2,15 +2,17 @@
 @*@model IPagedList<ShoppingCar.Models.Product>*@
 @using ImageResizer;
 @using PagedList
-@using PagedList.Mvc
 
 @{
     ViewBag.Title = "產品列表";
 }
 <head>
-    <script src="@Url.Content("~/Scripts/jquery-3.3.1.min.js")" type="text/javascript"></script>
-    <script src="@Url.Content("~/Scripts/jquery.blockUI.js")" type="text/javascript"></script>
-    
+    @*<script src="@Url.Content("~/Scripts/jquery-3.3.1.min.js")" type="text/javascript"></script>
+        <script src="@Url.Content("~/Scripts/jquery.blockUI.js")" type="text/javascript"></script>
+        <script src="~/Scripts/jquery.twbsPagination-1.3.1.min.js"></script>
+        <script src="~/Scripts/jquery.twbsPagination-1.3.1.js"></script>
+        <script src="~/Scripts/bootstrap.min.js"></script>*@
+
     <link href="~/Content/PagedList.css" rel="stylesheet" />
     @if (TempData["LoginMessage"] != null)
     {
@@ -50,45 +52,106 @@
 </script>
 <h2>產品列表</h2>
 <hr />
-<div class="row">
-    @foreach (var item in ViewBag.PageOfProduct)
-    {
-        <div class="col-lg-4">
-            <div class="thumbnail">
-                <!--<img src="@*Url.Content(item.ProductImg)*@" style="width:70%;height:15em" />-->
-                @{
-                    byte[] img = item.ProductImg_DB;
+<div id="ProductPage" class="row">
 
-                    var base64 = Convert.ToBase64String(img);
-                    string imageDate = String.Format("data: image / gif;base64,{0}", base64);
-
-                    if (item.ProductImg != null)
-                    {
-                        <img src="@Url.Content(item.ProductImg)?w=200&h=200&mode=cropyunits " />
-                    }
-                    else
-                    {
-                        <img src="~/Image/notImg_.jpg?w=200&h=200&mode=cropyunits" />
-                    }
-                }
-                @*<img src="@Url.Content(item.ProductImg)?w=200&h=200&mode=cropyunits " />*@
-                @*<img src="@Url.Content(imageDate)" />*@
-                <div class="caption">
-                    <h4 class="text-center">@item.ProductName</h4>
-                    <h4 class="text-center">NT$@item.ProductPrice</h4>
-                    @if (Session["Member"] == null)
-                    {
-                        <p></p>
-                    }
-                    else
-                    {
-                        <p class="text-center">
-                            <a href="@Url.Action("AddCar", "Shopping_Car")?ProductID=@item.ProductID" class="btn btn-primary" onclick="return confirm('確定要加入購物車嗎?')">加入購物車</a>
-                        </p>
-                    }
-                </div>
-            </div>
-        </div>
-    }
 </div>
-@Html.PagedListPager((IPagedList)ViewBag.PageOfProduct, page => Url.Action("Index", new { page }))
+<br />
+<div id="pager">
+    <ul id="pagination" class="pagination-sm"></ul>
+</div>
+
+<script>
+    var currentDomain = '@Url.Content("~")';
+    var addCarURL = '@Url.Action("AddCar", "Shopping_Car")';
+    var userSession='@Session["Member"]';
+    var $pagination = $('#pagination'),
+        totalRecords = 0,
+        model = [],
+        displayRecords = [],
+        recPerPage = 10,
+        totalPages = 0;
+    $.ajax({
+        type: "POST",
+        url: "/Home/Ajax_Method",
+        async: true,
+        data: '{pageIndex: ' + 1 + '}',
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function (response) {
+            on_success(response);
+        },
+        error: function (response) {
+            alert(response.d);
+        }
+    });
+    function getProduct(page) {
+        $.ajax({
+            type: "POST",
+            url: "/Home/Ajax_Method",
+            async: true,
+            data: '{pageIndex: ' + page + '}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                model = response;
+                totalRecords = model.RecordCount;
+                recPerPage = model.PageSize;
+                totalPages = Math.ceil(totalRecords / recPerPage);
+                displayRecords = model.Products;
+                generate_table();
+            },
+            error: function (response) {
+                alert(response.d);
+            }
+        });
+    }
+    function generate_table() {
+        var tr='';
+        $('#ProductPage').empty();
+        console.log(displayRecords);
+        for (var i = 0; i < displayRecords.length; i++) {
+            tr = '';
+            tr += '<div class="col-lg-4">';
+            tr += '<div class="thumbnail">';
+
+            if (displayRecords[i].ProductImg == null) {
+                tr += '<img src="' + currentDomain+'Image/notImg_.jpg?w=200&h=200&mode=cropyunits"/>';
+            }
+            else {
+                tr +='<img src="' + (displayRecords[i].ProductImg).substr(1) + '?w=200&h=200&mode=cropyunits"/>';
+            }
+
+            tr += '     <div class="caption">';
+            tr += '         <h4 class="text-center">' + displayRecords[i].ProductName+'</h4>';
+            tr += '         <h4 class="text-center">NT$' + displayRecords[i].ProductPrice + '</h4>';
+            
+            tr += '         <p class="text-center">';
+            tr += '             <a href="' + addCarURL + '?ProductID=' + displayRecords[i].ProductID + '" class="btn btn-primary" onclick="return confirm("確定要加入購物車嗎?")">加入購物車</a>';
+            tr += '         </p>';
+            
+            tr += '     </div>';
+            tr += ' </div>';
+            tr += '</div>';
+            $('#ProductPage').append(tr);
+        }
+    }
+    function on_success(response) {
+        var model = response;
+        totalRecords = model.RecordCount;
+        recPerPage = model.PageSize;
+        totalPages = Math.ceil(totalRecords / recPerPage);
+        displayRecords = model.Products;
+        $pagination.twbsPagination({
+            totalPages: totalPages,
+            visiblePages: 4,
+            startPage: model.PageIndex,
+            onPageClick: function (event, page) {
+                getProduct(page);
+            }
+        });
+        $(".page").click(function () {
+            getProduct(parseInt($(this).find('a').text()));
+            console.log($(this).find('a').text());
+        });
+    }
+</script>

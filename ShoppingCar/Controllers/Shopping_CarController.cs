@@ -21,7 +21,6 @@ using System.Drawing.Drawing2D;
 using ImageMagick;
 using System.Data.Entity.Validation;
 using PagedList;
-using PagedList.Mvc;
 
 namespace ShoppingCar.Controllers
 {
@@ -217,8 +216,8 @@ namespace ShoppingCar.Controllers
             int currentPage = page < 1 ? 1 : page;
             string UserID = Session["Member"].ToString();
             var orders = db.OrderHeader.Where(m => m.UserID == UserID && m.Delete_Flag != true).OrderByDescending(m => m.Create_Date).ToList();  //取出order依照create date排序
-            ViewBag.PageOfOrder= orders.ToPagedList(currentPage, pageSize);
-            return View("OrderList", Session["UserTag"].ToString(), ViewBag.PageOfOrder);
+            var result= orders.ToPagedList(currentPage, pageSize);
+            return View("OrderList", Session["UserTag"].ToString(), result);
         }
 
         public ActionResult OrderListDetail(string OrderID)

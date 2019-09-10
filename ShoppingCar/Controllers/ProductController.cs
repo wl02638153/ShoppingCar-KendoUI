@@ -21,7 +21,6 @@ using System.Drawing.Drawing2D;
 using ImageMagick;
 using System.Data.Entity.Validation;
 using PagedList;
-using PagedList.Mvc;
 using System.Diagnostics;
 using System.Data.Entity;
 
@@ -127,12 +126,12 @@ namespace ShoppingCar.Controllers
                 if (ev.CheckExcelData(ImportFile))//判斷excel是否有內容
                 {
                     var currentWorkSheet = ev.workbook.Worksheets.First();
-                    //if (currentWorkSheet.Cells[102, 1].Value != null)
-                    //{
-                    //    message = "最多上傳100筆產品";
-                    //    TempData["ExcelResultMessage"] = message;
-                    //    return View("CreateProduct", Session["UserTag"].ToString());
-                    //}
+                    if (currentWorkSheet.Cells[102, 1].Value != null)
+                    {
+                        message = "最多上傳100筆產品";
+                        TempData["ExcelResultMessage"] = message;
+                        return View("CreateProduct", Session["UserTag"].ToString());
+                    }
                     int col = 1;
                     int row = 2;
                     DateTime time_start = DateTime.Now;
@@ -403,63 +402,130 @@ namespace ShoppingCar.Controllers
 
         public ActionResult InsertProductTest()
         {
-            var count = 1000;
+            var count = 100000;
             var batchCount = 100;
             int InsertCount = 0;
             string message = "";
             int j = 1;
             DateTime time_start = DateTime.Now;
+            ShoppingCartEntities dbn = null;
             for (int i = 0; i < (count / batchCount); i++)
             {
-                using (ShoppingCartEntities dbn = new ShoppingCartEntities())
+                using (dbn = new ShoppingCartEntities())
                 {
+                    dbn.Configuration.AutoDetectChangesEnabled = false;
                     for ( j = 1; j <= batchCount; j++)
                     {
-                        try
-                        {
-                            Product product = new Product();
-                            product.ProductID = "P" + (i * batchCount + j);
-                            if (dbn.Product.Any(p => p.ProductID.Equals(product.ProductID)))    //判斷資料是否重複
-                            {
-                                message += "<p>[第" + (i * batchCount + j) + "列]" + product.ProductID + "資料已重複<p/>";   //ViewBag.DBResultErrorMessage
-                                continue;
-                            }
-                            product.ProductName = "P" + (i * batchCount + j);
-                            product.ProductExplain = "P" + (i * batchCount + j);
-                            product.ProductPrice = 1000;
-                            product.Create_Date = DateTime.Now;
-                            product.Delete_Flag = false;
-                            product.Shelf_Flag = true;
-                            product.ProductImg_DB = BitConverter.GetBytes(0);
-                            dbn.Product.Add(product);
-                            InsertCount++;
-                        }
-                        catch (InvalidCastException ex)
-                        {
-
-                        }
+                        Product product = new Product();
+                        product.ProductID = "P" + (i * batchCount + j);
+                        product.ProductName = "P" + (i * batchCount + j);
+                        product.ProductExplain = "P" + (i * batchCount + j);
+                        product.ProductPrice = 1000;
+                        product.Create_Date = DateTime.Now;
+                        product.Delete_Flag = false;
+                        product.Shelf_Flag = true;
+                        product.ProductImg_DB = BitConverter.GetBytes(0);
+                        dbn.Product.Add(product);
+                        InsertCount++;
                     }
-                    try
-                    {
-                        dbn.SaveChanges();
-                    }
-                    catch (DbEntityValidationException ex)
-                    {
-
-                    }
-                    
+                    dbn.SaveChanges();
                 }
             }
             DateTime time_end = DateTime.Now;
             TempData["InsertProductTest"] = "新增了"+ InsertCount + "筆資料共花了" + (((TimeSpan)(time_end - time_start)).TotalMilliseconds / 1000).ToString() + "秒";
+            logger.Info("Excel Insert Product:" + "新增了" + InsertCount + "筆資料共花了" + (((TimeSpan)(time_end - time_start)).TotalMilliseconds / 1000).ToString() + "秒");
             TempData["InsertProductTestMessage"]= message;
             return RedirectToAction("CreateProduct");
         }
 
-        public ActionResult InsertProduct()
+        public ShoppingCartEntities InsertProductContext(ShoppingCartEntities context, Product product ,int count,int commitCount,bool recreateContext)
         {
-            
-            return RedirectToAction("CreateProduct");
+            context.Set<Product>().Add(product);
+            if (count % commitCount == 0)
+            {
+                context.SaveChanges();
+                if (recreateContext)
+                {
+                    context.Dispose();
+                    context = new ShoppingCartEntities();
+                    context.Configuration.AutoDetectChangesEnabled = false;
+                }
+            }
+            return context;
+        }
+
+        [HttpPost]
+        [CreateProductFilter]
+        public ActionResult ImportLargeProduct(HttpPostedFileBase ImportLargeFile)
+        {
+            //check file format
+            FileUploadValidate fs = new FileUploadValidate();
+            fs.filesize = 2000;
+            ExcelValidate ev = new ExcelValidate();
+            string message = "";
+            if (fs.UploadUserFile(ImportLargeFile))  //判斷檔案是否合法
+            {
+                if (ev.CheckExcelData(ImportLargeFile))//判斷excel是否有內容
+                {
+                    var currentWorkSheet = ev.workbook.Worksheets.First();
+                    int col = 1;
+                    int row = 2;
+                    int count = 0;
+                    DateTime time_start = DateTime.Now;
+                    ShoppingCartEntities dbn = null;
+                    try
+                    {
+                        dbn = new ShoppingCartEntities();
+                        dbn.Configuration.AutoDetectChangesEnabled = false;
+
+                        foreach (var item in currentWorkSheet.Cells)
+                        {
+                            ++count;
+                            Product product = new Product();
+                            if (currentWorkSheet.Cells[row, col].Value != null)
+                            {
+                                product.ProductID = currentWorkSheet.Cells[row, col++].Value.ToString();
+                                product.ProductName = currentWorkSheet.Cells[row, col++].Value.ToString();
+                                product.ProductExplain = currentWorkSheet.Cells[row, col++].Value.ToString();
+                                product.ProductPrice = Convert.ToDecimal((double)currentWorkSheet.Cells[row, col++].Value);
+                                product.Create_Date = DateTime.Now;
+                                product.Delete_Flag = false;
+                                product.Shelf_Flag = true;
+                                byte[] temp = BitConverter.GetBytes(0);
+                                product.ProductImg_DB = temp;
+
+                                dbn = InsertProductContext(dbn, product, count, 100, true);
+                                col = 1;
+                                row++;
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+                        dbn.SaveChanges();
+                    }
+                    finally
+                    {
+                        if (dbn != null)
+                            dbn.Dispose();
+                    }
+                    DateTime time_end = DateTime.Now;
+                    TempData["ExcelLargeInsertTime"] = "新增了"+(count-1)+"筆資料共花了" + (((TimeSpan)(time_end - time_start)).TotalMilliseconds / 1000).ToString() + "秒";
+                    logger.Info("Excel Insert Product:"+ "新增了" + (count - 1) + "筆資料共花了" + (((TimeSpan)(time_end - time_start)).TotalMilliseconds / 1000).ToString() + "秒");
+                    TempData["ExcelLargeResultMessage"] = message;
+                }
+                else
+                {
+                    TempData["ExcelLargeResultMessage"] = ev.ErrorMessage;
+                }
+            }
+            else
+            {//檔案驗證失敗
+                TempData["ExcelLargeResultErrorMessage"] = fs.ErrorMessage;
+            }
+
+            return View("CreateProduct", Session["UserTag"].ToString());
         }
     }
 }

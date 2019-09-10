@@ -35,6 +35,9 @@
     function buttonShow() {
         $("#ImportFileSubmit").removeAttr("disabled");
     }
+    function LargebuttonShow() {
+        $("#ImportLargeFileSubmit").removeAttr("disabled");
+    }
 </script>
 @if (TempData["ResultErrorMessage"] != null)
 {
@@ -92,18 +95,34 @@
 
 
 <hr />
-<form method="post" action="ImportProduct" enctype="multipart/form-data" onsubmit="onSubmitBlock()">
-    <h4>透過Excel新增產品</h4>
-    <input id="ImportFile" name="ImportFile" type="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" onchange="buttonShow()">
-    <p></p>
-    <div class="form-group">
-        <div class="">
-            <input type="submit" id="ImportFileSubmit" value="匯入" class="btn btn-default" disabled="disabled" onsubmit="Confirm_custom('確定要匯入嗎?')" />
-        </div>
-        <p>@TempData["ExcelInsertTime"]</p>
-        <div style="overflow:auto;width:50%;height:100px;">@Html.Raw(TempData["ExcelResultMessage"])</div>
+<div class="row">
+    <div class="col-sm-5">
+        <form method="post" action="ImportProduct" enctype="multipart/form-data" onsubmit="onSubmitBlock()">
+            <h4>透過Excel新增產品</h4>
+            <input id="ImportFile" name="ImportFile" type="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" onchange="buttonShow()">
+            <p></p>
+            <div class="form-group">
+                <div class="">
+                    <input type="submit" id="ImportFileSubmit" value="匯入" class="btn btn-default" disabled="disabled" onsubmit="Confirm_custom('確定要匯入嗎?')" />
+                </div>
+                <p>@TempData["ExcelInsertTime"]</p>
+                <div style="overflow:auto;width:50%;height:100px;">@Html.Raw(TempData["ExcelResultMessage"])</div>
+            </div>
+        </form>
     </div>
-</form>
+    <div class="col-sm-5">
+        <form method="post" action="ImportLargeProduct" enctype="multipart/form-data" onsubmit="Confirm_custom('確定要匯入嗎?')">
+            <h4>透過Excel新增超過1000筆產品</h4>
+            <input id="ImportLargeFile" name="ImportLargeFile" type="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" onchange="LargebuttonShow()">
+            <p></p>
+            <div class="form-group">
+                <input type="submit" id="ImportLargeFileSubmit" value="匯入" class="btn btn-default" disabled="disabled"/>
+                <p>@TempData["ExcelLargeInsertTime"]</p>
+                <div style="overflow:auto;width:50%;height:100px;">@Html.Raw(TempData["ExcelLargeResultMessage"])</div>
+            </div>
+        </form>
+    </div>
+</div>
 <hr />
 @using (Html.BeginForm("CreateProduct", "Product", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {

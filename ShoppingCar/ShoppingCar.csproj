@@ -181,6 +181,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MemberController.cs" />
+    <Compile Include="Controllers\PaginationController.cs" />
     <Compile Include="Controllers\ProductController.cs" />
     <Compile Include="Controllers\Shopping_CarController.cs" />
     <Compile Include="Filters\CreateProductFilter.cs" />
@@ -189,6 +190,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\CustomizedPaging.cs" />
     <Compile Include="Models\dbShoppingCartModel.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -294,6 +296,10 @@
     <Content Include="Scripts\jquery-3.3.1.slim.min.js" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
     <Content Include="Scripts\jquery.blockUI.js" />
+    <Content Include="Scripts\jquery.twbsPagination-1.3.1.js" />
+    <Content Include="Scripts\jquery.twbsPagination-1.3.1.min.js" />
+    <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
+    <Content Include="Scripts\jquery.unobtrusive-ajax.min.js" />
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
@@ -328,10 +334,13 @@
     <Content Include="Views\Shopping_Car\OrderListDetail.cshtml" />
     <Content Include="Views\Shopping_Car\ShoppingCar.cshtml" />
     <Content Include="Views\Shopping_Car\Check_Car.cshtml" />
+    <Content Include="Views\Home\search.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\_BootstrapPagingTemplate.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Image\" />
     <Folder Include="Logs\" />
+    <Folder Include="Views\Pagination\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />

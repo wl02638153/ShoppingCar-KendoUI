@@ -20,7 +20,6 @@ using System.Drawing.Imaging;
 using System.Drawing.Drawing2D;
 using ImageMagick;
 using PagedList;
-using PagedList.Mvc;
 
 namespace ShoppingCar.Controllers
 {
@@ -52,23 +51,31 @@ namespace ShoppingCar.Controllers
             return View("Index", Session["UserTag"].ToString(), products);
         }
 
-        
-
-        public ActionResult About()
+        public ActionResult search(int page=1)
         {
-            ViewBag.Message = "Your application description page.";
+            int pageSize = 9;
+            int currentPage = page < 1 ? 1 : page;
+            var productQuery = (from Product in db.Product orderby Product.ID descending select Product).Skip(0).Take(pageSize).ToList();
+            return View(productQuery);
 
-            return View();
+        }
+        
+        public JsonResult Ajax_Method(int pageIndex)
+        {
+            db.Configuration.ProxyCreationEnabled = false;
+            CustomizedPaging model = new CustomizedPaging();
+            model.PageIndex = pageIndex;
+            model.PageSize = 9;
+            model.RecordCount = db.Product.Count();
+            int startIndex = (pageIndex - 1) * model.PageSize;
+            model.Products = (from Product in db.Product select Product)
+                .OrderBy(product => product.ID)
+                .Skip(startIndex)
+                .Take(model.PageSize).ToList();
+            return Json(model, JsonRequestBehavior.AllowGet);
         }
 
-        public ActionResult Contact()
-        {
-            ViewBag.Message = "Your contact page.";
 
-            return View();
-        }
-
-        
 
     }
 }

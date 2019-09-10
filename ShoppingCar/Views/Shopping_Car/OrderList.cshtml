@@ -1,6 +1,7 @@
-﻿@model IPagedList<ShoppingCar.Models.OrderHeader>
-@using PagedList
+﻿@using PagedList
 @using PagedList.Mvc
+
+@model PagedList.IPagedList<ShoppingCar.Models.OrderHeader>
 @{
     ViewBag.Title = "訂單列表";
 }
@@ -95,6 +96,5 @@
             </td>
         </tr>
     }
-
 </table>
 @Html.PagedListPager(Model, page => Url.Action("OrderList", new { page }))

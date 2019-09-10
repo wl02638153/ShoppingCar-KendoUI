@@ -1,8 +1,8 @@
-﻿@*@model IEnumerable<ShoppingCar.Models.Product>*@
+﻿@using PagedList
+@using PagedList.Mvc
+
 @model IPagedList<ShoppingCar.Models.Product>
 @using ImageResizer;
-@using PagedList
-@using PagedList.Mvc
 @{
     ViewBag.Title = "ProductList";
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
@@ -83,53 +83,53 @@
 
     @foreach (var item in Model)
     {
-    <tr>
-        <td>
-            @{
-                byte[] img = item.ProductImg_DB;
+        <tr>
+            <td>
+                @{
+                    byte[] img = item.ProductImg_DB;
 
-                var base64 = Convert.ToBase64String(img);
-                string imageDate = String.Format("data: image / gif;base64,{0}", base64);
+                    var base64 = Convert.ToBase64String(img);
+                    string imageDate = String.Format("data: image / gif;base64,{0}", base64);
 
-                if (item.ProductImg != null)
-                {
-                    <img src="@Url.Content(item.ProductImg)?w=70&h=70&mode=cropyunits " />
+                    if (item.ProductImg != null)
+                    {
+                        <img src="@Url.Content(item.ProductImg)?w=70&h=70&mode=cropyunits " />
+                    }
+                    else
+                    {
+                        <img src="~/Image/notImg_.jpg?w=70&h=70&mode=cropyunits" />
+                    }
                 }
-                else
-                {
-                    <img src="~/Image/notImg_.jpg?w=70&h=70&mode=cropyunits" />
-                }
-            }
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ProductName)
-        </td>
-        <td>
-            @*@Html.DisplayFor(modelItem => item.ProductExplain)*@
-            <style>
-                textarea {
-                    resize: none;
-                }
-            </style>
-            @Html.TextAreaFor(model => item.ProductExplain, new { @class = "form-controll", cols = "35", rows = "3", disabled = "disabled" })
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ProductPrice)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ProductImg)
-        </td>
-        <td>
-            @Html.CheckBoxFor(modelItem => item.Shelf_Flag,new { @disabled="disabled"})
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Create_Date)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "ProductEdit", new { ProductID = item.ProductID })
-            @Html.ActionLink("Delete", "DeleteProduct", new { ProductID = item.ProductID }, new { onclick = "return Confirm_custom('確定要刪除嗎?')" })
-        </td>
-    </tr>
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ProductName)
+            </td>
+            <td>
+                @*@Html.DisplayFor(modelItem => item.ProductExplain)*@
+                <style>
+                    textarea {
+                        resize: none;
+                    }
+                </style>
+                @Html.TextAreaFor(model => item.ProductExplain, new { @class = "form-controll", cols = "35", rows = "3", disabled = "disabled" })
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ProductPrice)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ProductImg)
+            </td>
+            <td>
+                @Html.CheckBoxFor(modelItem => item.Shelf_Flag, new { @disabled = "disabled" })
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Create_Date)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "ProductEdit", new { ProductID = item.ProductID })
+                @Html.ActionLink("Delete", "DeleteProduct", new { ProductID = item.ProductID }, new { onclick = "return Confirm_custom('確定要刪除嗎?')" })
+            </td>
+        </tr>
     }
 
 </table>

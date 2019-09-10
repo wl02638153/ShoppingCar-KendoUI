@@ -109,29 +109,8 @@
     }
 </script>
 <h2>購物車</h2>
-<p>
-    @Html.ActionLink("下載產品Excel", "DownloadProductExcel2", "Product")
-</p>
-<p>
-    <a href="~/Excel/ExcelCreateOrderFormate.xlsx">下載訂單Excel格式</a>
-</p>
 <hr />
-<h3>資料格式限制</h3>
-<p>1.產品編號輸入正確即可</p>
-<hr />
-<form method="post" action="~/Shopping_Car/ImportOrder" enctype="multipart/form-data">
-    <h4>透過Excel新增購物車</h4>
-    <input id="ImportOrder" name="ImportOrder" type="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" onchange="buttonShow()">
-    <p></p>
-    <div class="form-group">
-        <div class="">
-            <input type="submit" id="ImportOrderSubmit" value="匯入" class="btn btn-default" disabled="disabled" />
-        </div>
-        <div style="overflow:auto;width:50%;height:100px;">@Html.Raw(TempData["ExcelResultErrorMessage"])</div>
-    </div>
-</form>
-<hr />
-@using (Html.BeginForm("Check_Car", "Shopping_Car",FormMethod.Post,new { onsubmit= "return Confirm_custom('確認結帳去')" }))
+@using (Html.BeginForm("Check_Car", "Shopping_Car", FormMethod.Post, new { onsubmit = "return Confirm_custom('確認結帳去')" }))
 {
     <table class="table" id="list">
         <tr>
@@ -204,3 +183,24 @@
         </div>
     </div>
 }
+<p>
+    @Html.ActionLink("下載產品Excel", "DownloadProductExcel2", "Product")
+</p>
+<p>
+    <a href="~/Excel/ExcelCreateOrderFormate.xlsx">下載訂單Excel格式</a>
+</p>
+<hr />
+<h3>資料格式限制</h3>
+<p>1.產品編號輸入正確即可</p>
+<hr />
+<form method="post" action="~/Shopping_Car/ImportOrder" enctype="multipart/form-data">
+    <h4>透過Excel新增購物車</h4>
+    <input id="ImportOrder" name="ImportOrder" type="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" onchange="buttonShow()">
+    <p></p>
+    <div class="form-group">
+        <div class="">
+            <input type="submit" id="ImportOrderSubmit" value="匯入" class="btn btn-default" disabled="disabled" />
+        </div>
+        <div style="overflow:auto;width:50%;height:100px;">@Html.Raw(TempData["ExcelResultErrorMessage"])</div>
+    </div>
+</form>
