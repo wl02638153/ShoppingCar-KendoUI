@@ -73,6 +73,9 @@
     <Reference Include="ImageResizer.Plugins.PrettyGifs, Version=4.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ImageResizer.Plugins.PrettyGifs.4.2.5\lib\net45\ImageResizer.Plugins.PrettyGifs.dll</HintPath>
     </Reference>
+    <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
+    </Reference>
     <Reference Include="Magick.NET-Q16-AnyCPU, Version=7.14.2.0, Culture=neutral, PublicKeyToken=2004825badfa91ec, processorArchitecture=MSIL">
       <HintPath>..\packages\Magick.NET-Q16-AnyCPU.7.14.2\lib\net40\Magick.NET-Q16-AnyCPU.dll</HintPath>
     </Reference>
@@ -179,6 +182,81 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="App_GlobalResources\CreateProductResource.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>CreateProductResource.resx</DependentUpon>
+    </Compile>
+    <Compile Include="App_GlobalResources\CreateProductResource.zh-CN.designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>CreateProductResource.zh-CN.resx</DependentUpon>
+    </Compile>
+    <Compile Include="App_GlobalResources\CreateProductResource.zh-TW.designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>CreateProductResource.zh-TW.resx</DependentUpon>
+    </Compile>
+    <Compile Include="App_GlobalResources\IndexResource.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>IndexResource.resx</DependentUpon>
+    </Compile>
+    <Compile Include="App_GlobalResources\IndexResource.zh-CN.designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>IndexResource.zh-CN.resx</DependentUpon>
+    </Compile>
+    <Compile Include="App_GlobalResources\IndexResource.zh-TW.designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>IndexResource.zh-TW.resx</DependentUpon>
+    </Compile>
+    <Compile Include="App_GlobalResources\LayoutMemberResource.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>LayoutMemberResource.resx</DependentUpon>
+    </Compile>
+    <Compile Include="App_GlobalResources\LayoutMemberResource.zh-CN.designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>LayoutMemberResource.zh-CN.resx</DependentUpon>
+    </Compile>
+    <Compile Include="App_GlobalResources\LayoutMemberResource.zh-TW.designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>LayoutMemberResource.zh-TW.resx</DependentUpon>
+    </Compile>
+    <Compile Include="App_GlobalResources\MemberResource.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MemberResource.resx</DependentUpon>
+    </Compile>
+    <Compile Include="App_GlobalResources\MemberResource.zh-CN.designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MemberResource.zh-CN.resx</DependentUpon>
+    </Compile>
+    <Compile Include="App_GlobalResources\MemberResource.zh-TW.designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MemberResource.zh-TW.resx</DependentUpon>
+    </Compile>
+    <Compile Include="App_GlobalResources\ProductResource.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ProductResource.resx</DependentUpon>
+    </Compile>
+    <Compile Include="App_GlobalResources\ProductResource.zh-CN.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ProductResource.zh-CN.resx</DependentUpon>
+    </Compile>
+    <Compile Include="App_GlobalResources\ProductResource.zh-TW.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ProductResource.zh-TW.resx</DependentUpon>
+    </Compile>
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
@@ -207,11 +285,15 @@
     <Compile Include="Controllers\ProductController.cs" />
     <Compile Include="Controllers\Shopping_CarController.cs" />
     <Compile Include="Filters\CreateProductFilter.cs" />
+    <Compile Include="Filters\CultureActionFilter.cs" />
     <Compile Include="Filters\MemberFilter.cs" />
     <Compile Include="Filters\MyFilter.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helper\CultureHelper.cs" />
+    <Compile Include="Helper\EnumExtension.cs" />
+    <Compile Include="Helper\EnumHelper.cs" />
     <Compile Include="Models\CustomizedPaging.cs" />
     <Compile Include="Models\dbShoppingCartModel.Context.cs">
       <AutoGen>True</AutoGen>
@@ -255,21 +337,6 @@
     </Compile>
     <Compile Include="Models\ShoppingCarLists.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Resources\HomeText.zh_CN.Designer.cs">
-      <DependentUpon>HomeText.zh_CN.resx</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-    </Compile>
-    <Compile Include="Resources\HomeText.zh_TW.Designer.cs">
-      <DependentUpon>HomeText.zh_TW.resx</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-    </Compile>
-    <Compile Include="Resources\HomeText.en.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>HomeText.en.resx</DependentUpon>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Data\dbShoppingCar.mdf" />
@@ -344,7 +411,9 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Scripts\ShareScript.js" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
@@ -397,17 +466,69 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\HomeText.zh_CN.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>HomeText.zh_CN.Designer.cs</LastGenOutput>
+    <EmbeddedResource Include="App_GlobalResources\CreateProductResource.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>CreateProductResource.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Resources\HomeText.zh_TW.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>HomeText.zh_TW.Designer.cs</LastGenOutput>
+    <EmbeddedResource Include="App_GlobalResources\CreateProductResource.zh-TW.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>CreateProductResource.zh-TW.designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Resources\HomeText.en.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>HomeText.en.Designer.cs</LastGenOutput>
+    <EmbeddedResource Include="App_GlobalResources\CreateProductResource.zh-CN.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>CreateProductResource.zh-CN.designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="App_GlobalResources\IndexResource.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>IndexResource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="App_GlobalResources\IndexResource.zh-TW.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>IndexResource.zh-TW.designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="App_GlobalResources\IndexResource.zh-CN.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>IndexResource.zh-CN.designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="App_GlobalResources\LayoutMemberResource.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>LayoutMemberResource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="App_GlobalResources\LayoutMemberResource.zh-TW.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>LayoutMemberResource.zh-TW.designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="App_GlobalResources\LayoutMemberResource.zh-CN.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>LayoutMemberResource.zh-CN.designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="App_GlobalResources\MemberResource.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>MemberResource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <Content Include="App_GlobalResources\MemberResource.zh-TW.resx">
+      <Generator>GlobalResourceProxyGenerator</Generator>
+      <LastGenOutput>MemberResource.zh-TW.designer.cs</LastGenOutput>
+    </Content>
+    <Content Include="App_GlobalResources\MemberResource.zh-CN.resx">
+      <Generator>GlobalResourceProxyGenerator</Generator>
+      <LastGenOutput>MemberResource.zh-CN.designer.cs</LastGenOutput>
+    </Content>
+    <EmbeddedResource Include="App_GlobalResources\ProductResource.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>ProductResource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="App_GlobalResources\ProductResource.zh-TW.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>ProductResource.zh-TW.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="App_GlobalResources\ProductResource.zh-CN.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>ProductResource.zh-CN.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

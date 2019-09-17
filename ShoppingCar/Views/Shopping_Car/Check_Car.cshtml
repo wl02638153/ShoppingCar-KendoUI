@@ -5,9 +5,7 @@
 }
 
 <head>
-    <script src="~/Scripts/jquery-3.3.1.min.js"></script>
-    <script type="text/javascript" src="~/Scripts/jquery.blockUI.js"></script>
-    <script src="~/Scripts/bootstrap.min.js"></script>
+    
 </head>
 
 @if (ViewBag.CheckCarMessage != null)
@@ -40,6 +38,7 @@
     $(document).ready(function () {
         $('input:checkbox').click();
         $('input:checkbox').click();
+        checkCount();
     });
     function checkboxclick(id, ProductPrice) {
 
@@ -75,6 +74,7 @@
         }
         console.log("count=" + count);
         $("#TotalPrice").val(count);
+        checkCount();
     }
     function getIndex(array, id) {
 
@@ -106,6 +106,14 @@
     }
     function buttonShow() {
         $("#ImportOrderSubmit").removeAttr("disabled");
+    }
+    function checkCount() {
+        if ($("#TotalPrice").val() != 0) {
+            $("#Checkout").removeAttr("disabled");
+        }
+        else {
+            $("#Checkout").attr("disabled", 'disabled');
+        }
     }
 </script>
 <h2>購物車</h2>
@@ -173,12 +181,12 @@
         <div class="form-group">
             <span class="control-label col-md-2">商品小計</span>
             <div class="col-md-10">
-                <input type="number" step="0.01" id="TotalPrice" name="TotalPrice" class="form-control" readonly value="0" />
+                <input type="number" step="0.01" id="TotalPrice" name="TotalPrice" class="form-control" readonly value="0"/>
             </div>
         </div>
         <div class="form-group">
             <div class="col-md-10">
-                <input type="submit" value="結帳去" id="Checkout" name="Checkout" required="required" class="btn btn-default" />
+                <input type="submit" value="結帳去" id="Checkout" name="Checkout" required="required" class="btn btn-default" disabled="disabled"/>
             </div>
         </div>
     </div>

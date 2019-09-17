@@ -20,17 +20,19 @@ using System.Drawing.Imaging;
 using System.Drawing.Drawing2D;
 using ImageMagick;
 using PagedList;
+using ShoppingCar.Helper;
+using System.Globalization;
+using System.Threading;
 
 namespace ShoppingCar.Controllers
 {
-
     public class HomeController : Controller
     {
         //dbShoppingCarEntities3 db = new dbShoppingCarEntities3();     //存取db
         ShoppingCartEntities db = new ShoppingCartEntities();
         private NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
-        
 
+        //[CultureActionFilter]
         public ActionResult Index(int page=1)
         {
             int pageSize = 9;
@@ -48,6 +50,7 @@ namespace ShoppingCar.Controllers
                 return View("Index", Session["UserTag"].ToString(), products);
             }
             Session["UserTag"] = "_LayoutMember";
+            
             return View("Index", Session["UserTag"].ToString(), products);
         }
 
@@ -75,6 +78,30 @@ namespace ShoppingCar.Controllers
             return Json(model, JsonRequestBehavior.AllowGet);
         }
 
+        public ActionResult SetCulture(string culture,string returnUrl)
+        {
+            // Validate input 
+            culture = CultureHelper.GetImplementedCulture(culture);
+
+            // Save culture in a cookie 
+            HttpCookie cookie = Request.Cookies["_culture"];
+
+            if (cookie != null)
+            {
+                // update cookie value 
+                cookie.Value = culture;
+            }
+            else
+            {
+                // create cookie value 
+                cookie = new HttpCookie("_culture");
+                cookie.Value = culture;
+                cookie.Expires = DateTime.Now.AddYears(1);
+            }
+
+            Response.Cookies.Add(cookie);
+            return Redirect(returnUrl);
+        }
 
 
     }

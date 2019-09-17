@@ -117,10 +117,58 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Home" xml:space="preserve">
-    <value>Home</value>
+  <data name="UserID" xml:space="preserve">
+    <value>帐号</value>
   </data>
-  <data name="Language" xml:space="preserve">
-    <value>Language</value>
+  <data name="UserID_Required_ErrorMessage" xml:space="preserve">
+    <value>帐号必须大于8个字元小于15个字元</value>
+  </data>
+  <data name="UserID_StringLength_ErrorMessage" xml:space="preserve">
+    <value>帐号必须大于8个字元小于15个字元</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>密码</value>
+  </data>
+  <data name="Password_Required_ErrorMessage" xml:space="preserve">
+    <value>密码不可空白</value>
+  </data>
+  <data name="Password_StringLength_ErrorMessage" xml:space="preserve">
+    <value>密码必须大于8个字元小于15个字元</value>
+  </data>
+  <data name="Password_Regular_ErrorMessage" xml:space="preserve">
+    <value>密码仅能有英文或数字，且开头需为英文字母！</value>
+  </data>
+  <data name="Password2" xml:space="preserve">
+    <value>确认密码</value>
+  </data>
+  <data name="Password2_Required_ErrorMessage" xml:space="preserve">
+    <value>确认密码不可空白</value>
+  </data>
+  <data name="Password2_StringLength_ErrorMessage" xml:space="preserve">
+    <value>确认密码必须大于8个字元小于15个字元</value>
+  </data>
+  <data name="Password2_Compare_ErrorMessage" xml:space="preserve">
+    <value>两组密码必须相等！</value>
+  </data>
+  <data name="MemberName_Required_ErrorMessage" xml:space="preserve">
+    <value>会员名称不可空白</value>
+  </data>
+  <data name="MemberName" xml:space="preserve">
+    <value>会员名称</value>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>电子邮件</value>
+  </data>
+  <data name="Email_Required_ErrorMessage" xml:space="preserve">
+    <value>电子邮件不可空白</value>
+  </data>
+  <data name="Email_EmailAddress_ErrorMessage" xml:space="preserve">
+    <value>Email格式有误</value>
+  </data>
+  <data name="Phone" xml:space="preserve">
+    <value>电话号码</value>
+  </data>
+  <data name="Phone_Required_Message" xml:space="preserve">
+    <value>电话号码不可空白</value>
   </data>
 </root>

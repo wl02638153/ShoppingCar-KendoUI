@@ -50,7 +50,7 @@
         $("#ImportOrderSubmit").show();
     }
 </script>
-<h2>產品列表</h2>
+<h2>@ShoppingCar.App_GlobalResources.IndexResource.Title</h2>
 <hr />
 <div id="ProductPage" class="row">
 
@@ -63,7 +63,9 @@
 <script>
     var currentDomain = '@Url.Content("~")';
     var addCarURL = '@Url.Action("AddCar", "Shopping_Car")';
-    var userSession='@Session["Member"]';
+    var getURL = '@Url.Action("Ajax_Method", "Home")';
+    var userSession = '@Session["Member"]';
+    var addCarButton='@ShoppingCar.App_GlobalResources.IndexResource.AddCar'
     var $pagination = $('#pagination'),
         totalRecords = 0,
         model = [],
@@ -72,7 +74,7 @@
         totalPages = 0;
     $.ajax({
         type: "POST",
-        url: "/Home/Ajax_Method",
+        url: getURL,
         async: true,
         data: '{pageIndex: ' + 1 + '}',
         contentType: "application/json; charset=utf-8",
@@ -87,7 +89,7 @@
     function getProduct(page) {
         $.ajax({
             type: "POST",
-            url: "/Home/Ajax_Method",
+            url: getURL,
             async: true,
             data: '{pageIndex: ' + page + '}',
             contentType: "application/json; charset=utf-8",
@@ -126,7 +128,7 @@
             tr += '         <h4 class="text-center">NT$' + displayRecords[i].ProductPrice + '</h4>';
             
             tr += '         <p class="text-center">';
-            tr += '             <a href="' + addCarURL + '?ProductID=' + displayRecords[i].ProductID + '" class="btn btn-primary" onclick="return confirm("確定要加入購物車嗎?")">加入購物車</a>';
+            tr += '             <a href="' + addCarURL + '?ProductID=' + displayRecords[i].ProductID + '" class="btn btn-primary" onclick="return confirm("確定要加入購物車嗎?")">' + addCarButton+'</a>';
             tr += '         </p>';
             
             tr += '     </div>';

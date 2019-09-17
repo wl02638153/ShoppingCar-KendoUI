@@ -17,8 +17,15 @@ namespace ShoppingCar
                 name: "Default",
                 url: "{controller}/{action}/{id}",
                 defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional },
-                namespaces:new[] {"ShoppingCar.Controllers"}
+                namespaces: new[] { "ShoppingCar.Controllers" }
             );
+
+            //routes.maproute(
+            //    name: "default",
+            //    url: "{culture}/{controller}/{action}/{id}",
+            //    defaults: new { culture = "zn-ch", controller = "home", action = "index", id = urlparameter.optional },
+            //    namespaces: new[] { "shoppingcar.controllers" }
+            //);
         }
     }
 }

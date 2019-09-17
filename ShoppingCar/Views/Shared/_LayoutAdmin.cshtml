@@ -4,14 +4,15 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - 我的 ASP.NET 應用程式</title>
+    <title>@ViewBag.Title</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
-    <script src="@Url.Content("~/Scripts/jquery-3.3.1.min.js")" type="text/javascript"></script>
-    <script src="@Url.Content("~/Scripts/jquery.blockUI.js")" type="text/javascript"></script>
+    <script src="~/Scripts/jquery-3.3.1.min.js"></script>
+    <script src="~/Scripts/bootstrap.min.js" type="text/javascript"></script>
+    <script src="~/Scripts/jquery.blockUI.js" type="text/javascript"></script>
     <script src="~/Scripts/jquery.twbsPagination-1.3.1.min.js"></script>
     <script src="~/Scripts/jquery.twbsPagination-1.3.1.js"></script>
-    <script src="~/Scripts/bootstrap.min.js"></script>
+    <script src="~/Scripts/bootstrap.min.js" type="text/javascript"></script>
 </head>
 <body>
     <div class="navbar navbar-default navbar-fixed-top">
@@ -22,20 +23,31 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                @Html.ActionLink("線上購物車-會員專區", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+                @*Html.ActionLink(ShoppingCar.App_GlobalResources.LayoutMemberResource.Title, "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })*@
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li>@Html.ActionLink("產品列表", "Index", "Home")</li>
-                    <li>@Html.ActionLink("購物車", "Check_Car", "Shopping_Car")</li>
-                    <li>@Html.ActionLink("訂單", "OrderList", "Shopping_Car")</li>
-                    <li>@Html.ActionLink("成員名單", "MemberList", "Member")</li>
-                    <li>@Html.ActionLink("新增產品", "CreateProduct", "Product")</li>
-                    <li>@Html.ActionLink("產品編輯", "ProductList", "Product")</li>
+                    <li>@Html.ActionLink(ShoppingCar.App_GlobalResources.LayoutMemberResource.Product_List, "Index", "Home")</li>
+                    <li>@Html.ActionLink(ShoppingCar.App_GlobalResources.LayoutMemberResource.Shopping_Car, "Check_Car", "Shopping_Car")</li>
+                    <li>@Html.ActionLink(ShoppingCar.App_GlobalResources.LayoutMemberResource.Order, "OrderList", "Shopping_Car")</li>
+                    <li>@Html.ActionLink(ShoppingCar.App_GlobalResources.LayoutMemberResource.MemberList, "MemberList", "Member")</li>
+                    <li>@Html.ActionLink(ShoppingCar.App_GlobalResources.LayoutMemberResource.CreateProduct, "CreateProduct", "Product")</li>
+                    <li>@Html.ActionLink(ShoppingCar.App_GlobalResources.LayoutMemberResource.EditProduct, "ProductList", "Product")</li>
                     <li><a href="~/MvcElmahDashboard">Log Dashboard</a></li>
-                    <li>@Html.ActionLink("登出", "Logout", "Member")</li>
+                    <li>@Html.ActionLink(ShoppingCar.App_GlobalResources.LayoutMemberResource.Logout, "Logout", "Member")</li>
                     <li><a href="#">@Session["Welcome"]</a></li>
+                    <li class="navbar-collapse dropdown">
+                        <a class="navbar-link dropdown-toggle" href="#" id="LangueDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">@ShoppingCar.App_GlobalResources.LayoutMemberResource.Language<span class="caret"></span></a>
+                        <div class="dropdown-menu" aria-labelledby="LangueDropdown">
+                            <ul class="navbar-collapse collapse dropdown-menu">
+                                <li>@Html.ActionLink("English", "SetCulture", "Home", new { culture = "en-US", returnUrl = this.Request.RawUrl }, null)</li>
+                                <li>@Html.ActionLink("繁體中文", "SetCulture", "Home", new { culture = "zh-TW", returnUrl = this.Request.RawUrl }, null)</li>
+                                <li>@Html.ActionLink("简体中文", "SetCulture", "Home", new { culture = "zh-CN", returnUrl = this.Request.RawUrl }, null)</li>
+                            </ul>
+                        </div>
+                    </li>
                 </ul>
+                    
             </div>
         </div>
     </div>
@@ -43,7 +55,7 @@
         @RenderBody()
         <hr />
         <footer>
-            <p>&copy; @DateTime.Now.Year - 我的 ASP.NET 應用程式</p>
+            <p>&copy; @DateTime.Now.Year</p>
         </footer>
     </div>
 
