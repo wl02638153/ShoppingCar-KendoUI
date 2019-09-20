@@ -5,7 +5,17 @@
 @using ImageResizer;
 @{
     ViewBag.Title = "ProductList";
-    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+    if (Session["Member"] != null)
+    {
+        if (Session["Member"].ToString() == "Admin")
+        {
+            Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+        }
+        else
+        {
+            Layout = "~/Views/Shared/_LayoutMember.cshtml";
+        }
+    }
 }
 <head>
     

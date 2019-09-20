@@ -196,6 +196,15 @@ namespace ShoppingCar.App_GlobalResources {
         }
         
         /// <summary>
+        ///   查詢類似 Register 的當地語系化字串。
+        /// </summary>
+        public static string RegisterTitle {
+            get {
+                return ResourceManager.GetString("RegisterTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查詢類似 UserID 的當地語系化字串。
         /// </summary>
         public static string UserID {

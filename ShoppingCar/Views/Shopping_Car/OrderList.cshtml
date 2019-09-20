@@ -4,6 +4,18 @@
 @model PagedList.IPagedList<ShoppingCar.Models.OrderHeader>
 @{
     ViewBag.Title = "訂單列表";
+    if (Session["Member"] != null)
+    {
+        if (Session["Member"].ToString() == "Admin")
+        {
+            Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+        }
+        else
+        {
+            Layout = "~/Views/Shared/_LayoutMember.cshtml";
+        }
+    }
+
 }
 <head>
     

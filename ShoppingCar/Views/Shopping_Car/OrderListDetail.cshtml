@@ -2,6 +2,17 @@
 
 @{
     ViewBag.Title = "訂單明細";
+    if (Session["Member"] != null)
+    {
+        if (Session["Member"].ToString() == "Admin")
+        {
+            Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+        }
+        else
+        {
+            Layout = "~/Views/Shared/_LayoutMember.cshtml";
+        }
+    }
 }
 <script>
     function Confirm_custom(str) {

@@ -171,4 +171,7 @@
   <data name="Phone_Required_Message" xml:space="preserve">
     <value>电话号码不可空白</value>
   </data>
+  <data name="RegisterTitle" xml:space="preserve">
+    <value>注册</value>
+  </data>
 </root>

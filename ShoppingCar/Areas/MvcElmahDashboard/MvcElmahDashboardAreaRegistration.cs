@@ -16,7 +16,7 @@ namespace ShoppingCar.Areas.MvcElmahDashboard
         {
             context.MapRoute(
                 name: "MvcElmahDashboard_default",
-                url: "MvcElmahDashboard/{controller}/{action}/{id}",
+                url: "LogDashboard/{controller}/{action}/{id}",
                 defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional },
                 namespaces: new string[] { "ShoppingCar.Areas.MvcElmahDashboard.Controllers" }
             );

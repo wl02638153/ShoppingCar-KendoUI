@@ -30,7 +30,9 @@ namespace ShoppingCar.Models
         [Display(Name ="Password2", ResourceType = typeof(App_GlobalResources.MemberResource))]
         [Required(ErrorMessageResourceName = "Password2_Required_ErrorMessage", ErrorMessageResourceType = typeof(App_GlobalResources.MemberResource))]
         [StringLength(15, ErrorMessageResourceName = "Password2_StringLength_ErrorMessage", ErrorMessageResourceType = typeof(App_GlobalResources.MemberResource), MinimumLength = 8)]
+#pragma warning disable CS0618 // 類型或成員已經過時
         [System.Web.Mvc.Compare("Password", ErrorMessageResourceName = "Password2_Compare_ErrorMessage", ErrorMessageResourceType = typeof(App_GlobalResources.MemberResource))]
+#pragma warning restore CS0618 // 類型或成員已經過時
         public string Password2 { get; set; }
         [Display(Name = "MemberName", ResourceType = typeof(App_GlobalResources.MemberResource))]
         [Required(ErrorMessageResourceName = "MemberName_Required_ErrorMessage", ErrorMessageResourceType = typeof(App_GlobalResources.MemberResource))]

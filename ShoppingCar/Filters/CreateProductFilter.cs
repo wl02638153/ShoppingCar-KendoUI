@@ -12,12 +12,16 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System.Reflection;
+using log4net;
+using log4net.Config;
 
 namespace ShoppingCar.Filters
 {
     public class CreateProductFilter : ActionFilterAttribute, IActionFilter
     {
         private NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        private static log4net.ILog log { get; set; }
+        ILog log4 = log4net.LogManager.GetLogger(typeof(CreateProductFilter));
         //dbShoppingCarEntities3 db = new dbShoppingCarEntities3();     //存取db
         ShoppingCartEntities db = new ShoppingCartEntities();
         public override void OnActionExecuting(ActionExecutingContext filterContext)
@@ -43,9 +47,12 @@ namespace ShoppingCar.Filters
             log.Date = DateTime.Now;
             log.Message = string.Format("{0}.{1}() => {2}", controllerName, actionName, string.IsNullOrEmpty(parameter) ? "(void)" : parameter);
             logger.Info("Message : " + log.Message);
+            
+
             db.LogMessage.Add(log);
             db.SaveChanges();
         }
+
     }
 
     class ReadablePropertiesOnlyResolver : DefaultContractResolver

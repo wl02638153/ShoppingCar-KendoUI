@@ -14,7 +14,11 @@ namespace ShoppingCar
                         "~/Script/jquery.unobtrusive-ajax.js",
                         "~/Script/ASPSnippets_Pager.min.js",
                         "~/Script/jquery.twbsPagination-1.3.1.min.js",
-                        "~/Script/jquery.twbsPagination-1.3.1.js"
+                        "~/Script/jquery.twbsPagination-1.3.1.js",
+                        "~/Script/jquery.validate.js",
+                        "~/Script/jquery.validate.min.js",
+                        "~/Script/jquery.validate.unobtrusive.min.js",
+                        "~/Script/jquery.validate.unobtrusive.js"
                         ));
 
             bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(

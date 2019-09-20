@@ -20,11 +20,11 @@ namespace ShoppingCar
                 namespaces: new[] { "ShoppingCar.Controllers" }
             );
 
-            //routes.maproute(
-            //    name: "default",
+            //routes.MapRoute(
+            //    name: "Default",
             //    url: "{culture}/{controller}/{action}/{id}",
-            //    defaults: new { culture = "zn-ch", controller = "home", action = "index", id = urlparameter.optional },
-            //    namespaces: new[] { "shoppingcar.controllers" }
+            //    defaults: new { culture = "zn-CH", controller = "Home", action = "Index", id = UrlParameter.Optional },
+            //    namespaces: new[] { "ShoppingCar.Controllers" }
             //);
         }
     }

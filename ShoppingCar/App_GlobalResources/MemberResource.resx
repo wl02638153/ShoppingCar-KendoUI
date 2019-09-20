@@ -151,4 +151,7 @@
   <data name="Phone_Required_Message" xml:space="preserve">
     <value>Phone is Required</value>
   </data>
+  <data name="RegisterTitle" xml:space="preserve">
+    <value>Register</value>
+  </data>
 </root>

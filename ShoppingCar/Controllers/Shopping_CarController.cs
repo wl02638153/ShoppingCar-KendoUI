@@ -140,7 +140,7 @@ namespace ShoppingCar.Controllers
         {
             string UserID = Session["Member"].ToString();
             var shoppingCarList = db.ShoppingCarList.Where(m => m.UserID == UserID && m.Order_Flag == true).ToList();
-            return View("ShoppingCar", Session["UserTag"].ToString(), shoppingCarList);
+            return View("ShoppingCar", shoppingCarList);
         }
         [HttpPost]
         public ActionResult ShoppingCar(string Receiver, string Email, string Address,decimal TotalPrice)    //產生orderHeader
@@ -180,7 +180,7 @@ namespace ShoppingCar.Controllers
             string UserID = Session["Member"].ToString();
             ShoppingCarCheckList shoppingCarCheckList = new ShoppingCarCheckList();
             shoppingCarCheckList.ShoppingCarLists = db.ShoppingCarList.Where(m => m.UserID == UserID).ToList<ShoppingCarList>();
-            return View("Check_Car", Session["UserTag"].ToString(), shoppingCarCheckList);
+            return View("Check_Car", shoppingCarCheckList);
         }
 
         [HttpPost]
@@ -217,13 +217,13 @@ namespace ShoppingCar.Controllers
             string UserID = Session["Member"].ToString();
             var orders = db.OrderHeader.Where(m => m.UserID == UserID && m.Delete_Flag != true).OrderByDescending(m => m.Create_Date).ToList();  //取出order依照create date排序
             var result= orders.ToPagedList(currentPage, pageSize);
-            return View("OrderList", Session["UserTag"].ToString(), result);
+            return View("OrderList", result);
         }
 
         public ActionResult OrderListDetail(string OrderID)
         {
             var orderDetails = db.OrderDetail.Where(m => m.OrderID == OrderID && m.Delete_Flag != true).ToList();
-            return View("OrderListDetail", Session["UserTag"].ToString(), orderDetails);
+            return View("OrderListDetail", orderDetails);
         }
 
         public ActionResult DownloadOrderExcel(string OrderID)

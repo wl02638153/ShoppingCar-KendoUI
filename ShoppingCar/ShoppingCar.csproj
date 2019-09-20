@@ -506,14 +506,14 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>MemberResource.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Content Include="App_GlobalResources\MemberResource.zh-TW.resx">
+    <EmbeddedResource Include="App_GlobalResources\MemberResource.zh-TW.resx">
       <Generator>GlobalResourceProxyGenerator</Generator>
       <LastGenOutput>MemberResource.zh-TW.designer.cs</LastGenOutput>
-    </Content>
-    <Content Include="App_GlobalResources\MemberResource.zh-CN.resx">
+    </EmbeddedResource>
+    <EmbeddedResource Include="App_GlobalResources\MemberResource.zh-CN.resx">
       <Generator>GlobalResourceProxyGenerator</Generator>
       <LastGenOutput>MemberResource.zh-CN.designer.cs</LastGenOutput>
-    </Content>
+    </EmbeddedResource>
     <EmbeddedResource Include="App_GlobalResources\ProductResource.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>ProductResource.Designer.cs</LastGenOutput>

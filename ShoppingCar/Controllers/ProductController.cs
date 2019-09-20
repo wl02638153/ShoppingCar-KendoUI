@@ -40,7 +40,7 @@ namespace ShoppingCar.Controllers
 
         public ActionResult CreateProduct()
         {
-            return View("CreateProduct", Session["UserTag"].ToString());
+            return View("CreateProduct");
         }
         [HttpPost]
         [CreateProductFilter]
@@ -84,7 +84,7 @@ namespace ShoppingCar.Controllers
                     if (db.Product.Any(p => p.ProductID.Equals(cProduct.ProductID)))    //判斷資料是否重複
                     {
                         TempData["DBResultErrorMessage"] = cProduct.ProductID + "資料已重複，請重新輸入";
-                        return View("CreateProduct", Session["UserTag"].ToString());
+                        return View("CreateProduct");
                     }
                     try
                     {
@@ -95,20 +95,20 @@ namespace ShoppingCar.Controllers
                     {//資料庫異動例外狀況
                         logger.Error(ex.Message);
                         TempData["DBResultErrorMessage"] = ex.Message;
-                        return View("CreateProduct", Session["UserTag"].ToString());
+                        return View("CreateProduct");
                     }
                     TempData["DBResultErrorMessage"] = cProduct.ProductID + "新增成功!";
                     return RedirectToAction("ProductList");    //新增成功
                 }
                 else
                 {   //model 驗證失敗
-                    return View("CreateProduct", Session["UserTag"].ToString());
+                    return View("CreateProduct");
                 }
             }
             else
             {//檔案驗證失敗
                 TempData["ImgValidate"] = ImgV.ErrorMessage;
-                return View("CreateProduct", Session["UserTag"].ToString());
+                return View("CreateProduct");
             }
         }
 
@@ -130,7 +130,7 @@ namespace ShoppingCar.Controllers
                     {
                         message = "最多上傳100筆產品";
                         TempData["ExcelResultMessage"] = message;
-                        return View("CreateProduct", Session["UserTag"].ToString());
+                        return View("CreateProduct");
                     }
                     int col = 1;
                     int row = 2;
@@ -221,7 +221,7 @@ namespace ShoppingCar.Controllers
                 TempData["ExcelResultErrorMessage"] = fs.ErrorMessage;
             }
 
-            return View("CreateProduct", Session["UserTag"].ToString());
+            return View("CreateProduct");
         }
 
         public ActionResult ProductList(int page = 1)
@@ -230,7 +230,7 @@ namespace ShoppingCar.Controllers
             int currentPage = page < 1 ? 1 : page;
             var products = db.Product.Where(m => m.Delete_Flag == false).OrderByDescending(m => m.Create_Date).ToList();
             var product = products.ToPagedList(currentPage, pageSize);
-            return View("ProductList", Session["UserTag"].ToString(), product);
+            return View("ProductList", product);
         }
 
         public ActionResult ProductEdit(string ProductID)
@@ -525,7 +525,7 @@ namespace ShoppingCar.Controllers
                 TempData["ExcelLargeResultErrorMessage"] = fs.ErrorMessage;
             }
 
-            return View("CreateProduct", Session["UserTag"].ToString());
+            return View("CreateProduct");
         }
     }
 }
