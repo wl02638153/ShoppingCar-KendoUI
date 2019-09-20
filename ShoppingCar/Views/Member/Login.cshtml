@@ -1,11 +1,16 @@
 ﻿
 @{
     ViewBag.Title = "Login";
+    var LoginUrl = Url.Action("Login");
+    if (ViewBag.returnUrl != null)
+    {
+        LoginUrl= Url.Action("LoginR");
+    }
 }
 
 <h2>Login</h2>
 
-<form action="@Url.Action("Login")" method="post">
+<form action="@LoginUrl" method="post">
     <div class="form-horizontal">
         <div class="form-group">
             <span class="control-label col-md-2">帳號</span>
@@ -35,7 +40,10 @@
 
         <div class="form-group hidden">
             <div class="col-md-10">
-                <input type="password" id="returnUrl" name="returnUrl" required="required" class="form-control" value="@ViewBag.returnUrl" />
+                @if (ViewBag.returnUrl != null)
+                {
+                    <input type="password" id="returnUrl" name="returnUrl" required="required" class="form-control" value="@ViewBag.returnUrl" />
+                }
             </div>
         </div>
     </div>
