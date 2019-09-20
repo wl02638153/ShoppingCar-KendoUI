@@ -1,5 +1,6 @@
 using ShoppingCar.Areas.MvcElmahDashboard.Code;
 using ShoppingCar.Areas.MvcElmahDashboard.Models.Home;
+using ShoppingCar.Models;
 using System;
 using System.Configuration;
 using System.Linq;
@@ -30,6 +31,8 @@ namespace ShoppingCar.Areas.MvcElmahDashboard.Controllers
         #endregion
 
         // GET: ElmahLog/Home
+        //[Member(UserID = "Admin")]
+        //[Authorize(Roles = "Admin")]
         public ActionResult Index()
         {
             return View();

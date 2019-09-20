@@ -30,6 +30,7 @@
           <Property Name="Delete_Date" Type="nvarchar" MaxLength="50" />
           <Property Name="Delete_Flag" Type="bit" />
           <Property Name="Password2" Type="nvarchar" MaxLength="50" />
+          <Property Name="Role" Type="nvarchar" MaxLength="50" Nullable="false" />
         </EntityType>
         <EntityType Name="OrderDetail">
           <Key>
@@ -237,6 +238,7 @@
           <Property Name="Password2" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="OrderDetail" Relationship="ShoppingCartModel.FK_OrderDetail_Member" FromRole="Member" ToRole="OrderDetail" />
           <NavigationProperty Name="ShoppingCarList" Relationship="ShoppingCartModel.FK_ShoppingCarList_Member" FromRole="Member" ToRole="ShoppingCarList" />
+          <Property Name="Role" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="OrderDetail">
           <Key>
@@ -441,6 +443,7 @@
           <EntitySetMapping Name="Member">
             <EntityTypeMapping TypeName="ShoppingCartModel.Member">
               <MappingFragment StoreEntitySet="Member">
+                <ScalarProperty Name="Role" ColumnName="Role" />
                 <ScalarProperty Name="Password2" ColumnName="Password2" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="UserID" ColumnName="UserID" />

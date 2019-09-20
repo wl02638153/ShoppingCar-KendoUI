@@ -2,15 +2,17 @@
 @{
     ViewBag.Title = "Login";
     var LoginUrl = Url.Action("Login");
+    var RedirectUrl = Url.Action("Index", "Home");
     if (ViewBag.returnUrl != null)
     {
         LoginUrl= Url.Action("LoginR");
+        RedirectUrl = ViewBag.returnUrl;
     }
 }
 
 <h2>Login</h2>
 
-<form action="@LoginUrl" method="post">
+<form action="@LoginUrl" method="post" id="LoginForm">
     <div class="form-horizontal">
         <div class="form-group">
             <span class="control-label col-md-2">帳號</span>
@@ -28,7 +30,7 @@
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="登入" class="btn btn-default" />
+                <input type="button" value="登入" class="btn btn-default" id="LoginSubmit"/>
                 <input type="button" value="註冊" class="btn btn-default" onclick="location.href='@Url.Action("Register","Member")'" />
                 <hr />
                 @ViewBag.Message
@@ -49,4 +51,36 @@
     </div>
 
 </form>
-
+<script>
+    var RedirectUrl = '@RedirectUrl';
+    var getURL = '@LoginUrl';
+    $(document).ready(function () {
+        $("#LoginSubmit").click(function (event) {
+            var data = {
+                UserID: $("#UserID").val(),
+                Password: $("#Password").val()
+            }
+            $.ajax({
+                type: "POST",
+                url: getURL,
+                cache: false,
+                async: true,
+                data: JSON.stringify(data) ,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    if (response.IsSuccess) {
+                        alert(response.LoginMessage);
+                        window.location.href = RedirectUrl;
+                    }
+                    else {
+                        alert(response.LoginMessage);
+                    }
+                },
+                error: function (response) {
+                    alert(response.d);
+                }
+            });
+        });
+    });
+</script>

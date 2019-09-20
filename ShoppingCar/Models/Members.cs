@@ -5,16 +5,17 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Security;
 using CompareAttribute = System.Web.Mvc.CompareAttribute;
 
 namespace ShoppingCar.Models
 {
     [System.ComponentModel.DataAnnotations.MetadataType(typeof(MemberMetaData))]
-    public partial class Member
+    public partial class Member : AuthorizeAttribute
     {
     }
 
-    public partial class MemberMetaData
+    public partial class MemberMetaData : AuthorizeAttribute
     {
         public int ID { get; set; }
         [Display(Name ="UserID",ResourceType =typeof(App_GlobalResources.MemberResource))]
@@ -49,6 +50,7 @@ namespace ShoppingCar.Models
         public Nullable<System.DateTime> Modify_Date { get; set; }
         public string Delete_Date { get; set; }
         public Nullable<bool> Delete_Flag { get; set; }
+        public string Role { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<OrderHeader> OrderHeader { get; set; }

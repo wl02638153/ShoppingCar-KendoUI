@@ -33,6 +33,7 @@ namespace ShoppingCar.Models
         public string Delete_Date { get; set; }
         public Nullable<bool> Delete_Flag { get; set; }
         public string Password2 { get; set; }
+        public string Role { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<OrderHeader> OrderHeader { get; set; }
