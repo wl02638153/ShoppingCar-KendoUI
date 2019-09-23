@@ -47,7 +47,12 @@ namespace ShoppingCar.Filters
             log.Date = DateTime.Now;
             log.Message = string.Format("{0}.{1}() => {2}", controllerName, actionName, string.IsNullOrEmpty(parameter) ? "(void)" : parameter);
             logger.Info("Message : " + log.Message);
-            
+
+            log4.Info("Message : " + log.Message);
+            log4.Debug("Testing Debug log");
+            log4.Fatal("Testing Fatal log");
+
+
 
             db.LogMessage.Add(log);
             db.SaveChanges();

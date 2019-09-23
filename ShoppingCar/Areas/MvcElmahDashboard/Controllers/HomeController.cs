@@ -9,7 +9,8 @@ using System.Web.Mvc;
 
 namespace ShoppingCar.Areas.MvcElmahDashboard.Controllers
 {
-    [SessionState(System.Web.SessionState.SessionStateBehavior.Disabled)]
+    [Filters.MemberFilter]
+    //[SessionState(System.Web.SessionState.SessionStateBehavior.Disabled)]
     public class HomeController : Controller
     {
         private static ElmahErrorCounters EECounters = new ElmahErrorCounters(TimeSpan.FromDays(15));
@@ -31,8 +32,7 @@ namespace ShoppingCar.Areas.MvcElmahDashboard.Controllers
         #endregion
 
         // GET: ElmahLog/Home
-        //[Member(UserID = "Admin")]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         public ActionResult Index()
         {
             return View();

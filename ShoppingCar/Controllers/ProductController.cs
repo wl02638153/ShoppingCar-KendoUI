@@ -37,7 +37,8 @@ namespace ShoppingCar.Controllers
         {
             return View();
         }
-        
+
+        [Authorize(Roles = "Admin")]
         public ActionResult CreateProduct()
         {
             return View("CreateProduct");

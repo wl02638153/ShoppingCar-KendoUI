@@ -52,6 +52,7 @@ namespace ShoppingCar.Models
         public Nullable<System.DateTime> Modify_Date { get; set; }
         [Display(Name = "ProductImg_DB", ResourceType = typeof(App_GlobalResources.ProductResource))]
         public byte[] ProductImg_DB { get; set; }
+
         [Display(Name = "Shelf_Flag", ResourceType = typeof(App_GlobalResources.ProductResource))]
         public bool Shelf_Flag { get; set; }
 
