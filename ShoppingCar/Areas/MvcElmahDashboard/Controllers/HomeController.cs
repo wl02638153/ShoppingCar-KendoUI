@@ -32,7 +32,7 @@ namespace ShoppingCar.Areas.MvcElmahDashboard.Controllers
         #endregion
 
         // GET: ElmahLog/Home
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         public ActionResult Index()
         {
             return View();
