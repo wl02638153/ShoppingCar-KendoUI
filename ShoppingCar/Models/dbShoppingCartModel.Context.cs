@@ -31,5 +31,8 @@ namespace ShoppingCar.Models
         public virtual DbSet<OrderHeader> OrderHeader { get; set; }
         public virtual DbSet<Product> Product { get; set; }
         public virtual DbSet<ShoppingCarList> ShoppingCarList { get; set; }
+        public virtual DbSet<ELMAH_Error> ELMAH_Error { get; set; }
+        public virtual DbSet<Log4NetLog> Log4NetLog { get; set; }
+        public virtual DbSet<Product_Category> Product_Category { get; set; }
     }
 }

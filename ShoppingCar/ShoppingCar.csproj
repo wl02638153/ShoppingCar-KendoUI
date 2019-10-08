@@ -45,6 +45,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AutoMapper, Version=5.2.0.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
+      <HintPath>..\packages\AutoMapper.5.2.0\lib\net45\AutoMapper.dll</HintPath>
+    </Reference>
     <Reference Include="Elmah, Version=1.2.13605.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\elmah.corelibrary.1.2\lib\Elmah.dll</HintPath>
     </Reference>
@@ -73,8 +76,14 @@
     <Reference Include="ImageResizer.Plugins.PrettyGifs, Version=4.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ImageResizer.Plugins.PrettyGifs.4.2.5\lib\net45\ImageResizer.Plugins.PrettyGifs.dll</HintPath>
     </Reference>
+    <Reference Include="Json.Net, Version=1.0.16.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Json.Net.1.0.16\lib\netstandard2.0\Json.Net.dll</HintPath>
+    </Reference>
     <Reference Include="Kendo.Mvc">
       <HintPath>Content\kendo\Kendo.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="KendoGridBinder, Version=3.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\KendoGridBinder.3.2.0\lib\net45\KendoGridBinder.dll</HintPath>
     </Reference>
     <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <HintPath>..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
@@ -113,6 +122,15 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.IO.Compression" />
+    <Reference Include="System.Linq.Dynamic, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Linq.Dynamic.1.0.0\lib\net40\System.Linq.Dynamic.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Linq.Dynamic.Core, Version=1.0.18.0, Culture=neutral, PublicKeyToken=0f07ec44de6ac832, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Linq.Dynamic.Core.1.0.18\lib\net46\System.Linq.Dynamic.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.Formatting, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
+    </Reference>
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
     <Reference Include="System.ServiceModel" />
@@ -125,6 +143,9 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.6\lib\net45\System.Web.Helpers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.5.2.3\lib\net45\System.Web.Http.dll</HintPath>
     </Reference>
     <Reference Include="System.Web.Mvc, Version=5.2.6.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.Mvc.5.2.6\lib\net45\System.Web.Mvc.dll</HintPath>
@@ -276,7 +297,9 @@
     <Compile Include="Areas\MvcElmahDashboard\Models\Logs\ItemsModel.cs" />
     <Compile Include="Areas\MvcElmahDashboard\Models\Logs\PrevNextRequest.cs" />
     <Compile Include="Areas\MvcElmahDashboard\MvcElmahDashboardAreaRegistration.cs" />
+    <Compile Include="Controllers\GridController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\KendoController.cs" />
     <Compile Include="Controllers\MemberController.cs" />
     <Compile Include="Controllers\PaginationController.cs" />
     <Compile Include="Controllers\ProductController.cs" />
@@ -291,6 +314,7 @@
     <Compile Include="Helper\CultureHelper.cs" />
     <Compile Include="Helper\EnumExtension.cs" />
     <Compile Include="Helper\EnumHelper.cs" />
+    <Compile Include="Models\Product_Categorys.cs" />
     <Compile Include="Models\CustomizedPaging.cs" />
     <Compile Include="Models\dbShoppingCartModel.Context.cs">
       <AutoGen>True</AutoGen>
@@ -307,9 +331,15 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>dbShoppingCartModel.edmx</DependentUpon>
     </Compile>
+    <Compile Include="Models\ELMAH_Error.cs">
+      <DependentUpon>dbShoppingCartModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\ExcelValidate.cs" />
     <Compile Include="Models\FileUploadValidate.cs" />
     <Compile Include="Models\ImgUploadValidate.cs" />
+    <Compile Include="Models\Log4NetLog.cs">
+      <DependentUpon>dbShoppingCartModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\LogMessage.cs">
       <DependentUpon>dbShoppingCartModel.tt</DependentUpon>
     </Compile>
@@ -329,11 +359,16 @@
       <DependentUpon>dbShoppingCartModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Products.cs" />
+    <Compile Include="Models\Product_Category.cs">
+      <DependentUpon>dbShoppingCartModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\ShoppingCarList.cs">
       <DependentUpon>dbShoppingCartModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\ShoppingCarLists.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Service\ProductCustomBindingExtensions.cs" />
+    <Compile Include="Service\ProductService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Data\dbShoppingCar.mdf" />
@@ -850,6 +885,8 @@
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
+    <Content Include="Scripts\jszip.js" />
+    <Content Include="Scripts\jszip.min.js" />
     <Content Include="Scripts\kendo\angular.min.js" />
     <Content Include="Scripts\kendo\cultures\kendo.culture.aa-DJ.min.js" />
     <Content Include="Scripts\kendo\cultures\kendo.culture.aa-ER.min.js" />
@@ -2944,10 +2981,16 @@
     <Content Include="Scripts\kendo\messages\kendo.messages.zh-CN.min.js.map" />
     <Content Include="Scripts\kendo\messages\kendo.messages.zh-HK.min.js.map" />
     <Content Include="Scripts\kendo\messages\kendo.messages.zh-TW.min.js.map" />
+    <Content Include="Views\Home\CheckBoxTest.cshtml" />
+    <Content Include="Views\Kendo\Index.cshtml" />
+    <Content Include="Views\Shared\_LayoutKendo.cshtml" />
+    <Content Include="Views\Kendo\ProductGridView.cshtml" />
+    <Content Include="Views\Kendo\ProductListView.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Image\" />
     <Folder Include="Logs\" />
+    <Folder Include="Views\Grid\" />
     <Folder Include="Views\Pagination\" />
   </ItemGroup>
   <ItemGroup>

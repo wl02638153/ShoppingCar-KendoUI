@@ -1,0 +1,33 @@
+﻿@{
+    ViewBag.Title = "ProductList";
+    if (Session["Member"] != null)
+    {
+        if (Session["Member"].ToString() == "Admin")
+        {
+            Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+        }
+        else
+        {
+            Layout = "~/Views/Shared/_LayoutMember.cshtml";
+        }
+    }
+}
+<div id="MainZone">
+    
+</div>
+
+<script>
+    $(document).ready(function () {
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("ProductGridView", "Kendo")',
+            success: function (returnView) {
+                $("#MainZone").html(returnView); //reload MainZone div
+            },
+            error: function (response) {
+                alert("error:"+response.d);
+            }
+        });
+    })
+</script>
+

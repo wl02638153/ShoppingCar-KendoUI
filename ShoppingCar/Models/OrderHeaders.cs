@@ -1,9 +1,11 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
+using System.Web.Script.Serialization;
 
 namespace ShoppingCar.Models
 {
@@ -38,6 +40,8 @@ namespace ShoppingCar.Models
 
         public virtual Member Member { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        [ScriptIgnore]
+        [JsonIgnore]
         public virtual ICollection<OrderDetail> OrderDetail { get; set; }
     }
 }

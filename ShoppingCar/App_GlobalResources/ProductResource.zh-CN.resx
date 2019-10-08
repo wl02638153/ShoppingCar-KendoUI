@@ -183,4 +183,13 @@
   <data name="ProductPrice_DataType_ErrorMessage" xml:space="preserve">
     <value>请输入数字</value>
   </data>
+  <data name="CategoryName" xml:space="preserve">
+    <value>产品类别</value>
+  </data>
+  <data name="CategoryName_Require_Message" xml:space="preserve">
+    <value>产品类别不可空白</value>
+  </data>
+  <data name="CatrgoryName_DataType_ErrorMessage" xml:space="preserve">
+    <value>请输入文字格式</value>
+  </data>
 </root>

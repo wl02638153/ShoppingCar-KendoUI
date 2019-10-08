@@ -25,10 +25,12 @@ using System.Globalization;
 using System.Threading;
 using log4net;
 using log4net.Config;
+using Kendo.Mvc.Extensions;
+using Kendo.Mvc.UI;
 
 namespace ShoppingCar.Controllers
 {
-    
+
     public class HomeController : Controller
     {
         //dbShoppingCarEntities3 db = new dbShoppingCarEntities3();     //存取db
@@ -37,27 +39,16 @@ namespace ShoppingCar.Controllers
 
         //[CultureActionFilter]
         //[Filters.MemberFilter]
-        public ActionResult Index(int page=1)
+        public ActionResult Index(int page = 1)
         {
             int pageSize = 9;
             int currentPage = page < 1 ? 1 : page;
-            var products = db.Product.Where(m => m.Delete_Flag == false&&m.Shelf_Flag==true).OrderByDescending(m => m.Create_Date).ToList();
+            var products = db.Product.Where(m => m.Delete_Flag == false && m.Shelf_Flag == true).OrderByDescending(m => m.Create_Date).ToList();
             ViewBag.PageOfProduct = products.ToPagedList(currentPage, pageSize);
-            //if (Session["Member"] == null)
-            //{
-            //    Session["UserTag"]= "_Layout";
-            //    return View("Index", Session["UserTag"].ToString(), products);
-            //}
-            //else if (Session["Welcome"].ToString() == "Admin歡迎光臨")
-            //{
-            //    Session["UserTag"] = "_LayoutAdmin";
-            //    return View("Index", Session["UserTag"].ToString(), products);
-            //}
-            //Session["UserTag"] = "_LayoutMember";
-            
+
             return View("Index", products);
         }
-        
+
         public JsonResult Ajax_Method(int pageIndex)
         {
             db.Configuration.ProxyCreationEnabled = false;
@@ -72,8 +63,8 @@ namespace ShoppingCar.Controllers
                 .Take(model.PageSize).ToList();
             return Json(model, JsonRequestBehavior.AllowGet);
         }
-        
-        public ActionResult SetCulture(string culture,string returnUrl)
+
+        public ActionResult SetCulture(string culture, string returnUrl)
         {
 
             // Validate input 
@@ -98,5 +89,9 @@ namespace ShoppingCar.Controllers
             Response.Cookies.Add(cookie);
             return Redirect(returnUrl);
         }
+        
+        /* grid test */
+        
+
     }
 }

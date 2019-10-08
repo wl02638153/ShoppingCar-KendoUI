@@ -24,7 +24,8 @@ namespace ShoppingCar
 
             bundles.Add(new ScriptBundle("~/bundles/kendo").Include(
                         "~/Scripts/kendo/kendo.all.min.js",
-                        "~/Scripts/kendo/kendo.aspnetmvc.min.js"));
+                        "~/Scripts/kendo/kendo.aspnetmvc.min.js",
+                        "~/Scripts/jszip.js"));
 
 
             // 使用開發版本的 Modernizr 進行開發並學習。然後，當您

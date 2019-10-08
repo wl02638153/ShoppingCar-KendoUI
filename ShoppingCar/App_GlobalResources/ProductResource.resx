@@ -183,4 +183,13 @@
   <data name="ProductPrice_DataType_ErrorMessage" xml:space="preserve">
     <value>Please enter a number format</value>
   </data>
+  <data name="CategoryName" xml:space="preserve">
+    <value>Category Name</value>
+  </data>
+  <data name="CategoryName_Require_Message" xml:space="preserve">
+    <value>Category Name is Required</value>
+  </data>
+  <data name="CatrgoryName_DataType_ErrorMessage" xml:space="preserve">
+    <value>Please enter a text format</value>
+  </data>
 </root>

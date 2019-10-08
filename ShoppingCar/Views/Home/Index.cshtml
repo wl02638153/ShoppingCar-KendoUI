@@ -19,7 +19,7 @@
 
 }
 <head>
-    
+
 
     <link href="~/Content/PagedList.css" rel="stylesheet" />
     @if (TempData["LoginMessage"] != null)
@@ -61,109 +61,199 @@
 <h2>@ShoppingCar.App_GlobalResources.IndexResource.Title</h2>
 <hr />
 
+
+
 <div id="ProductPage" class="row">
 
-</div>
-<br />
-<div id="pager">
-    <ul id="pagination" class="pagination-sm"></ul>
-</div>
+    </div>
+    <br />
+    <div id="pager">
+        <ul id="pagination" class="pagination-sm"></ul>
+    </div>
 
-<script>
-    var currentDomain = '@Url.Content("~")';
-    var addCarURL = '@Url.Action("AddCar", "Shopping_Car")';
-    var getURL = '@Url.Action("Ajax_Method", "Home")';
-    var userSession = '@Session["Member"]';
-    var addCarButton = '@ShoppingCar.App_GlobalResources.IndexResource.AddCar'
-    var checkCar = "確定加入購物車嗎?";
-    var $pagination = $('#pagination'),
-        totalRecords = 0,
-        model = [],
-        displayRecords = [],
-        recPerPage = 10,
-        totalPages = 0;
-    $.ajax({
-        type: "POST",
-        url: getURL,
-        async: true,
-        data: '{pageIndex: ' + 1 + '}',
-        contentType: "application/json; charset=utf-8",
-        dataType: "json",
-        success: function (response) {
-            on_success(response);
-        },
-        error: function (response) {
-            alert(response.d);
-        }
-    });
-    function getProduct(page) {
+    <script>
+        var currentDomain = '@Url.Content("~")';
+        var addCarURL = '@Url.Action("AddCar", "Shopping_Car")';
+        var getURL = '@Url.Action("Ajax_Method", "Home")';
+        var userSession = '@Session["Member"]';
+        var addCarButton = '@ShoppingCar.App_GlobalResources.IndexResource.AddCar'
+        var checkCar = "確定加入購物車嗎?";
+        var $pagination = $('#pagination'),
+            totalRecords = 0,
+            model = [],
+            displayRecords = [],
+            recPerPage = 10,
+            totalPages = 0;
         $.ajax({
             type: "POST",
             url: getURL,
             async: true,
-            data: '{pageIndex: ' + page + '}',
+            data: '{pageIndex: ' + 1 + '}',
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             success: function (response) {
-                model = response;
-                totalRecords = model.RecordCount;
-                recPerPage = model.PageSize;
-                totalPages = Math.ceil(totalRecords / recPerPage);
-                displayRecords = model.Products;
-                generate_table();
+                on_success(response);
             },
             error: function (response) {
                 alert(response.d);
             }
         });
-    }
-    function generate_table() {
-        var tr='';
-        $('#ProductPage').empty();
-        console.log(displayRecords);
-        for (var i = 0; i < displayRecords.length; i++) {
-            tr = '';
-            tr += '<div class="col-lg-4">';
-            tr += '<div class="thumbnail">';
-
-            if (displayRecords[i].ProductImg == null) {
-                tr += '<img src="' + currentDomain+'Image/notImg_.jpg?w=200&h=200&mode=cropyunits"/>';
-            }
-            else {
-                tr +='<img src="' + (displayRecords[i].ProductImg).substr(1) + '?w=200&h=200&mode=cropyunits"/>';
-            }
-
-            tr += '     <div class="caption">';
-            tr += '         <h4 class="text-center">' + displayRecords[i].ProductName+'</h4>';
-            tr += '         <h4 class="text-center">NT$' + displayRecords[i].ProductPrice + '</h4>';
-            
-            tr += '         <p class="text-center">';
-            tr += '             <a href="' + addCarURL + '?ProductID=' + displayRecords[i].ProductID + '" class="btn btn-primary" onclick="return confirm(' +"checkCar"+')">' + addCarButton + '</a>';
-            tr += '         </p>';
-            
-            tr += '     </div>';
-            tr += ' </div>';
-            tr += '</div>';
-            $('#ProductPage').append(tr);
+        function getProduct(page) {
+            $.ajax({
+                type: "POST",
+                url: getURL,
+                async: true,
+                data: '{pageIndex: ' + page + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    model = response;
+                    totalRecords = model.RecordCount;
+                    recPerPage = model.PageSize;
+                    totalPages = Math.ceil(totalRecords / recPerPage);
+                    displayRecords = model.Products;
+                    generate_table();
+                },
+                error: function (response) {
+                    alert(response.d);
+                }
+            });
         }
-    }
-    function on_success(response) {
-        var model = response;
-        totalRecords = model.RecordCount;
-        recPerPage = model.PageSize;
-        totalPages = Math.ceil(totalRecords / recPerPage);
-        displayRecords = model.Products;
-        $pagination.twbsPagination({
-            totalPages: totalPages,
-            visiblePages: 4,
-            startPage: model.PageIndex,
-            onPageClick: function (event, page) {
-                getProduct(page);
+        function generate_table() {
+            var tr='';
+            $('#ProductPage').empty();
+            console.log(displayRecords);
+            for (var i = 0; i < displayRecords.length; i++) {
+                tr = '';
+                tr += '<div class="col-lg-4">';
+                tr += '<div class="thumbnail">';
+
+                if (displayRecords[i].ProductImg == null) {
+                    tr += '<img src="' + currentDomain+'Image/notImg_.jpg?w=200&h=200&mode=cropyunits"/>';
+                }
+                else {
+                    tr +='<img src="' + (displayRecords[i].ProductImg).substr(1) + '?w=200&h=200&mode=cropyunits"/>';
+                }
+
+                tr += '     <div class="caption">';
+                tr += '         <h4 class="text-center">' + displayRecords[i].ProductName+'</h4>';
+                tr += '         <h4 class="text-center">NT$' + displayRecords[i].ProductPrice + '</h4>';
+
+                tr += '         <p class="text-center">';
+                tr += '             <a href="' + addCarURL + '?ProductID=' + displayRecords[i].ProductID + '" class="btn btn-primary" onclick="return confirm(' +"checkCar"+')">' + addCarButton + '</a>';
+                tr += '         </p>';
+
+                tr += '     </div>';
+                tr += ' </div>';
+                tr += '</div>';
+                $('#ProductPage').append(tr);
             }
-        });
-        $(".page").click(function () {
-            getProduct(parseInt($(this).find('a').text()));
-            console.log($(this).find('a').text());
-        });
-    }
+        }
+        function on_success(response) {
+            var model = response;
+            totalRecords = model.RecordCount;
+            recPerPage = model.PageSize;
+            totalPages = Math.ceil(totalRecords / recPerPage);
+            displayRecords = model.Products;
+            $pagination.twbsPagination({
+                totalPages: totalPages,
+                visiblePages: 4,
+                startPage: model.PageIndex,
+                onPageClick: function (event, page) {
+                    getProduct(page);
+                }
+            });
+            $(".page").click(function () {
+                getProduct(parseInt($(this).find('a').text()));
+                console.log($(this).find('a').text());
+            });
+        }
+    </script>
+
+
+@*<script type="text/x-kendo-template" id="template">
+    <div class="product">
+        <img src="@Url.Content("~")#= ProductImg #" alt="#: ProductName # image" />
+        <h3>#:ProductName#</h3>
+        <p>#:kendo.toString(ProductPrice, "c")#</p>
+    </div>
 </script>
+
+<div class="k-content wide">
+    @(Html.Kendo().ListView<ShoppingCar.Models.Product>()
+                            .Name("listView")
+                            .TagName("div")
+                            .ClientTemplateId("template")
+                            .DataSource(dataSource =>
+                            {
+                                dataSource.Read(read => read.Action("Read_Product", "Product"));
+                                dataSource.PageSize(21);
+                            })
+                            .Pageable()
+    )
+</div>*@
+
+<style>
+    #listView {
+        padding: 10px 5px;
+        margin-bottom: -1px;
+        min-height: 510px;
+    }
+
+    .product {
+        float: left;
+        position: relative;
+        width: 111px;
+        height: 170px;
+        margin: 0 5px;
+        padding: 0;
+    }
+
+        .product img {
+            width: 110px;
+            height: 110px;
+        }
+
+        .product h3 {
+            margin: 0;
+            padding: 3px 5px 0 0;
+            max-width: 96px;
+            overflow: hidden;
+            line-height: 1.1em;
+            font-size: .9em;
+            font-weight: normal;
+            text-transform: uppercase;
+            color: #999;
+        }
+
+        .product p {
+            visibility: hidden;
+        }
+
+        .product:hover p {
+            visibility: visible;
+            position: absolute;
+            width: 110px;
+            height: 110px;
+            top: 0;
+            margin: 0;
+            padding: 0;
+            line-height: 110px;
+            vertical-align: middle;
+            text-align: center;
+            color: #fff;
+            background-color: rgba(0,0,0,0.75);
+            transition: background .2s linear, color .2s linear;
+            -moz-transition: background .2s linear, color .2s linear;
+            -webkit-transition: background .2s linear, color .2s linear;
+            -o-transition: background .2s linear, color .2s linear;
+        }
+
+    .k-listview:after {
+        content: ".";
+        display: block;
+        height: 0;
+        clear: both;
+        visibility: hidden;
+    }
+</style>

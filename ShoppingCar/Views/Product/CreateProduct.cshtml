@@ -87,59 +87,92 @@
 {
     @Html.AntiForgeryToken()
 
-    <div class="form-horizontal">
-        <h4>@ShoppingCar.App_GlobalResources.CreateProductResource.Add_single_product</h4>
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+<div class="form-horizontal">
+    <h4>@ShoppingCar.App_GlobalResources.CreateProductResource.Add_single_product</h4>
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.ProductID, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.ProductID, new { htmlAttributes = new { @class = "form-control", required = "required" } })
-                @Html.ValidationMessageFor(model => model.ProductID, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.ProductName, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.ProductName, new { htmlAttributes = new { @class = "form-control", required = "required" } })
-                @Html.ValidationMessageFor(model => model.ProductName, "", new { @class = "text-danger" })
-            </div>
-        </div>
-        <style>
-            textarea {
-                resize: none;
-            }
-        </style>
-        <div class="form-group">
-            @Html.LabelFor(model => model.ProductExplain, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.TextAreaFor(model => model.ProductExplain, new { htmlAttributes = new { @class = "form-control" }, cols = "37", rows = "10" })
-                @Html.ValidationMessageFor(model => model.ProductExplain, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.ProductPrice, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.ProductPrice, new { htmlAttributes = new { @class = "form-control", type = "number", step = "0.01", required = "required" } })
-                @Html.ValidationMessageFor(model => model.ProductPrice, "", new { @class = "text-danger" })
-            </div>
-        </div>
-        <div class="form-group">
-            @Html.LabelFor(model => model.ProductImg, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                <input type="file" name="ImgFile" id="ImgFile" accept="image/*" required />
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" name="InsertProduct" id="InsertProduct" value="Create" class="btn btn-default" />
-
-            </div>
+    <div class="form-group">
+        @Html.LabelFor(model => model.ProductID, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.ProductID, new { htmlAttributes = new { @class = "form-control", required = "required" } })
+            @Html.ValidationMessageFor(model => model.ProductID, "", new { @class = "text-danger" })
         </div>
     </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.ProductName, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.ProductName, new { htmlAttributes = new { @class = "form-control", required = "required" } })
+            @Html.ValidationMessageFor(model => model.ProductName, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <style>
+        textarea {
+            resize: none;
+        }
+    </style>
+    <div class="form-group">
+        @Html.LabelFor(model => model.ProductExplain, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.TextAreaFor(model => model.ProductExplain, new { htmlAttributes = new { @class = "form-control" }, cols = "37", rows = "10" })
+            @Html.ValidationMessageFor(model => model.ProductExplain, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.ProductPrice, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.ProductPrice, new { htmlAttributes = new { @class = "form-control", type = "number", step = "0.01", required = "required" } })
+            @Html.ValidationMessageFor(model => model.ProductPrice, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Product_Category.CategoryName, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @(Html.Kendo().DropDownList().Name("CategoryID").DataTextField("CategoryName").DataValueField("CategoryID")
+                                            .DataSource(source =>
+                                            {
+                                                source.Read(read =>
+                                                {
+                                                    read.Action("Product_Category", "Product");
+                                                });
+                                            })
+                                            .HtmlAttributes(new { style = "" })
+            )
+            @Html.ValidationMessageFor(model => model.Product_Category, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.ProductImg, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            <input type="file" name="ImgFile" id="ImgFile" accept="image/*" required />
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" name="InsertProduct" id="InsertProduct" value="Create" class="btn btn-default" />
+
+        </div>
+    </div>
+</div>
 }
+
+<form method="post" action='@Url.Action("Basic_Usage_Submit")'>
+    <div class="demo-section k-content">
+        <h4>Kendo upload test</h4>
+        @(Html.Kendo().Upload()
+                    .Name("files")
+                    .HtmlAttributes(new { aria_label = "files" })
+                    .Validation(validation => validation.AllowedExtensions(new string[] { ".gif", ".jpg", ".png" }).MaxFileSize(3145728))
+        )
+        <div class="demo-hint">You can only upload <strong>GIF</strong>, <strong>JPG</strong>, <strong>PNG</strong> files.</div>
+        <p style="padding-top: 1em; text-align: right">
+            <button type="submit" class="k-button k-primary">Submit</button>
+        </p>
+    </div>
+</form>
     <hr />
 <h3>@ShoppingCar.App_GlobalResources.CreateProductResource.Data_format</h3>
 <p>@ShoppingCar.App_GlobalResources.CreateProductResource.Data_format_1</p>

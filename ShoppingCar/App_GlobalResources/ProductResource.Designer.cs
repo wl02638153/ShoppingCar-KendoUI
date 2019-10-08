@@ -61,6 +61,33 @@ namespace ShoppingCar.App_GlobalResources {
         }
         
         /// <summary>
+        ///   查詢類似 Category Name 的當地語系化字串。
+        /// </summary>
+        public static string CategoryName {
+            get {
+                return ResourceManager.GetString("CategoryName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Category Name is Required 的當地語系化字串。
+        /// </summary>
+        public static string CategoryName_Require_Message {
+            get {
+                return ResourceManager.GetString("CategoryName_Require_Message", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類似 Please enter a text format 的當地語系化字串。
+        /// </summary>
+        public static string CatrgoryName_DataType_ErrorMessage {
+            get {
+                return ResourceManager.GetString("CatrgoryName_DataType_ErrorMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查詢類似 Create Date 的當地語系化字串。
         /// </summary>
         public static string Create_Date {

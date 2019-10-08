@@ -17,6 +17,10 @@
         <EntityTypeShape EntityType="ShoppingCartModel.ShoppingCarList" Width="1.5" PointX="12.5" PointY="1.625" />
         <AssociationConnector Association="ShoppingCartModel.FK_ShoppingCarList_Member" />
         <AssociationConnector Association="ShoppingCartModel.FK_ShoppingCarList_Product" />
+        <EntityTypeShape EntityType="ShoppingCartModel.ELMAH_Error" Width="1.5" PointX="0.5" PointY="5.5" />
+        <EntityTypeShape EntityType="ShoppingCartModel.Log4NetLog" Width="1.5" PointX="2.5" PointY="5.5" />
+        <EntityTypeShape EntityType="ShoppingCartModel.Product_Category" Width="1.5" PointX="5.625" PointY="5.375" />
+        <AssociationConnector Association="ShoppingCartModel.FK_Product_Product_Category1" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

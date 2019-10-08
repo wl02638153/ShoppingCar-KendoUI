@@ -23,6 +23,12 @@ using System.Data.Entity.Validation;
 using PagedList;
 using System.Diagnostics;
 using System.Data.Entity;
+using ShoppingCar.Service;
+using Kendo.Mvc.UI;
+using Kendo.Mvc.Extensions;
+using KendoGridBinder;
+using KendoGridBinder.ModelBinder.Mvc;
+using Kendo.Mvc;
 
 namespace ShoppingCar.Controllers
 {
@@ -32,7 +38,11 @@ namespace ShoppingCar.Controllers
         //dbShoppingCarEntities3 db = new dbShoppingCarEntities3();     //存取db
 
         ShoppingCartEntities db = new ShoppingCartEntities();
+        
         private NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        ProductService productService = new ProductService(new ShoppingCartEntities());
+
+
         // GET: Product
         public ActionResult Index()
         {
@@ -238,6 +248,18 @@ namespace ShoppingCar.Controllers
         public ActionResult ProductEdit(string ProductID)
         {
             Product Product = db.Product.Find(ProductID);
+            var categorys = db.Product_Category.ToList();
+            List<SelectListItem> items = new List<SelectListItem>();
+            foreach(var category in categorys)
+            {
+                items.Add(new SelectListItem()
+                {
+                    Text = category.CategoryName,
+                    Value=category.CategoryID.ToString()
+                });
+            }
+            ViewBag.CategoryItems = items;
+
             return View("ProductEdit", Product);
         }
         [HttpPost]
@@ -285,6 +307,7 @@ namespace ShoppingCar.Controllers
                 Product.ProductName = product.ProductName;
                 Product.ProductPrice = product.ProductPrice;
                 Product.Shelf_Flag = product.Shelf_Flag;
+                Product.CategoryID = product.CategoryID;
 
                 try
                 {
@@ -393,14 +416,17 @@ namespace ShoppingCar.Controllers
         public ActionResult DeleteProduct(string ProductID)
         {
             var Product = db.Product.Where(m => m.ProductID == ProductID).FirstOrDefault();
-            Product.Delete_Flag = true;
+            //Product.Delete_Flag = true;
             if (ModelState.IsValid)
             {
+                db.Product.Remove(Product);
                 db.SaveChanges();
                 TempData["DeleteMessage"] = Product.ProductID + "刪除成功";
             }
             return RedirectToAction("ProductList");
         }
+
+        
 
         public ActionResult InsertProductTest()
         {
@@ -528,6 +554,122 @@ namespace ShoppingCar.Controllers
             }
 
             return View("CreateProduct");
+        }
+        
+        public ActionResult Products_Read([DataSourceRequest] DataSourceRequest request)
+        {
+            var sort = request.Sorts;
+            var category = 0;
+            if(request.Filters != null)
+            {
+                if (request.Filters.Count > 0)
+                {
+                    foreach (var filter in request.Filters)
+                    {
+                        var descriptor = filter as FilterDescriptor;
+                        if (descriptor != null && descriptor.Member == "CategoryID")
+                        {
+                            category = Convert.ToInt32(descriptor.ConvertedValue);
+                        }
+                    }
+                }
+            }
+
+            if (category == 0)
+            {
+                var AllProducts = db.Product.OrderByDescending(product => product.Create_Date).Skip((request.Page - 1) * request.PageSize).Take(request.PageSize).ToList().Select(product => new Product
+                {
+                    ID = product.ID,
+                    ProductID = product.ProductID,
+                    ProductName = product.ProductName,
+                    ProductExplain = product.ProductExplain,
+                    ProductPrice = product.ProductPrice,
+                    ProductImg = product.ProductImg == null ? "Image/notImg_.jpg" : product.ProductImg.Replace("~/", ""),
+                    Create_Date = product.Create_Date,
+                    Delete_Date = product.Delete_Date,
+                    Delete_Flag = product.Delete_Flag,
+                    Modify_Date = product.Modify_Date,
+                    ProductImg_DB = product.ProductImg_DB,
+                    Shelf_Flag = product.Shelf_Flag,
+                    CategoryID = product.CategoryID,
+                    Product_Category = new Product_Category()
+                    {
+                        CategoryID = product.Product_Category.CategoryID,
+                        CategoryName = product.Product_Category.CategoryName
+                    },
+                }).ToList();
+                var result = new DataSourceResult()
+                {
+                    Data = AllProducts,
+                    Total = db.Product.Count(),
+
+                };
+                return Json(result, JsonRequestBehavior.AllowGet);
+            }
+            else
+            {
+                var AllProducts = db.Product.Where(p => p.CategoryID == category).OrderByDescending(product => product.Create_Date).Skip((request.Page - 1) * request.PageSize).Take(request.PageSize).ToList().Select(product => new Product
+                {
+                    ID = product.ID,
+                    ProductID = product.ProductID,
+                    ProductName = product.ProductName,
+                    ProductExplain = product.ProductExplain,
+                    ProductPrice = product.ProductPrice,
+                    ProductImg = product.ProductImg == null ? "Image/notImg_.jpg" : product.ProductImg.Replace("~/", ""),
+                    Create_Date = product.Create_Date,
+                    Delete_Date = product.Delete_Date,
+                    Delete_Flag = product.Delete_Flag,
+                    Modify_Date = product.Modify_Date,
+                    ProductImg_DB = product.ProductImg_DB,
+                    Shelf_Flag = product.Shelf_Flag,
+                    CategoryID = product.CategoryID,
+                    Product_Category = new Product_Category()
+                    {
+                        CategoryID = product.Product_Category.CategoryID,
+                        CategoryName = product.Product_Category.CategoryName
+                    },
+                }).ToList();
+                var result = new DataSourceResult()
+                {
+                    Data = AllProducts,
+                    Total = db.Product.Where(p => p.CategoryID == category).Count(),
+
+                };
+                return Json(result, JsonRequestBehavior.AllowGet);
+            }
+        }
+       
+        public ActionResult Product_Category()
+        {
+            var Categorys = db.Product_Category.OrderBy(e => e.CategoryName).ToList(); ;
+            //return Json(Categorys, JsonRequestBehavior.AllowGet);
+            return Content(JsonConvert.SerializeObject(Categorys), "application/json");
+        }
+
+        [HttpPost]
+        public ActionResult Excel_Export_Save(string contentType,string base64,string fileName)
+        {
+            var fileContents = Convert.FromBase64String(base64);
+            return File(fileContents, contentType, fileName);
+        }
+        
+        public ActionResult Basic_Usage_Submit(IEnumerable<HttpPostedFileBase> files)
+        {
+            if (files != null)
+            {
+                foreach (var file in files)
+                {
+                    // Some browsers send file names with full path.
+                    // We are only interested in the file name.
+                    var fileName = Path.GetFileName(file.FileName);
+                    var physicalPath = Path.Combine(Server.MapPath("~/App_Data/file"), fileName);
+
+                    // The files are not actually saved in this demo
+                    file.SaveAs(physicalPath);
+                }
+            }
+
+            return RedirectToAction("CreateProduct");
         }
     }
 }

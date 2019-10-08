@@ -1,0 +1,82 @@
+﻿
+@(Html.Kendo().Grid<ShoppingCar.Models.Product>()
+    .Name("Grid")
+    .Columns(colums =>
+    {
+    colums.Bound(item => item.ProductImg)
+        .ClientTemplate("<img src='" + Url.Content("~") + "#=ProductImg#?w=70&h=70&mode=cropyunits ' alt='#=ProductID #' Title='#=ProductID #'/>").Width(90);
+    colums.Bound(item => item.ProductName);
+    colums.Bound(item => item.ProductExplain)
+        .ClientTemplate("<textarea rows = '3' disabled = 'disabled' style='width:99%;'>#=ProductExplain#</textarea>").Width(270);
+    colums.Bound(item => item.ProductPrice);
+    colums.Bound(item => item.Shelf_Flag)
+        .ClientTemplate("<input type='checkbox' disabled = 'disabled' ${ Shelf_Flag == true ? checked='checked' : ''} value='#= Shelf_Flag#' onclick=''/>"
+                + "<input type='hidden' value='#= Shelf_Flag#' class='Shelf_Flag'/>").Width(50).HtmlAttributes(new { style = "text-align: center;" });
+    colums.Bound(item => item.Create_Date).Format("{0: yyyy/MM/dd HH:mm}");
+    colums.Bound(item => item.Create_Date);
+    colums.Template(item => { }).ClientTemplate("<a class='k-button' href='" + Url.Action("ProductEdit", "Product") + "/?ProductID=#=ProductID#''>Edit</a>");
+    colums.Command(command => { command.Destroy(); });
+    })
+    .HtmlAttributes(new { style = "height:550px;" })
+    .ToolBar(toolbar => toolbar.Create())
+    .Editable(editable => editable.Mode(GridEditMode.PopUp))
+    .Pageable()
+    .Scrollable()
+    .DataSource(dataSource => dataSource
+        .Ajax()
+        .Model(model => model.Id(m => m.ProductID))
+        .PageSize(10)
+        .Read("Products_Read", "Kendo")
+        .Destroy("Product_Delete", "Kendo")
+        .Update("ProductEdit", "Product")
+        .Create("Product_Create", "Kendo"))
+
+)
+
+
+<script>
+    var RedirectUrl ='@Url.Action("Index", "Kendo")';
+    var getUrl = '@Url.Action("Product_Delete", "Kendo")';
+
+    function onDelete(ProductID) {
+        var data = {
+            ProductID: ProductID
+        }
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("Product_Delete", "Kendo")',
+            cache: false,
+            async: false,
+            data: JSON.stringify(data),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                if (response.IsSuccess) {
+                    alert(response.Alert_Msg);
+                    $("#MainZone").load(window.location.href +"#MainZone"); //reload MainZone div
+                }
+                else {
+                    alert(response.Alert_Msg);
+                }
+            },
+            error: function (response) {
+                alert("error:"+response.d);
+            }
+        });
+    }
+    function Confirm_custom(str) {
+        if (confirm(str)) {
+            //onSubmitBlock();
+            onDelete(ProductID);
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    function onSubmitBlock() {
+        $.blockUI({
+            message: "請稍等..."
+        });
+    }
+</script>

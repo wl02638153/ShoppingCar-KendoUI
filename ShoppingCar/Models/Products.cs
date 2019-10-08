@@ -1,10 +1,12 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Security.AccessControl;
 using System.Web;
+using System.Web.Script.Serialization;
 
 namespace ShoppingCar.Models
 {
@@ -43,6 +45,7 @@ namespace ShoppingCar.Models
         [DataType(DataType.Currency, ErrorMessageResourceName = "ProductPrice_DataType_ErrorMessage", ErrorMessageResourceType = typeof(App_GlobalResources.ProductResource))]
         public Nullable<decimal> ProductPrice { get; set; }
 
+        [UIHint("FileUpload")]
         [DisplayName("產品圖片")]
         [Display(Name = "ProductImg", ResourceType = typeof(App_GlobalResources.ProductResource))]
         public string ProductImg { get; set; }
@@ -55,8 +58,16 @@ namespace ShoppingCar.Models
 
         [Display(Name = "Shelf_Flag", ResourceType = typeof(App_GlobalResources.ProductResource))]
         public bool Shelf_Flag { get; set; }
+        
+        public int CategoryID { get; set; }
 
+        
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<OrderDetail> OrderDetail { get; set; }
+        
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ShoppingCarList> ShoppingCarList { get; set; }
+        public virtual Product_Category Product_Category { get; set; }
+
     }
 }

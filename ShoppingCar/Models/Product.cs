@@ -33,10 +33,12 @@ namespace ShoppingCar.Models
         public Nullable<System.DateTime> Modify_Date { get; set; }
         public byte[] ProductImg_DB { get; set; }
         public bool Shelf_Flag { get; set; }
+        public Nullable<int> CategoryID { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<OrderDetail> OrderDetail { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ShoppingCarList> ShoppingCarList { get; set; }
+        public virtual Product_Category Product_Category { get; set; }
     }
 }

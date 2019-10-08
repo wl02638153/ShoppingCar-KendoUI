@@ -18,7 +18,7 @@
     }
 }
 <head>
-    
+
 </head>
 <script>
     function Confirm_custom(str) {
@@ -62,10 +62,131 @@
             };
     </script>
 }
-<table class="table">
+
+    <style>
+        textarea {
+            resize: none;
+        }
+    </style>
+@(Html.Kendo().Grid<ShoppingCar.Models.Product>()
+    .Name("grid")
+    .Columns(colums =>
+    {
+        colums.Bound(item => item.ProductImg)
+        .ClientTemplate(
+            @"<img src='" + Url.Content("~") + "#=ProductImg#?w=70&h=70&mode=cropyunits ' alt='#=ProductID #' Title='#=ProductID #'/>").Width(90);
+        colums.Bound(item => item.ProductName);
+        colums.Bound(item => item.ProductExplain)
+            .ClientTemplate("<textarea rows = '3' disabled = 'disabled' style='width:99%;'>#=ProductExplain#</textarea>").Width(270);
+        colums.Bound(item => item.ProductPrice);
+        colums.Bound(item => item.Product_Category.CategoryName);
+        colums.Bound(item => item.Shelf_Flag)
+            .ClientTemplate("<input type='checkbox' disabled = 'disabled' ${ Shelf_Flag == true ? checked='checked' : ''} value='#= Shelf_Flag#' onclick=''/>"
+                            + "<input type='hidden' value='#= Shelf_Flag#' class='Shelf_Flag'/>").Width(50).HtmlAttributes(new { style ="text-align: center;" });
+        colums.Bound(item => item.Create_Date);
+        colums.Template(item => { }).ClientTemplate("<a class='k-button' href='" + Url.Action("ProductEdit","Product") + "/?ProductID=#=ProductID#''>Edit</a>"
+            + Html.ActionLink("Delete", "DeleteProduct", new { ProductID = "#=ProductID #" }, new { onclick = "return Confirm_custom('確定要刪除嗎?')" ,@class="k-button"}));
+
+    })
+    //.ToolBar(tools => tools.Excel())
+    //.ToolBar(toolbar => toolbar.Custom().Text("Create").Action("CreateProduct", "Product"))
+    .ToolBar(toolbar =>
+    {
+        toolbar.Template(
+            @<text>
+                <div class="create-button">
+                    <a class="k-button k-button-icontext k-grid-excel" href="#"><span class="k-icon k-i-excel"></span>Export to Excel</a>
+                </div>
+                <div class="create-button">
+                    <a class="k-button" href="@Url.Action("CreateProduct", "Product")">Create</a>
+                </div>
+                <div class="toolbar">
+                    <label class="category-label" for="category">Show products by category:</label>
+                    @(Html.Kendo().DropDownList()
+                            .Name("categories")
+                            .OptionLabel("All")
+                            .DataTextField("CategoryName")
+                            .DataValueField("CategoryID")
+                            .AutoBind(false)
+                            .Events(e => e.Change("categoriesChange"))
+                            .DataSource(ds =>
+                            {
+                                ds.Read("Product_Category", "Product");
+                            })
+                            .Filter("contains")
+                            .HtmlAttributes(new { style = "" })
+                    )
+                </div>
+            </text>);
+    })
+    .Excel(excel => excel
+        .FileName("KendoUIGridExport.xlsx")
+        .Filterable(true)
+        .ProxyURL(Url.Action("Excel_Export_Save", "Product"))
+        )
+    .HtmlAttributes(new { style= "height:550px;" })
+    .Scrollable()
+    .Sortable()
+    .Filterable()
+    .DataSource(dataSource => dataSource
+        .Ajax()
+        .ServerOperation(true)
+        .Model(model => model.Id(p => p.ProductID))
+        .Read(read => read.Action("Products_Read", "Product"))
+        .PageSize(20))
+    .Pageable(pageable => pageable
+        .Refresh(true)
+        .ButtonCount(5)
+        .PageSizes(true))
+)
+
+<script>
+
+    function categoriesChange() {
+        var value = this.value(),
+            grid = $("#grid").data("kendoGrid");
+
+        if (value) {
+            grid.dataSource.filter({ field: "CategoryID", operator: "eq", value: parseInt(value) });
+        } else {
+            grid.dataSource.filter({});
+        }
+    }
+</script>
+    <style>
+        .customer-photo {
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+        border-radius: 50%;
+        background-size: 32px 35px;
+        background-position: center center;
+        vertical-align: middle;
+        line-height: 32px;
+        box-shadow: inset 0 0 1px #999, inset 0 0 10px rgba(0,0,0,.2);
+            margin-left: 5px;
+    }
+
+        .customer-name {
+    display: inline-block;
+        vertical-align: middle;
+        line-height: 32px;
+        padding-left: 3px;
+    }
+        .create-button {
+    display: inline-block;
+    }
+        .toolbar{
+        float:right;
+    }
+    </style>
+@*<table class="table">
     <tr>
         <th>
             @Html.DisplayNameFor(model => model.FirstOrDefault().ProductImg_DB)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.FirstOrDefault().Product_Category.CategoryName)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.FirstOrDefault().ProductName)
@@ -90,54 +211,56 @@
 
     @foreach (var item in Model)
     {
-        <tr>
-            <td>
-                @{
-                    byte[] img = item.ProductImg_DB;
+    <tr>
+        <td>
+            @{
+                byte[] img = item.ProductImg_DB;
 
-                    var base64 = Convert.ToBase64String(img);
-                    string imageDate = String.Format("data: image / gif;base64,{0}", base64);
+                var base64 = Convert.ToBase64String(img);
+                string imageDate = String.Format("data: image / gif;base64,{0}", base64);
 
-                    if (item.ProductImg != null)
-                    {
-                        <img src="@Url.Content(item.ProductImg)?w=70&h=70&mode=cropyunits " />
-                    }
-                    else
-                    {
-                        <img src="~/Image/notImg_.jpg?w=70&h=70&mode=cropyunits" />
-                    }
+                if (item.ProductImg != null)
+                {
+                    <img src="@Url.Content(item.ProductImg)?w=70&h=70&mode=cropyunits " />
                 }
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ProductName)
-            </td>
-            <td>
-                @*@Html.DisplayFor(modelItem => item.ProductExplain)*@
-                <style>
-                    textarea {
-                        resize: none;
-                    }
-                </style>
-                @Html.TextAreaFor(model => item.ProductExplain, new { @class = "form-controll", cols = "35", rows = "3", disabled = "disabled" })
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ProductPrice)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ProductImg)
-            </td>
-            <td>
-                @Html.CheckBoxFor(modelItem => item.Shelf_Flag, new { @disabled = "disabled" })
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Create_Date)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "ProductEdit", new { ProductID = item.ProductID })
-                @Html.ActionLink("Delete", "DeleteProduct", new { ProductID = item.ProductID }, new { onclick = "return Confirm_custom('確定要刪除嗎?')" })
-            </td>
-        </tr>
+                else
+                {
+                    <img src="~/Image/notImg_.jpg?w=70&h=70&mode=cropyunits" />
+                }
+            }
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Product_Category.CategoryName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ProductName)
+        </td>
+        <td>
+            <style>
+                textarea {
+                    resize: none;
+                }
+            </style>
+            @Html.TextAreaFor(model => item.ProductExplain, new { @class = "form-controll", cols = "35", rows = "3", disabled = "disabled" })
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ProductPrice)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ProductImg)
+        </td>
+        <td>
+            @Html.CheckBoxFor(modelItem => item.Shelf_Flag, new { @disabled = "disabled" })
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Create_Date)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "ProductEdit", new { ProductID = item.ProductID })
+            @Html.ActionLink("Delete", "DeleteProduct", new { ProductID = item.ProductID }, new { onclick = "return Confirm_custom('確定要刪除嗎?')" })
+        </td>
+    </tr>
     }
 
 </table>
-@Html.PagedListPager(Model, page => Url.Action("ProductList", new { page }))
+@Html.PagedListPager(Model, page => Url.Action("ProductList", new { page }))*@
