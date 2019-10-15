@@ -5,7 +5,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 
-namespace API.Controllers
+namespace ShoppingCarAPI.Controllers
 {
     public class ValuesController : ApiController
     {

@@ -1,0 +1,59 @@
+﻿
+@(Html.Kendo().Grid<ShoppingCar.Models.Book>()
+                    .Name("grid")
+                    .Columns(columns =>
+                    {
+                        columns.Bound(c => c.Id);
+                        columns.Bound(c => c.Title);
+                        columns.Bound(c => c.Price);
+                        columns.Bound(c => c.PubDate);
+                        columns.Bound(c => c.Author.Name);
+                        columns.Template(item => { }).ClientTemplate("<a class='k-button' href='" + Url.Action("Book_Edit", "Book") + "/?Id=#=Id#''>Edit</a>"
+                + Html.ActionLink("Delete", "Book_Delete", new { Id = "#=Id #" }, new { onclick = "return Confirm_custom('確定要刪除嗎?')", @class = "k-button" }));
+                    })
+                    .ToolBar(toolbar =>
+                    {
+                        toolbar.Template(
+                            @<text>
+                            <div class="create-button">
+                                <a class="k-button" href="@Url.Action("Book_Create", "Book")">Create</a>
+                            </div>
+                            </text>);
+
+                    })
+                    .HtmlAttributes(new { style = "height: 550px;" })
+                    .Scrollable()
+                    .Groupable()
+                    .Sortable()
+                    .Pageable(pageable => pageable
+                        .Refresh(true)
+                        .PageSizes(true)
+                        .ButtonCount(5))
+                    .DataSource(dataSource => dataSource
+                        .Ajax()
+                        .Read(read => read.Action("Book_Get", "Book"))
+                        .PageSize(20)
+                    )
+)
+
+<style>
+    .customer-photo {
+        display: inline-block;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background-size: 32px 35px;
+        background-position: center center;
+        vertical-align: middle;
+        line-height: 32px;
+        box-shadow: inset 0 0 1px #999, inset 0 0 10px rgba(0,0,0,.2);
+        margin-left: 5px;
+    }
+
+    .customer-name {
+        display: inline-block;
+        vertical-align: middle;
+        line-height: 32px;
+        padding-left: 3px;
+    }
+</style>

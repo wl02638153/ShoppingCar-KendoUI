@@ -34,5 +34,7 @@ namespace ShoppingCar.Models
         public virtual DbSet<ELMAH_Error> ELMAH_Error { get; set; }
         public virtual DbSet<Log4NetLog> Log4NetLog { get; set; }
         public virtual DbSet<Product_Category> Product_Category { get; set; }
+        public virtual DbSet<Author> Author { get; set; }
+        public virtual DbSet<Book> Book { get; set; }
     }
 }

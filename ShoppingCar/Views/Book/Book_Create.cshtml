@@ -1,0 +1,88 @@
+﻿@model ShoppingCar.Models.Book
+
+<form id="BookForm">
+    <div class="form-horizontal">
+        <h4>Book</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            <label for="Title" class="required control-label col-md-2">Title</label>
+            <div class="col-md-10">
+                @(Html.Kendo().TextBoxFor(model => model.Title).Name("Title").HtmlAttributes(new { required = "required", type = "text", data_max_msg = "Title length between 5 and 15", data_min_msg = "Title length between 5 and 15", validationmessage = "Enter {0}" }))
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="Price" class="required control-label col-md-2">Price</label>
+            <div class="col-md-10">
+                @(Html.Kendo().TextBoxFor(model => model.Price).Name("Price").HtmlAttributes(new { required = "required",type="number", validationmessage = "Enter {0}" }))
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="Genre" class="required control-label col-md-2">Genre</label>
+            <div class="col-md-10">
+                @(Html.Kendo().TextBoxFor(model => model.Genre).Name("Genre").HtmlAttributes(new { required = "required", validationmessage = "Enter {0}" }))
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.PubDate, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @(Html.Kendo().DatePicker()
+                                              .Name("PubDate")
+                                              .Value(DateTime.Now)
+                                              .HtmlAttributes(new { title = "datepicker" })
+                )
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Author.Name, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @(Html.Kendo().DropDownList().Name("AuthorId").DataTextField("Name").DataValueField("Id")
+                                                                                        .DataSource(source =>
+                                                                                        {
+                                                                                            source.Read(read =>
+                                                                                            {
+                                                                                                read.Action("Author_Get", "Author");
+                                                                                            });
+                                                                                        })
+                                                                                        .HtmlAttributes(new { style = "" })
+                )
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Create" class="btn btn-default" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10 status">
+                
+            </div>
+        </div>
+    </div>
+</form>
+
+<script>
+    $(function () {
+        var validator = $("#BookForm").kendoValidator().data("kendoValidator");
+        var status = $(".status");
+
+        $("form").submit(function (event) {
+            event.preventDefault();
+            if (validator.validate()) {
+                status.text("Hooray! Your tickets has been booked!")
+                    .removeClass("invalid")
+                    .addClass("valid");
+            } else {
+                status.text("Oops! There is invalid data in the form.")
+                    .removeClass("valid")
+                    .addClass("invalid");
+            }
+        });
+    });
+</script>

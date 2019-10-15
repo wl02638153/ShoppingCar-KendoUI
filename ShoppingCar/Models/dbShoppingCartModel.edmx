@@ -5,6 +5,24 @@
     <!-- SSDL content -->
     <edmx:StorageModels>
     <Schema Namespace="ShoppingCartModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Author">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="Book">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Title" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="PubDate" Type="date" />
+          <Property Name="Price" Type="decimal" Precision="18" Scale="0" />
+          <Property Name="Genre" Type="nvarchar" MaxLength="50" />
+          <Property Name="AuthorId" Type="int" />
+        </EntityType>
         <EntityType Name="ELMAH_Error">
           <Key>
             <PropertyRef Name="ErrorId" />
@@ -170,6 +188,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Book_Author">
+          <End Role="Author" Type="Self.Author" Multiplicity="0..1" />
+          <End Role="Book" Type="Self.Book" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Author">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Book">
+              <PropertyRef Name="AuthorId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_OrderDetail_Member">
           <End Role="Member" Type="Self.Member" Multiplicity="0..1" />
           <End Role="OrderDetail" Type="Self.OrderDetail" Multiplicity="*" />
@@ -223,6 +253,8 @@
           </ReferentialConstraint>
         </Association>
         <EntityContainer Name="ShoppingCartModelStoreContainer">
+          <EntitySet Name="Author" EntityType="Self.Author" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Book" EntityType="Self.Book" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ELMAH_Error" EntityType="Self.ELMAH_Error" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Log4NetLog" EntityType="Self.Log4NetLog" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="LogMessage" EntityType="Self.LogMessage" Schema="dbo" store:Type="Tables" />
@@ -243,6 +275,10 @@
           <AssociationSet Name="FK__OrderHead__UserI__4CA06362" Association="Self.FK__OrderHead__UserI__4CA06362">
             <End Role="Member" EntitySet="Member" />
             <End Role="OrderHeader" EntitySet="OrderHeader" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Book_Author" Association="Self.FK_Book_Author">
+            <End Role="Author" EntitySet="Author" />
+            <End Role="Book" EntitySet="Book" />
           </AssociationSet>
           <AssociationSet Name="FK_OrderDetail_Member" Association="Self.FK_OrderDetail_Member">
             <End Role="Member" EntitySet="Member" />
@@ -433,6 +469,12 @@
             <End Role="Product_Category" EntitySet="Product_Category" />
             <End Role="Product" EntitySet="Product" />
           </AssociationSet>
+          <EntitySet Name="Author" EntityType="ShoppingCartModel.Author" />
+          <EntitySet Name="Book" EntityType="ShoppingCartModel.Book" />
+          <AssociationSet Name="FK_Book_Author" Association="ShoppingCartModel.FK_Book_Author">
+            <End Role="Author" EntitySet="Author" />
+            <End Role="Book" EntitySet="Book" />
+          </AssociationSet>
           </EntityContainer>
         <Association Name="FK_OrderDetail_Member">
           <End Type="ShoppingCartModel.Member" Role="Member" Multiplicity="0..1" />
@@ -532,6 +574,38 @@
             </Principal>
             <Dependent Role="Product">
               <PropertyRef Name="CategoryID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Author">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Book" Relationship="ShoppingCartModel.FK_Book_Author" FromRole="Author" ToRole="Book" />
+        </EntityType>
+        <EntityType Name="Book">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Title" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="PubDate" Type="DateTime" Precision="0" />
+          <Property Name="Price" Type="Decimal" Precision="18" Scale="0" />
+          <Property Name="Genre" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="AuthorId" Type="Int32" />
+          <NavigationProperty Name="Author" Relationship="ShoppingCartModel.FK_Book_Author" FromRole="Book" ToRole="Author" />
+        </EntityType>
+        <Association Name="FK_Book_Author">
+          <End Type="ShoppingCartModel.Author" Role="Author" Multiplicity="0..1" />
+          <End Type="ShoppingCartModel.Book" Role="Book" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Author">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Book">
+              <PropertyRef Name="AuthorId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -670,6 +744,26 @@
               <MappingFragment StoreEntitySet="Product_Category">
                 <ScalarProperty Name="CategoryName" ColumnName="CategoryName" />
                 <ScalarProperty Name="CategoryID" ColumnName="CategoryID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Author">
+            <EntityTypeMapping TypeName="ShoppingCartModel.Author">
+              <MappingFragment StoreEntitySet="Author">
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Book">
+            <EntityTypeMapping TypeName="ShoppingCartModel.Book">
+              <MappingFragment StoreEntitySet="Book">
+                <ScalarProperty Name="AuthorId" ColumnName="AuthorId" />
+                <ScalarProperty Name="Genre" ColumnName="Genre" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="PubDate" ColumnName="PubDate" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

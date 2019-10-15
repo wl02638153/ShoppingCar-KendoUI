@@ -1,7 +1,7 @@
 ﻿@using PagedList
 @using PagedList.Mvc
 
-@model IPagedList<ShoppingCar.Models.Product>
+@model IEnumerable<ShoppingCar.Models.Product>
 @using ImageResizer;
 @{
     ViewBag.Title = "ProductList";
@@ -38,30 +38,6 @@
 </script>
 <h2>ProductList</h2>
 
-@if (TempData["DBResultErrorMessage"] != null)
-{
-    <script type="text/javascript">
-            window.onload = function () {
-                alert("@TempData["DBResultErrorMessage"]");
-            };
-    </script>
-}
-@if (TempData["EditMessage"] != null)
-{
-    <script type="text/javascript">
-            window.onload = function () {
-                alert("@TempData["EditMessage"]");
-            };
-    </script>
-}
-@if (TempData["DeleteMessage"] != null)
-{
-    <script type="text/javascript">
-            window.onload = function () {
-                alert("@TempData["DeleteMessage"]");
-            };
-    </script>
-}
 
     <style>
         textarea {
@@ -180,87 +156,70 @@
         float:right;
     }
     </style>
-@*<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.FirstOrDefault().ProductImg_DB)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.FirstOrDefault().Product_Category.CategoryName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.FirstOrDefault().ProductName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.FirstOrDefault().ProductExplain)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.FirstOrDefault().ProductPrice)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.FirstOrDefault().ProductImg)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.FirstOrDefault().Shelf_Flag)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.FirstOrDefault().Create_Date)
-        </th>
-        <th></th>
-    </tr>
 
-    @foreach (var item in Model)
-    {
-    <tr>
-        <td>
-            @{
-                byte[] img = item.ProductImg_DB;
 
-                var base64 = Convert.ToBase64String(img);
-                string imageDate = String.Format("data: image / gif;base64,{0}", base64);
+<script type="text/x-kendo-tmpl" id="template">
+    <div class="product">
+        <img src="@Url.Content("~")#:ProductImg#" alt="#:ProductName# image" />
+        <h3>#:ProductName#</h3>
+    </div>
+</script>
 
-                if (item.ProductImg != null)
-                {
-                    <img src="@Url.Content(item.ProductImg)?w=70&h=70&mode=cropyunits " />
-                }
-                else
-                {
-                    <img src="~/Image/notImg_.jpg?w=70&h=70&mode=cropyunits" />
-                }
-            }
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Product_Category.CategoryName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ProductName)
-        </td>
-        <td>
-            <style>
-                textarea {
-                    resize: none;
-                }
-            </style>
-            @Html.TextAreaFor(model => item.ProductExplain, new { @class = "form-controll", cols = "35", rows = "3", disabled = "disabled" })
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ProductPrice)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ProductImg)
-        </td>
-        <td>
-            @Html.CheckBoxFor(modelItem => item.Shelf_Flag, new { @disabled = "disabled" })
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Create_Date)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "ProductEdit", new { ProductID = item.ProductID })
-            @Html.ActionLink("Delete", "DeleteProduct", new { ProductID = item.ProductID }, new { onclick = "return Confirm_custom('確定要刪除嗎?')" })
-        </td>
-    </tr>
+<div class="demo-section k-content wide">
+    @(Html.Kendo().ListView<ShoppingCar.Models.Product>(Model)
+            .Name("listView")
+            .TagName("div")
+            .ClientTemplateId("template")
+            .DataSource(dataSource =>
+            {
+                dataSource.Read(read => read.Action("Products_Read", "Product"));
+                dataSource.PageSize(20);
+            })
+            .Pageable(pageable => pageable
+                .Refresh(true)
+                .ButtonCount(5)
+                .PageSizes(true))
+            //.Selectable(selectable => selectable.Mode(ListViewSelectionMode.Multiple))
+            //.Events(events => events.Change("onChange").DataBound("onDataBound"))
+    )
+</div>
+
+<style>
+    .product {
+        float: left;
+        width: 220px;
+        height: 110px;
+        margin: 0;
+        padding: 5px;
+        cursor: pointer;
     }
 
-</table>
-@Html.PagedListPager(Model, page => Url.Action("ProductList", new { page }))*@
+        .product img {
+            float: left;
+            width: 110px;
+            height: 110px;
+        }
+
+        .product h3 {
+            margin: 0;
+            padding: 10px 0 0 10px;
+            font-size: .9em;
+            overflow: hidden;
+            font-weight: normal;
+            float: left;
+            max-width: 100px;
+            text-transform: uppercase;
+        }
+
+    .k-pager-wrap {
+        border-top: 0;
+    }
+
+    .demo-section .k-listview:after {
+        content: ".";
+        display: block;
+        height: 0;
+        clear: both;
+        visibility: hidden;
+    }
+</style>

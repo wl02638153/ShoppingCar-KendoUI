@@ -119,8 +119,14 @@
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.IO, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.IO.4.3.0\lib\net462\System.IO.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.Linq.Dynamic, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Linq.Dynamic.1.0.0\lib\net40\System.Linq.Dynamic.dll</HintPath>
@@ -128,11 +134,37 @@
     <Reference Include="System.Linq.Dynamic.Core, Version=1.0.18.0, Culture=neutral, PublicKeyToken=0f07ec44de6ac832, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Linq.Dynamic.Core.1.0.18\lib\net46\System.Linq.Dynamic.Core.dll</HintPath>
     </Reference>
+    <Reference Include="System.Net.Http" />
     <Reference Include="System.Net.Http.Formatting, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
     </Reference>
+    <Reference Include="System.Runtime, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.4.3.0\lib\net462\System.Runtime.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
+    <Reference Include="System.Security.Cryptography.Algorithms, Version=4.2.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Security.Cryptography.Algorithms.4.3.0\lib\net463\System.Security.Cryptography.Algorithms.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Security.Cryptography.Encoding, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Security.Cryptography.Encoding.4.3.0\lib\net46\System.Security.Cryptography.Encoding.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Security.Cryptography.Primitives, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Security.Cryptography.Primitives.4.3.0\lib\net46\System.Security.Cryptography.Primitives.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Security.Cryptography.X509Certificates, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Security.Cryptography.X509Certificates.4.3.0\lib\net461\System.Security.Cryptography.X509Certificates.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Transactions" />
     <Reference Include="System.Web.DynamicData" />
@@ -174,8 +206,6 @@
     <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <Private>True</Private>
       <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Net.Http">
     </Reference>
     <Reference Include="System.Net.Http.WebRequest">
     </Reference>
@@ -297,6 +327,8 @@
     <Compile Include="Areas\MvcElmahDashboard\Models\Logs\ItemsModel.cs" />
     <Compile Include="Areas\MvcElmahDashboard\Models\Logs\PrevNextRequest.cs" />
     <Compile Include="Areas\MvcElmahDashboard\MvcElmahDashboardAreaRegistration.cs" />
+    <Compile Include="Controllers\AuthorController.cs" />
+    <Compile Include="Controllers\BookController.cs" />
     <Compile Include="Controllers\GridController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\KendoController.cs" />
@@ -314,6 +346,12 @@
     <Compile Include="Helper\CultureHelper.cs" />
     <Compile Include="Helper\EnumExtension.cs" />
     <Compile Include="Helper\EnumHelper.cs" />
+    <Compile Include="Models\Author.cs">
+      <DependentUpon>dbShoppingCartModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Book.cs">
+      <DependentUpon>dbShoppingCartModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Product_Categorys.cs" />
     <Compile Include="Models\CustomizedPaging.cs" />
     <Compile Include="Models\dbShoppingCartModel.Context.cs">
@@ -2986,6 +3024,10 @@
     <Content Include="Views\Shared\_LayoutKendo.cshtml" />
     <Content Include="Views\Kendo\ProductGridView.cshtml" />
     <Content Include="Views\Kendo\ProductListView.cshtml" />
+    <Content Include="Views\Book\Index.cshtml" />
+    <Content Include="Views\Author\Index.cshtml" />
+    <Content Include="Views\Book\Book_Create.cshtml" />
+    <Content Include="Views\Book\Book_Edit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Image\" />

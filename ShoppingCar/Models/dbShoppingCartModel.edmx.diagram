@@ -21,6 +21,9 @@
         <EntityTypeShape EntityType="ShoppingCartModel.Log4NetLog" Width="1.5" PointX="2.5" PointY="5.5" />
         <EntityTypeShape EntityType="ShoppingCartModel.Product_Category" Width="1.5" PointX="5.625" PointY="5.375" />
         <AssociationConnector Association="ShoppingCartModel.FK_Product_Product_Category1" />
+        <EntityTypeShape EntityType="ShoppingCartModel.Author" Width="1.5" PointX="5.375" PointY="8.25" />
+        <EntityTypeShape EntityType="ShoppingCartModel.Book" Width="1.5" PointX="7.625" PointY="8" />
+        <AssociationConnector Association="ShoppingCartModel.FK_Book_Author" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

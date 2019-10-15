@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="06d96563e2be4724bc64b2ec080cf097" Name="Diagram1">
+        <EntityTypeShape EntityType="ShoppingCartModel.ELMAH_Error" Width="1.5" PointX="5.75" PointY="7.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="ShoppingCartModel.Log4NetLog" Width="1.5" PointX="7.75" PointY="6.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="ShoppingCartModel.LogMessage" Width="1.5" PointX="9.75" PointY="6.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="ShoppingCartModel.Member" Width="1.5" PointX="3" PointY="9" IsExpanded="true" />
+        <EntityTypeShape EntityType="ShoppingCartModel.OrderDetail" Width="1.5" PointX="5.25" PointY="2.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="ShoppingCartModel.OrderHeader" Width="1.5" PointX="3" PointY="13.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="ShoppingCartModel.Product" Width="1.5" PointX="3" PointY="2.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="ShoppingCartModel.Product_Category" Width="1.5" PointX="0.75" PointY="3.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="ShoppingCartModel.ShoppingCarList" Width="1.5" PointX="8.25" PointY="3.25" IsExpanded="true" />
+        <AssociationConnector Association="ShoppingCartModel.FK__OrderHead__UserI__4CA06362" ManuallyRouted="false" />
+        <AssociationConnector Association="ShoppingCartModel.FK_OrderDetail_Member" ManuallyRouted="false" />
+        <AssociationConnector Association="ShoppingCartModel.FK_ShoppingCarList_Member" ManuallyRouted="false" />
+        <AssociationConnector Association="ShoppingCartModel.FK__OrderDeta__Order__5165187F" ManuallyRouted="false" />
+        <AssociationConnector Association="ShoppingCartModel.FK__OrderDeta__Produ__5070F446" ManuallyRouted="false" />
+        <AssociationConnector Association="ShoppingCartModel.FK_Product_Product_Category1" ManuallyRouted="false" />
+        <AssociationConnector Association="ShoppingCartModel.FK_ShoppingCarList_Product" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

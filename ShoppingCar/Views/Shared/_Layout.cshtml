@@ -52,14 +52,14 @@
         @(Html.Kendo().Menu().Name("menu")
                             .Items(items =>
                             {
-                                items.Add().Text("Test1").HtmlAttributes(new {
+                                items.Add().Text("Book").Action("Index", "Book").HtmlAttributes(new {
 
                                 });
                                 items.Add().Text("Login").Action("Login", "Member");
                                 items.Add().Text("Register").Action("Register", "Member");
                                 items.Add().Text("Product List").Action("Index", "Home");
                                 items.Add().Text("Language")
-                                .Items(innerChildren=> 
+                                .Items(innerChildren=>
                                 {
                                     innerChildren.Add().Text("English").Action("SetCulture", "Home", new { culture = "en-US", returnUrl = this.Request.RawUrl });
                                     innerChildren.Add().Text("繁體中文").Action("SetCulture", "Home", new { culture = "zh-TW", returnUrl = this.Request.RawUrl });
